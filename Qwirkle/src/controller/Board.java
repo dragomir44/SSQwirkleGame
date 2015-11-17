@@ -7,11 +7,8 @@ public class Board {
 
 	// -- Constants --------------------------------------------------
 
-	public static final int ROW = 6;
-	public static final int COL = 7;
-	public static final int COUNT = 4;
-	public static final int NO_OF_DIAGONALS = 12;
-	public boolean debug = true;
+	public static final int ROW = 15;
+	public static final int COL = 15;
 
 	// -- Instance variables -----------------------------------------
 
@@ -28,7 +25,7 @@ public class Board {
 
 	// -- Queries ----------------------------------------------------
 
-
+/*  SMART COMPUTER PLAYER
 	public Board deepCopy() {
 		Board copy = new Board();
 		for (int i = 0; i < fields.length; i++) {
@@ -38,12 +35,12 @@ public class Board {
 		}
 		return copy;
 	}
-
+*/
+	
 
 	public int index(int row, int col) {
 		return COL * row + col;
 	}
-
 
 	public boolean isField(int ix) {
 		return 0 <= ix && ix < ROW * COL;
@@ -67,30 +64,10 @@ public class Board {
 		return this.getField(row, col) == Mark.EE;
 	}
 
-	public boolean columnHasEmptyField(int col) {
-		for (int i = ROW - 1; i >= 0; i--) {
-			if (fields[i][col] == Mark.EE) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	public boolean isFull() {
-		for (int i = 0; i < ROW; i++) {
-			for (int j = 0; j < COL; j++) {
-				if (fields[i][j] == Mark.EE) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 
 	public boolean gameOver() {
-		return isFull() || hasWinner();
+		//All tiles gone
+		return false;
 	}
 
 

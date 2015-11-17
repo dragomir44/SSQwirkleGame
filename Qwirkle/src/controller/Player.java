@@ -1,36 +1,35 @@
 package controller;
 
-import model.Mark;
+//import model.Mark;
+//import model.PlayerTiles
 
 public abstract class Player {
 
 	// -- Instance variables -----------------------------------------
 
 	private String name;
-	private Mark mark;
-
+//	private Mark mark;
+//	private PlayerTiles playertiles;
+	
 	// -- Constructors -----------------------------------------------
 
-	public Player(String theName, Mark theMark) {
+	public Player(String theName) {
 		this.name = theName;
-		this.mark = theMark;
 	}
 
 	// -- Queries ----------------------------------------------------
+
 
 	public String getName() {
 		return name;
 	}
 
-	public Mark getMark() {
-		return mark;
-	}
 
 	public abstract int determineMove(Board board);
 
+
 	public void makeMove(Board board) {
 		int keuze = determineMove(board);
-		board.setField(keuze, getMark());
 	}
 
 }

@@ -8,24 +8,21 @@ public class HumanPlayer extends Player {
 
 	// -- Constructors -----------------------------------------------
 
-	public HumanPlayer(String name, Mark mark) {
-		super(name, mark);
+	public HumanPlayer(String name) {
+		super(name);
 	}
 
 	// -- Commands ---------------------------------------------------
 
 	public int determineMove(Board board) {
-		String prompt = "> " + getName() + " (" + getMark().toString() + ")"
-				  + ", what is your choice? ";
+		String prompt = "> " + getName() + " (what is your choice? ";
 		int choice = readInt(prompt);
-		boolean valid = board.isColumn(choice) && board.isField(choice)
-				  && board.columnHasEmptyField(choice);
+		boolean valid = board.isColumn(choice) && board.isField(choice);
 		while (!valid) {
 			System.out.println("ERROR: field " + choice
 					  + " is no valid choice. Please choose a colum(0-6).");
 			choice = readInt(prompt);
-			valid = board.isColumn(choice) && board.isField(choice)
-					&& board.columnHasEmptyField(choice);
+			valid = board.isColumn(choice) && board.isField(choice);
 		}
 		return choice;
 	}

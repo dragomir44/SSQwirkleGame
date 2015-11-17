@@ -36,12 +36,10 @@ public class NaiveStrategy implements Strategy {
 	@Override
 	public int determineMove(Board board, Mark mark) {
 		int choice = (int) (Math.random() * 100) % COL;
-		boolean valid = board.isColumn(choice) && board.isField(choice) && board
-				  .columnHasEmptyField(choice);
+		boolean valid = board.isColumn(choice) && board.isField(choice);
 		while (!valid) {
 			choice = (int) (Math.random() * 100) % COL;
-			valid = board.isColumn(choice) && board.isField(choice)
-					&& board.columnHasEmptyField(choice);
+			valid = board.isColumn(choice) && board.isField(choice);
 		}
 		return choice;
 	}

@@ -14,12 +14,12 @@ public class Game {
 	private int current;
 
 	// -- Constructors -----------------------------------------------
-
-	public Game(Player s0, Player s1)  {
+	
+	public Game(Player player0, Player player1)  {
 		board = new Board();
 		players = new Player[NUMBER_PLAYERS];
-		players[0] = s0;
-		players[1] = s1;
+		players[0] = player0;
+		players[1] = player1;
 		current = 0;
 	}
 
@@ -68,8 +68,7 @@ public class Game {
 	private void printResult() {
 		if (board.hasWinner()) {
 			Player winner = players[(current + 1) % 2];
-			System.out.println("Speler " + winner.getName() + " ("
-					  + winner.getMark().toString() + ") has won!");
+			System.out.println("Speler " + winner.getName() + " has won!");
 		} else {
 			System.out.println("Draw. There is no winner!");
 		}
