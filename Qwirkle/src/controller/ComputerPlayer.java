@@ -1,26 +1,26 @@
 package controller;
 
-import model.Mark;
+import model.Tile;
 
 public class ComputerPlayer extends Player {
 
 	// -- Constants --------------------------------------------------
 
 	private String name;
-	private Mark mark;
+	private Tile mark;
 	private Strategy strategy;
 
 	// -- Constructors -----------------------------------------------
 
-	public ComputerPlayer(Mark mark, Strategy strategy) {
-		super(strategy.getName(), mark);
+	public ComputerPlayer(Tile mark, Strategy strategy) {
+		super(strategy.getName());
 		this.name = strategy + "-" + mark;
 		this.mark = mark;
 		this.strategy = strategy;
 	}
 
-	public ComputerPlayer(Mark mark) {
-		super("Naive", mark);
+	public ComputerPlayer(Tile mark) {
+		super("Naive");
 		this.name = "naive-computer";
 		this.mark = mark;
 		strategy = new NaiveStrategy();

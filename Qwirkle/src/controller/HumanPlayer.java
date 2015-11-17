@@ -2,7 +2,7 @@ package controller;
 
 import java.util.Scanner;
 
-import model.Mark;
+import model.Tile;
 
 public class HumanPlayer extends Player {
 

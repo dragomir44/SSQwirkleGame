@@ -1,10 +1,10 @@
 package controller;
 
-import model.Mark;
+import model.Tile;
 
 public interface Strategy {
 	
 	public String getName();
-	public int determineMove(Board b, Mark m);
+	public int determineMove(Board b, Tile m);
 
 }

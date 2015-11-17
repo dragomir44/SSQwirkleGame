@@ -1,6 +1,6 @@
 package controller;
 
-import model.Mark;
+import model.Tile;
 
 public class NaiveStrategy implements Strategy {
 
@@ -34,7 +34,7 @@ public class NaiveStrategy implements Strategy {
 	 * @return the computer player's choice
 	 */
 	@Override
-	public int determineMove(Board board, Mark mark) {
+	public int determineMove(Board board, Tile mark) {
 		int choice = (int) (Math.random() * 100) % COL;
 		boolean valid = board.isColumn(choice) && board.isField(choice);
 		while (!valid) {

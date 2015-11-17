@@ -1,7 +1,6 @@
 package controller;
 
-import model.Mark;
-
+import model.Tile;
 
 public class Board {
 
@@ -13,13 +12,13 @@ public class Board {
 	// -- Instance variables -----------------------------------------
 
 
-	private Mark[][] fields;
-	private Mark[][] fieldsCopy;
+	private Tile[][] fields;
+	private Tile[][] fieldsCopy;
 
 	// -- Constructors -----------------------------------------------
 
 	public Board() {
-		fields = new Mark[ROW][COL];
+		fields = new Tile[ROW][COL];
 
 	}
 
@@ -55,13 +54,13 @@ public class Board {
 		return 0 <= ix && ix < COL;
 	}
 
-	public Mark getField(int row, int col) {
+	public Tile getField(int row, int col) {
 
 		return fields[row][col];
 	}
 
 	public boolean isEmptyField(int row, int col) {
-		return this.getField(row, col) == Mark.EE;
+		return this.getField(row, col) == Tile.EE;
 	}
 
 
@@ -71,7 +70,7 @@ public class Board {
 	}
 
 
-	public boolean isWinner(Mark m) {
+	public boolean isWinner(Tile m) {
 	//	return hasRow(m) || hasColumn(m) || hasUpperRightDiagonal(m)
 	//			|| hasLowerRightDiagonal(m);
 		return true;
@@ -79,7 +78,7 @@ public class Board {
 
 
 	public boolean hasWinner() {
-		return isWinner(Mark.YY) || isWinner(Mark.RR);
+		return isWinner(Tile.YY) || isWinner(Tile.RR);
 	}
 
 	public String toString() {
@@ -104,12 +103,12 @@ public class Board {
 	public void reset() {
 		for (int i = 0; i < ROW; i++) {
 			for (int j = 0; j < COL; j++) {
-				fields[i][j] = Mark.EE;
+				fields[i][j] = Tile.EE;
 			}
 		}
 	}
 
-	public void setField(int col, Mark m) {
+	public void setField(int col, Tile m) {
 		for (int i = ROW - 1; i >= 0; i--) {
 			if (isEmptyField(i, col)) {
 				fields[i][col] = m;
@@ -117,5 +116,7 @@ public class Board {
 			}
 		}
 	}
+	
+
 
 }
