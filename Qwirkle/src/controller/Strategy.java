@@ -1,6 +1,6 @@
-package pp.controller;
+package controller;
 
-import pp.model.Mark;
+import model.Mark;
 
 public interface Strategy {
 	

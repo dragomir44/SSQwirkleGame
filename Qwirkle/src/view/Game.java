@@ -65,13 +65,6 @@ public class Game {
 				  + "\n");
 	}
 
-	/*
-	 * @ requires this.board.gameOver();
-	 */
-
-	/**
-	 * Prints the result of the last game.
-	 */
 	private void printResult() {
 		if (board.hasWinner()) {
 			Player winner = players[(current + 1) % 2];
