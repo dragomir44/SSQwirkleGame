@@ -1,5 +1,6 @@
 package controller;
 
+import model.Bag;
 import model.Tile;
 
 public class Board {
@@ -14,11 +15,13 @@ public class Board {
 
 	private Tile[][] fields;
 	private Tile[][] fieldsCopy;
+	private Bag bag;
 
 	// -- Constructors -----------------------------------------------
 
 	public Board() {
 		fields = new Tile[ROW][COL];
+		bag = new Bag();
 
 	}
 
@@ -36,29 +39,32 @@ public class Board {
 	}
 */
 	
-
+	//werkt
 	public int index(int row, int col) {
 		return COL * row + col;
 	}
 
+	//werkt
 	public boolean isField(int ix) {
 		return 0 <= ix && ix < ROW * COL;
 	}
 
+	//werkt
 	public boolean isField(int row, int col) {
 		int i = index(row, col);
 		return 0 <= i && i < ROW * COL;
 	}
 
+	//werkt
 	public boolean isColumn(int ix) {
 		return 0 <= ix && ix < COL;
 	}
 
 	public Tile getField(int row, int col) {
-
 		return fields[row][col];
 	}
 
+	//TODO
 	public boolean isEmptyField(int row, int col) {
 		return this.getField(row, col) == Tile.EE;
 	}
@@ -128,6 +134,10 @@ public class Board {
 	public static void main(String [] args) {
 		Board b = new Board();
 		System.out.println(b.toString());
+		System.out.println(b.getField(1, 1));
+		System.out.println(b.bag.toString());
+		System.out.println(b.bag.getBag().get(1));
+		b.setField(5, b.bag.getBag().get(1));
 	}
 
 }
