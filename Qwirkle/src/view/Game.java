@@ -9,17 +9,18 @@ public class Game {
 
 	// -- Instance variables -----------------------------------------
 	public static final int NUMBER_PLAYERS = 2;
+	public static final int CARDS_PER_HAND = 6;
 	private Board board;
 	private Player[] players;
 	private int current;
 
 	// -- Constructors -----------------------------------------------
 	
-	public Game(Player player0, Player player1)  {
+	public Game(Player p0, Player p1)  {
 		board = new Board();
 		players = new Player[NUMBER_PLAYERS];
-		players[0] = player0;
-		players[1] = player1;
+		players[0] = p0;
+		players[1] = 1;
 		current = 0;
 	}
 

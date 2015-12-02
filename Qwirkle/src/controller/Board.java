@@ -6,8 +6,8 @@ public class Board {
 
 	// -- Constants --------------------------------------------------
 
-	public static final int ROW = 15;
-	public static final int COL = 15;
+	public static final int ROW = 16;
+	public static final int COL = 16;
 
 	// -- Instance variables -----------------------------------------
 
@@ -63,12 +63,10 @@ public class Board {
 		return this.getField(row, col) == Tile.EE;
 	}
 
-
 	public boolean gameOver() {
 		//All tiles gone
 		return false;
 	}
-
 
 	public boolean isWinner(Tile m) {
 	//	return hasRow(m) || hasColumn(m) || hasUpperRightDiagonal(m)
@@ -76,28 +74,38 @@ public class Board {
 		return true;
 	}
 
-
 	public boolean hasWinner() {
 		return isWinner(Tile.YY) || isWinner(Tile.RR);
 	}
 
 	public String toString() {
-		String s = "";
-		String g = " 0    1    2    3    4    5    6 ";
-		for (int i = 0; i < ROW; i++) {
-			String row = "";
-			for (int j = 0; j < COL; j++) {
-				row = row + " " + getField(i, j).toString() + " ";
-				if (j < COL - 1) {
-					row = row + "|";
-				}
-			}
-			s = s + row;
-			if (i < ROW - 1) {
-				s = s + "\n";
+		String res = "    ";
+		for (int k = 0; k < COL; k++) {
+			if (k < 10) {
+				res = res + "   " + k;
+			} else {
+				res = res + "  " + k;
 			}
 		}
-		return g + "\n" + s;
+		res = res + "\n";
+		for (int i = 0; i < ROW; i++) {
+			if (i < 10) {
+				//add \n for blocks
+				res = res + i + " ";
+			} else {
+				//add \n for blocks
+				res = res + i + "";
+			}
+			for (int j = 0; j < COL; j++) {
+				//actually empty tile
+				res = res + "   ";
+				if (j < COL) {
+					res = res + "|";
+				}
+			}
+			res = res + "\n";
+		}
+		return res;
 	}
 
 	public void reset() {
@@ -117,6 +125,9 @@ public class Board {
 		}
 	}
 	
-
+	public static void main(String [] args) {
+		Board b = new Board();
+		System.out.println(b.toString());
+	}
 
 }

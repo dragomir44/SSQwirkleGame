@@ -1,11 +1,38 @@
 package model;
 
-//Square, Circle, Star, Diamond, Flower, Jew
-//Red, Blue, Yellow, Orange, Yellow, Green
+import java.util.ArrayList;
 
-public enum Tile {
+
+public class Tile {
     
-    OO, O, X, ƒ, Ø, ¥;
+	//Square, Circle, Star, Diamond, Flower, Jew, Empty
+	public enum Shape {
+		$, O, X, ƒ, Ø, ¥,
+	}
+	
+	//Red, Blue, Green, Yellow, Orange, Purple
+	public enum Colour {
+		R, B, G, Y, O, P
+	}
+	
+    private final Shape shape;
+    private final Colour colour;
+    
+    Tile(Shape shape, Colour colour) {
+        this.shape = shape;
+        this.colour = colour;
+    }
 
-
+    public Shape getShape() { 
+    	return shape; 
+    }
+    
+    public Colour getColour() { 
+    	return colour; 
+    }
+    
+    public String toString() { 
+    	return shape + " " + colour; 
+    }
 }
+	
