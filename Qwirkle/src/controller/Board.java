@@ -16,6 +16,10 @@ public class Board {
 	BoardTiles tiles = new BoardTiles();
 	// -- Constructors -----------------------------------------------
 	public Board() {
+//
+//		fields = new Tile[ROW][COL];
+//		bag = new Bag();
+
 	}
 
 	// -- Queries ----------------------------------------------------
