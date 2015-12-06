@@ -28,7 +28,7 @@ public class Board {
 	 * @param col
 	 * @return true if field has atleast 1 adjecent tile
 	 */
-	public boolean isAdjecent(int row, int col) {
+	public boolean hasAdjecent(int row, int col) {
 		Tile[] adjecent =  tiles.getAdjecentTiles(row, col);
 		boolean isAdjecent = false;
 		for (Tile tile : adjecent) {
@@ -57,6 +57,11 @@ public class Board {
 	 * @return true if the move is a valid one
 	 */
 	public boolean isValidMove(int row, int col, Tile t, Player p) {
+		boolean adjecent = hasAdjecent(row, col);
+		boolean colour = false;
+		boolean shape = false;
+		boolean turn = false;
+		
 		return adjecent && (colour || shape) && turn;
 	}
 	/** Grow the playing field in a certain direction.
