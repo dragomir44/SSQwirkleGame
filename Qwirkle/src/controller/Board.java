@@ -16,10 +16,7 @@ public class Board {
 	BoardTiles tiles = new BoardTiles();
 	// -- Constructors -----------------------------------------------
 	public Board() {
-//
-//		fields = new Tile[ROW][COL];
 //		bag = new Bag();
-
 	}
 
 	// -- Queries ----------------------------------------------------
@@ -31,7 +28,7 @@ public class Board {
 	 * @param col
 	 * @return true if field has atleast 1 adjecent tile
 	 */
-	public boolean isField(int row, int col) {
+	public boolean isAdjecent(int row, int col) {
 		Tile[] adjecent =  tiles.getAdjecentTiles(row, col);
 		boolean isAdjecent = false;
 		for (Tile tile : adjecent) {
@@ -44,58 +41,54 @@ public class Board {
 	}
 
 	public boolean gameOver() {
-		//All tiles gone
+		//Bag is empty
 		return false;
 	}
 
+	/** Make sure the move is a valid one.
+	 *  check if it has atleast 1 adjecent tile
+	 *	check if adjecent tile is same color or shape
+	 *	if first move, make sure it is placed in the middle (cast error)
+	 *  check if it is player's turn
+	 * @param row the row the player wants to place the tile
+	 * @param col the column the player wants to place the tile
+	 * @param tile the tile object the player wants to place
+	 * @param player the player that want's to place the tile
+	 * @return true if the move is a valid one
+	 */
+	public boolean isValidMove(int row, int col, Tile t, Player p) {
 
-//	public String toString() {
-//		String res = "    ";
-//		for (int k = 0; k < cols; k++) {
-//			if (k < 10) {
-//				res = res + "   " + k;
-//			} else {
-//				res = res + "  " + k;
-//			}
-//		}
-//		res = res + "\n";
-//		for (int i = 0; i < rows; i++) {
-//			if (i < 10) {
-//				//add \n for blocks
-//				res = res + i + " ";
-//			} else {
-//				//add \n for blocks
-//				res = res + i + "";
-//			}
-//			for (int j = 0; j < cols; j++) {
-//				//actually empty tile
-//				res = res + "   ";
-//				if (j < cols) {
-//					res = res + "|";
-//				}
-//			}
-//			res = res + "\n";
-//		}
-//		return res;
-//	}
-
-	/** Grow the playing field in a certain direction
+		return false;
+	}
+	/** Grow the playing field in a certain direction.
 	 * @param direction 0(right), 1(top), 2(left), 3(bottom)
 	 */
-	public void growField(int direction){
+	public void growBoard(int direction) {
 		// recreate boardString
 		// if top or left, increment BoardTiles Keys
 	}
-	
-	public void reset() {
-//		Board b = new Board();
-	}
 
-	public void setField(int col, int row, Tile m) {
-		// place tile in BoardTiles map
-		// put tile in BoardString
+	/** For placing a tile on the board.
+	 * @param row the row the player wants to place the tile
+	 * @param col the column the player wants to place the tile
+	 * @param t the tile object that the player wants to place
+	 * @param player the player that wants to place the tile
+	 * @return true if the tile has been placed on the field
+	 */
+	public boolean setField(int row, int col, Tile t, Player p) {
+		boolean result = false;
+		if (isValidMove(row, col, t, p)) {
+			// TODO remove tile from player hand
+			// TODO check if board has to grow
+			tiles.tileMap.put(row, col, t); // place tile on the field
+			result = true;
+		}
+		return result;
 	}
 	
+	/** Prints the board and places the tiles contained in tileMap on the board.
+	 * @return returns a string containing the board 
+	 */
 	public String toString() {
 		// use StringBuilder for better memory performance
 		StringBuilder boardString = new StringBuilder();
@@ -109,7 +102,7 @@ public class Board {
 		    	}
 		    }
 		    boardString.append("|\n"); // end of row
-		    for (int j = 0; j < cols; j++){
+		    for (int j = 0; j < cols; j++) {
 		    	boardString.append("---");
 		    }
 		    boardString.append("\n"); // end of row
