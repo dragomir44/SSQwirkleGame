@@ -57,8 +57,7 @@ public class Board {
 	 * @return true if the move is a valid one
 	 */
 	public boolean isValidMove(int row, int col, Tile t, Player p) {
-
-		return false;
+		return adjecent && (colour || shape) && turn;
 	}
 	/** Grow the playing field in a certain direction.
 	 * @param direction 0(right), 1(top), 2(left), 3(bottom)
@@ -91,8 +90,15 @@ public class Board {
 	 */
 	public String toString() {
 		// use StringBuilder for better memory performance
-		StringBuilder boardString = new StringBuilder();
+		StringBuilder boardString = new StringBuilder("  ");
+		String rowline = "|\n   " + new String(new char[cols]).replace("\0", "---") + "\n";
+		
+		for (int k = 0; k < cols; k++) {
+			boardString.append("|" + String.format("%02d", k)); // add column numbers
+		}
+		boardString.append(rowline);
 		for (int i = 0; i < rows; i++) { // loop trough rows
+			boardString.append(String.format("%02d", i)); // add row numbers
 		    for (int j = 0; j < cols; j++) { // loop trough cols
 		    	boardString.append("|");
 		    	if (tiles.tileMap.containsKeys(i, j)) { // check if grid contains tile
@@ -101,11 +107,7 @@ public class Board {
 			        boardString.append("  ");	    		
 		    	}
 		    }
-		    boardString.append("|\n"); // end of row
-		    for (int j = 0; j < cols; j++) {
-		    	boardString.append("---");
-		    }
-		    boardString.append("\n"); // end of row
+		    boardString.append(rowline); // end of row
 		}
 		return boardString.toString();
 	}
@@ -115,5 +117,6 @@ public class Board {
 		Tile tile = new Tile(Tile.Shape.X, Tile.Colour.R);
 		b.tiles.tileMap.put(1, 3, tile);
 		System.out.println(b.toString());
+
 	}
 }
