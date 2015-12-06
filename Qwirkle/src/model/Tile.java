@@ -1,71 +1,36 @@
 package model;
 
-import java.util.ArrayList;
-
 
 public class Tile {
     
 	//Square, Circle, Star, Diamond, Flower, Jew, Empty
 	public enum Shape {
-		$ ("$"),
-		O ("O"),
-		X ("X"),
-		ƒ ("ƒ"),
-		Ø ("Ø"),
-		¥ ("¥");
-
-		private final String value;
-		
-		private Shape(final String value) {
-			this.value = value;
-		}
-
-		// method to return String from enum type
-		public String toString() {
-			return value;
-		}	
+		$, O, X, ƒ, Ø, ¥,
 	}
 	
 	//Red, Blue, Green, Yellow, Orange, Purple
-	public enum Color {
-		R ("red"),
-		B ("blue"),
-		G ("green"),
-		Y ("yellow"), 
-		O ("orange"),
-		P ("purple");
-		
-		private final String value;
-		
-		private Color(final String value) {
-			this.value = value;
-		}
-		
-		/* Method to return String from enum
-		 * @return string of color
-		 */
-		public String toString() {
-			return value;
-		}		
+	public enum Colour {
+		R, B, G, Y, O, P
 	}
+	
     private final Shape shape;
-    private final Color color;
+    private final Colour colour;
     
-    Tile(Shape shape, Color color) {
+    public Tile(Shape shape, Colour colour) {
         this.shape = shape;
-        this.color = color;
+        this.colour = colour;
     }
 
     public Shape getShape() { 
     	return shape; 
     }
     
-    public Color getColor() { 
-    	return color; 
+    public Colour getColour() { 
+    	return colour; 
     }
     
     public String toString() { 
-    	return shape + " " + color; 
+    	return shape + "" + colour; 
     }
 }
 	
