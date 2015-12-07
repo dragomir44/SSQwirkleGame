@@ -1,43 +1,25 @@
 package controller;
 
 import model.Tile;
+
+import java.util.Arrays;
+
 import model.BoardTiles;
 
 public class Board {
 
 	// -- Constants --------------------------------------------------
 
+	// -- Instance variables -----------------------------------------
 	public int rows = 20;
 	public int cols = 20;
 
-	// -- Instance variables -----------------------------------------
 	
 	// instance with a map of all the tiles placed on the board
 	BoardTiles tiles = new BoardTiles();
 	// -- Constructors -----------------------------------------------
 	public Board() {
 //		bag = new Bag();
-	}
-
-	// -- Queries ----------------------------------------------------
-
-	/** Every tile needs to be placed next to adjecent tile (except first tile).
-	 * This method checks if tile is adjecent to atleast 1 tile,
-	 * n.b. (have to make sure that when placed next to end of board, board increses size)
-	 * @param row
-	 * @param col
-	 * @return true if field has atleast 1 adjecent tile
-	 */
-	public boolean hasAdjecent(int row, int col) {
-		Tile[] adjecent =  tiles.getAdjecentTiles(row, col);
-		boolean isAdjecent = false;
-		for (Tile tile : adjecent) {
-			if (tile != null) {
-				isAdjecent = true;
-				break;
-			}
-		}
-		return isAdjecent;
 	}
 
 	public boolean gameOver() {
@@ -56,13 +38,29 @@ public class Board {
 	 * @param player the player that want's to place the tile
 	 * @return true if the move is a valid one
 	 */
-	public boolean isValidMove(int row, int col, Tile t, Player p) {
-		boolean adjecent = hasAdjecent(row, col);
-		boolean colour = false;
-		boolean shape = false;
-		boolean turn = false;
-		
-		return adjecent && (colour || shape) && turn;
+	public boolean isValidMove(int row, int col, Tile t) {
+		// TODO add valid move for player turn
+		boolean hasTile = tiles.tileMap.containsKeys(row, col);
+		boolean hasAdjecent = false;
+		boolean hasColour = false;
+		boolean hasShape = false;
+		boolean isTurn = true;
+		int count = 0;
+		Tile[] adjecent =  tiles.getAdjecentTiles(row, col);
+		Tile.Shape[] shapes = new Tile.Shape[3];
+		Tile.Colour[] colours = new Tile.Colour[3];
+		for (Tile tile : adjecent) {
+			if (tile != null) {
+				hasAdjecent = true;
+				shapes[count] = tile.getShape();
+				colours[count] = tile.getColour();
+			}
+			count++;
+		}
+		hasShape = Arrays.asList(shapes).contains(t.getShape());
+		hasColour = Arrays.asList(colours).contains(t.getColour());
+			
+		return hasAdjecent && (hasColour || hasShape) && isTurn && !hasTile;
 	}
 	/** Grow the playing field in a certain direction.
 	 * @param direction 0(right), 1(top), 2(left), 3(bottom)
@@ -79,9 +77,9 @@ public class Board {
 	 * @param player the player that wants to place the tile
 	 * @return true if the tile has been placed on the field
 	 */
-	public boolean setField(int row, int col, Tile t, Player p) {
+	public boolean setField(int row, int col, Tile t) {
 		boolean result = false;
-		if (isValidMove(row, col, t, p)) {
+		if (isValidMove(row, col, t)) {
 			// TODO remove tile from player hand
 			// TODO check if board has to grow
 			tiles.tileMap.put(row, col, t); // place tile on the field
@@ -96,7 +94,7 @@ public class Board {
 	public String toString() {
 		// use StringBuilder for better memory performance
 		StringBuilder boardString = new StringBuilder("  ");
-		String rowline = "|\n   " + new String(new char[cols]).replace("\0", "---") + "\n";
+		String rowline = "|\n";
 		
 		for (int k = 0; k < cols; k++) {
 			boardString.append("|" + String.format("%02d", k)); // add column numbers
@@ -120,8 +118,15 @@ public class Board {
 	public static void main(String[] args) {
 		Board b = new Board();
 		Tile tile = new Tile(Tile.Shape.X, Tile.Colour.R);
+		Tile tile1 = new Tile(Tile.Shape.X, Tile.Colour.B);
+		Tile tile2 = new Tile(Tile.Shape.O, Tile.Colour.R);
 		b.tiles.tileMap.put(1, 3, tile);
 		System.out.println(b.toString());
+		System.out.println(b.setField(1, 4, tile1));
+		System.out.println(b.toString());
+		System.out.println(b.setField(1, 5, tile2));
+		System.out.println(b.toString());
+		
 
 	}
 }
