@@ -2,7 +2,7 @@ package controller;
 
 import model.Tile;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import model.BoardTiles;
 
@@ -28,10 +28,11 @@ public class Board {
 	}
 
 	/** Make sure the move is a valid one.
-	 *  check if it has atleast 1 adjecent tile
-	 *	check if adjecent tile is same color or shape
-	 *	if first move, make sure it is placed in the middle (cast error)
-	 *  check if it is player's turn
+	 * 0. make sure it is an empty tile
+	 * 1. check if it has adjecent tiles
+	 * 2. make sure it fits the common type of the all the rows
+	 * 3. make sure it is the only shape/color in the color/shape row
+	 * 4. return true/false
 	 * @param row the row the player wants to place the tile
 	 * @param col the column the player wants to place the tile
 	 * @param tile the tile object the player wants to place
@@ -42,25 +43,27 @@ public class Board {
 		// TODO add valid move for player turn
 		boolean hasTile = tiles.tileMap.containsKeys(row, col);
 		boolean hasAdjecent = false;
-		boolean hasColour = false;
-		boolean hasShape = false;
-		boolean isTurn = true;
-		int count = 0;
-		Tile[] adjecent =  tiles.getAdjecentTiles(row, col);
-		Tile.Shape[] shapes = new Tile.Shape[3];
-		Tile.Colour[] colours = new Tile.Colour[3];
-		for (Tile tile : adjecent) {
-			if (tile != null) {
-				hasAdjecent = true;
-				shapes[count] = tile.getShape();
-				colours[count] = tile.getColour();
+		boolean noMoreThenSix = true;
+		boolean exclusiveColour = true;
+		boolean exclusiveShape = true;
+		ArrayList<ArrayList<Tile>> tileRows = tiles.getAdjecentRows(row, col);
+		for (ArrayList<Tile> tileRow : tileRows) { // loop trough all the tile rows
+			if (!tileRow.isEmpty()) { 
+				hasAdjecent = true; // check if there is atleast 1 adjecent tile
+				if (tileRow.size() >= 6 && noMoreThenSix) {
+					noMoreThenSix = false;
+				}
+				for (Tile tile : tileRow) {
+					if (tile.getColour().equals(t.getColour()) && exclusiveColour) { 
+						exclusiveColour = false;	// check if exclusive color
+					}
+					if (tile.getShape().equals(t.getShape()) && exclusiveShape) { 
+						exclusiveShape = false; 	// check if exclusive shape
+					}
+				}
 			}
-			count++;
 		}
-		hasShape = Arrays.asList(shapes).contains(t.getShape());
-		hasColour = Arrays.asList(colours).contains(t.getColour());
-			
-		return hasAdjecent && (hasColour || hasShape) && isTurn && !hasTile;
+		return hasAdjecent && !hasTile && (exclusiveColour ^ exclusiveShape) && noMoreThenSix;
 	}
 	/** Grow the playing field in a certain direction.
 	 * @param direction 0(right), 1(top), 2(left), 3(bottom)
@@ -83,6 +86,7 @@ public class Board {
 			// TODO remove tile from player hand
 			// TODO check if board has to grow
 			tiles.tileMap.put(row, col, t); // place tile on the field
+//			getPoints(row, col);
 			result = true;
 		}
 		return result;
