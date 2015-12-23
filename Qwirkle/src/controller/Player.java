@@ -1,35 +1,41 @@
 package controller;
 
-//import model.Mark;
-//import model.PlayerTiles
+import java.util.ArrayList;
+
+import model.Bag;
+import model.Hand;
+import model.Tile;
 
 public abstract class Player {
 
-	// -- Instance variables -----------------------------------------
 
 	private String name;
-//	private Mark mark;
-//	private PlayerTiles playertiles;
+	private Hand hand;
 	
-	// -- Constructors -----------------------------------------------
-
 	public Player(String theName) {
 		this.name = theName;
 	}
 
-	// -- Queries ----------------------------------------------------
-
+	public void setHand(Hand h) {
+		this.hand = h;
+	}
 
 	public String getName() {
 		return name;
 	}
-
+	
+	public String getHand() {
+		return hand.toString();
+	}
 
 	public abstract int determineMove(Board board);
 
-
+	// geef een steen + locatie
 	public void makeMove(Board board) {
 		int keuze = determineMove(board);
 	}
+
+	
+	// Stenen ruilen
 
 }

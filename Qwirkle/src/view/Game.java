@@ -1,37 +1,48 @@
 package view;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 import controller.Board;
 import controller.Player;
+import model.Bag;
+import model.Hand;
+import model.Tile;
 
 public class Game {
 
-	// -- Instance variables -----------------------------------------
 	public static final int NUMBER_PLAYERS = 2;
-	public static final int CARDS_PER_HAND = 6;
+	public static final int TILES_PER_HAND = 6;
 	private Board board;
+	private Bag bag;
 	private Player[] players;
 	private int current;
-
-	// -- Constructors -----------------------------------------------
+	
 	
 	public Game(Player p0, Player p1)  {
 		board = new Board();
+		bag = new Bag();
 		players = new Player[NUMBER_PLAYERS];
 		players[0] = p0;
-		players[1] = 1;
+		players[1] = p1;
+		dealTiles();
 		current = 0;
 	}
+	
+	public void dealTiles() {
+		for (int i = 0; i < NUMBER_PLAYERS; i++) {
+			players[i].setHand(new Hand(bag, TILES_PER_HAND));
+		}
+	}
 
-	// -- Commands ---------------------------------------------------
-
-	void start() {
+	
+	public void start() {
 		boolean doorgaan = true;
 		while (doorgaan) {
 			reset();
 			play();
-			printResult();
+//			printResult();
 			doorgaan = readBoolean("\n> Play another time? (y/n)?", "y", "n");
 		}
 	}
@@ -46,11 +57,6 @@ public class Game {
 		return answer.equals(yes);
 	}
 
-	private void reset() {
-		current = 0;
-		board.reset();
-	}
-
 	private void play() {
 		update();
 		while (!board.gameOver()) {
@@ -58,20 +64,30 @@ public class Game {
 			update();
 			current = (current + 1) % 2;
 		}
-
 	}
 
 	private void update() {
-		System.out.println("\ncurrent game situation: \n\n" + board.toString()
-				  + "\n");
+		System.out.println("\ncurrent game situation: \n\n");
+		System.out.println("Bag: " + bag.getBag().toString());
+		System.out.println("Hand " + players[0].getName() + ":" + players[0].getHand());
+		System.out.println("Hand " + players[1].getName() + " :" + players[1].getHand());
+		System.out.println();
+		System.out.println(board.toString());
 	}
+	
 
-	private void printResult() {
-		if (board.hasWinner()) {
-			Player winner = players[(current + 1) % 2];
-			System.out.println("Speler " + winner.getName() + " has won!");
-		} else {
-			System.out.println("Draw. There is no winner!");
-		}
+//	private void printResult() {
+//		if (board.hasWinner()) {
+//			Player winner = players[(current + 1) % 2];
+//			System.out.println("Speler " + winner.getName() + " has won!");
+//		} else {
+//			System.out.println("Draw. There is no winner!");
+//		}
+//	}
+
+	private void reset() {
+		current = 0;
+//		board.reset();
 	}
+	
 }

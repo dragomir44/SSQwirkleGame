@@ -19,18 +19,26 @@ public class Bag {
         Collections.shuffle(BAG);
     }
     
-    public static ArrayList<Tile> getBag() {
+    public ArrayList<Tile> getBag() {
         return new ArrayList<Tile>(BAG); // Return copy of prototype deck
     }
     
-	public static void main(String [] args) {
-		Bag bag = new Bag();
-		System.out.println(bag.BAG);
-		bag.BAG.remove(0);
-		bag.getBag();
-		System.out.println(bag.BAG);
-		bag.BAG.remove(0);
-		System.out.println(bag.BAG);
+    public void removeFirst() {
+    	BAG.remove(0);
+    }
+ //   public Tile deal(int numberOfPlayers, int cardsPerPlayer) {
+
+ //   }
+    
+	public static void main(String[] args) {
+//		Bag bag = new Bag();
+//		System.out.println(bag.BAG);
+//		bag.BAG.remove(0);
+//		bag.getBag();
+//		System.out.println(bag.BAG);
+//		bag.BAG.remove(0);
+//		System.out.println(bag.BAG);
+
 	}
 
 }
