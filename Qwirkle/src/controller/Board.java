@@ -2,15 +2,14 @@ package controller;
 
 import model.*;
 
-import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 
 public class Board {
 
 
-	public int rows = 20;
-	public int cols = 20;
+	public int rows = 15;
+	public int cols = 15;
 	
 	// instance with a map of all the tiles placed on the board
 	public BoardTiles tiles = new BoardTiles();
@@ -22,6 +21,29 @@ public class Board {
 	public boolean gameOver() {
 		//Bag is empty
 		return false;
+	}
+	
+	public ArrayList<ArrayList<Tile>> getLines(Move move) {
+		ArrayList<ArrayList<Tile>> result = new ArrayList<ArrayList<Tile>>(2);
+		ArrayList<Tile> hline = new ArrayList<Tile>();
+		ArrayList<Tile> vline = new ArrayList<Tile>();
+		ArrayList<ArrayList<Tile>> tileLines = tiles.getAdjecentLines(move.row, move.col);
+		// horizontal line
+//		System.out.println("adjecent lines are: " + tileLines);
+		hline.addAll(tileLines.get(0));
+		hline.add(move.tile);
+		hline.addAll(tileLines.get(2));
+//		System.out.println("added " + tileLines.get(2) + " to " + hline);
+		result.add(hline);
+//		System.out.println("halfLine is " + result);
+		// vertical line
+		vline.addAll(tileLines.get(1));
+		vline.add(move.tile);
+		vline.addAll(tileLines.get(3));
+		result.add(vline);
+		
+		System.out.println("lines from " + move.row + move.col + " are " + result);
+		return result;
 	}
 
 	/** Make sure the move is a valid one.
@@ -36,7 +58,10 @@ public class Board {
 	 * @param player the player that want's to place the tile
 	 * @return true if the move is a valid one
 	 */
-	public boolean isValidMove(int row, int col, Tile t) {
+	public boolean isValidMove(Move move) {
+		int row = move.row;
+		int col = move.col;
+		Tile t = move.tile;
 		boolean result;
 		boolean hasTile = tiles.containsKeys(row, col);
 		boolean hasAdjecent = false;
@@ -48,11 +73,14 @@ public class Board {
 		ArrayList<Tile.Colour> lineColours;
 		Set<Tile.Colour> uniqueColours;
 		Set<Tile.Shape> uniqueShapes;
-		ArrayList<ArrayList<Tile>> tileLines = tiles.getAdjecentLines(row, col);
+		ArrayList<ArrayList<Tile>> tileLines = getLines(move);
 		if (tiles.isEmpty()) {
 			result = true;  // is first move
 		} else {
-			for (ArrayList<Tile> line : tileLines) { // loop trough all the tile lines
+			for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
+//				System.out.println("removing " + t + " from " + line);
+				line.remove(t); // remove the tile that is being placed from possible line
+//				System.out.println("the line is: " + line + " with size: " + line.size());
 				if (!line.isEmpty()) {
 					hasAdjecent = true; // check if there is atleast 1 adjecent tile
 					if (line.size() >= 6 && noMoreThenSix) {
@@ -83,14 +111,15 @@ public class Board {
 				}
 			}
 			result = hasAdjecent && !hasTile && (exclusiveColour ^ exclusiveShape) && noMoreThenSix;
+//			System.out.println("hasAdjecent?: " + hasAdjecent);
+//			System.out.println("hasTile?: " + !hasTile);
+//			System.out.println("Ex Colour?: " + exclusiveColour);
+//			System.out.println("Ex Shape?: " + exclusiveShape);
+//			System.out.println("exclusive Colour ^ Shape?: " + (exclusiveColour ^ exclusiveShape));
+//			System.out.println("No more then six?: " + noMoreThenSix);
 		}
 
-//		System.out.println("hasAdjecent?: " + hasAdjecent);
-//		System.out.println("hasTile?: " + !hasTile);
-//		System.out.println("Ex Colour?: " + exclusiveColour);
-//		System.out.println("Ex Shape?: " + exclusiveShape);
-//		System.out.println("exclusive Colour ^ Shape?: " + (exclusiveColour ^ exclusiveShape));
-//		System.out.println("No more then six?: " + noMoreThenSix);
+
 		
 		return result;
 	}
@@ -102,14 +131,16 @@ public class Board {
 		ArrayList<Tile> prevTiles = new ArrayList<Tile>();
 		for (Move move : moves) { // loop trough placed tiles
 			tile = move.tile;
-			tileLines = tiles.getAdjecentLines(move.row, move.col);
+			tileLines = getLines(move);
 			for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
 				// check if line was already rewarded points
-				if (!Collections.disjoint(line, prevTiles)) { 
+				System.out.println("disjoint result for: " + tile + " in line " + line + "v" + prevTiles +" is " + Collections.disjoint(line, prevTiles));
+				// disjoint if true if line and prevTiles have no tiles in common
+				if (Collections.disjoint(line, prevTiles) && line.size() > 1) { 
 					points += line.size();
-					System.out.println(line);
+					System.out.println("scored " + points + " for line " + line);
+					prevTiles.add(tile);
 				}
-				prevTiles.add(tile);
 			}
 		}
 		return points;
@@ -126,14 +157,14 @@ public class Board {
 	public boolean setField(ArrayList<Move> moves) {
 		boolean result = true;
 		for (Move move : moves) {
-			if (isValidMove(move.row, move.col, move.tile)) {
+			if (isValidMove(move)) {
 				tiles.put(move.row, move.col, move.tile); // place tile on the field	
 			} else {
 				result = false;
 				break;
 			}
 		}
-		System.out.println("Scored " + getPoints(moves) + " points!");
+		System.out.println("total score: " + getPoints(moves) + " points!");
 		return result;
 	}
 	
@@ -164,28 +195,28 @@ public class Board {
 		return boardString.toString();
 	}
 	
-	public static void main(String[] args) {
-		Tile tile = new Tile(Tile.Shape.X, Tile.Colour.R);
-		Tile tile1 = new Tile(Tile.Shape.X, Tile.Colour.B);
-		Tile tile2 = new Tile(Tile.Shape.X, Tile.Colour.G);
-		Tile tile3 = new Tile(Tile.Shape.X, Tile.Colour.P);
-		Tile tile4 = new Tile(Tile.Shape.O, Tile.Colour.O);
-		Tile tile5 = new Tile(Tile.Shape.Ø, Tile.Colour.R);
-		
-		Board board = new Board();
-		Move move1 = new Move(4, 5, tile);
-		ArrayList<Move> moves = new ArrayList<Move>();
-		
-		moves.add(move1);
-//		System.out.println(board.setField(moves));
-		board.tiles.put(4, 5, tile);
-		System.out.println(board.toString());
-		Move move2 = new Move(4, 6, tile1);
-		Move move3 = new Move(4, 7, tile3);
-		
-		moves.clear();
-		moves.add(move2);
-		moves.add(move3);
-//		assertTrue(board.setField(moves));
-	}
+//	public static void main(String[] args) {
+//		Tile tile = new Tile(Tile.Shape.X, Tile.Colour.R);
+//		Tile tile1 = new Tile(Tile.Shape.X, Tile.Colour.B);
+//		Tile tile2 = new Tile(Tile.Shape.X, Tile.Colour.G);
+//		Tile tile3 = new Tile(Tile.Shape.X, Tile.Colour.P);
+//		Tile tile4 = new Tile(Tile.Shape.O, Tile.Colour.O);
+//		Tile tile5 = new Tile(Tile.Shape.Ø, Tile.Colour.R);
+//		
+//		Board board = new Board();
+//		Move move1 = new Move(4, 5, tile);
+//		ArrayList<Move> moves = new ArrayList<Move>();
+//		
+//		moves.add(move1);
+////		System.out.println(board.setField(moves));
+//		board.tiles.put(4, 5, tile);
+//		System.out.println(board.toString());
+//		Move move2 = new Move(4, 6, tile1);
+//		Move move3 = new Move(4, 7, tile3);
+//		
+//		moves.clear();
+//		moves.add(move2);
+//		moves.add(move3);
+////		assertTrue(board.setField(moves));
+//	}
 }
