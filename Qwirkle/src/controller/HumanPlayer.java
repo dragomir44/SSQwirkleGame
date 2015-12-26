@@ -2,7 +2,6 @@ package controller;
 
 import java.util.Scanner;
 
-import model.Tile;
 import view.Game;
 
 public class HumanPlayer extends Player {
@@ -13,7 +12,8 @@ public class HumanPlayer extends Player {
 
 	public int determineMove(Board board) {
 		System.out.println("Your hand: " + this.getHand().toString());		
-		String prompt = "> " + getName() + ", which tile do you want to use?   [Type -1 if you want to switch tiles]";
+		String prompt = "> " + getName() 
+						+ ", which tile do you want to use?  [Type -1 if you want to switch tiles]";
 
 		boolean valid = false;
 		while (!valid) {
@@ -28,14 +28,16 @@ public class HumanPlayer extends Player {
 					pieceChoice = readInt(Switch) - 1;
 					validPiece = pieceChoice < Game.TILES_PER_HAND && pieceChoice >= 0;
 					if (validPiece) {
-						System.out.println("> You chose " + this.getHand().getTile(pieceChoice).toString());
+						System.out.println("> You chose " 
+										+ this.getHand().getTile(pieceChoice).toString());
 					}
 				} else {
 					System.out.println("> *ERROR* Your pieces only go from 1 to 6");
 					pieceChoice = readInt(prompt);
 					validPiece = pieceChoice <= Game.TILES_PER_HAND && pieceChoice > 0;
 					if (validPiece) {
-						System.out.println(">You chose " + this.getHand().getTile(pieceChoice - 1).toString());
+						System.out.println(">You chose " 
+										+ this.getHand().getTile(pieceChoice - 1).toString());
 					}
 				}
 			}
@@ -44,7 +46,8 @@ public class HumanPlayer extends Player {
 			int rowChoice  = readInt(prompt2);
 			boolean validRow = rowChoice <= board.rows && rowChoice >= 0;
 			while (!validRow) {
-				System.out.println("> *ERROR* The rows only go from 0 to " + (board.rows - 1) + " right now");
+				System.out.println("> *ERROR* The rows only go from 0 to " 
+						  + (board.rows - 1) + " right now");
 				System.out.println(" *ERROR* The rows only go from 0 to " +
 						  (board.rows - 1) + " right now");
 
@@ -56,7 +59,8 @@ public class HumanPlayer extends Player {
 			int colChoice  = readInt(prompt3);
 			boolean validCol = colChoice <= board.cols && colChoice >= 0;
 			while (!validCol) {
-				System.out.println("> *ERROR* The rows only go from 0 to " + (board.rows - 1) + " right now");
+				System.out.println("> *ERROR* The rows only go from 0 to " 
+							 + (board.rows - 1) + " right now");
 				System.out.println(" *ERROR* The rows only go from 0 to " + 
 							  (board.rows - 1) + " right now");
 				colChoice = readInt(prompt3);
