@@ -12,7 +12,19 @@ public class Hand {
             b.removeFirst();
         }
 	}
+	
+	public Tile getTile(int tile) {
+		return hand.get(tile);
+	}
      
+	public void removeTile(int tileIndex) {
+		hand.remove(tileIndex);
+	}
+	
+	public void addTile(int tileIndex, Tile tile) {
+		hand.add(tileIndex, tile);
+	}
+	
     public String toString() { 
     	return hand.toString(); 
     }

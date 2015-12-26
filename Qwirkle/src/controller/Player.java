@@ -24,9 +24,14 @@ public abstract class Player {
 		return name;
 	}
 	
-	public String getHand() {
+	public String printHand() {
 		return hand.toString();
 	}
+	
+	public Hand getHand() {
+		return hand;
+	}
+
 
 	public abstract int determineMove(Board board);
 

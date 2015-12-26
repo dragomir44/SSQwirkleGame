@@ -1,14 +1,11 @@
 package view;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 import controller.Board;
 import controller.Player;
 import model.Bag;
 import model.Hand;
-import model.Tile;
 
 public class Game {
 
@@ -36,6 +33,9 @@ public class Game {
 		}
 	}
 
+	public void drawNew(Player player, int pieceChoice) {
+		player.getHand().removeTile(pieceChoice);
+	}
 	
 	public void start() {
 		boolean doorgaan = true;
@@ -69,8 +69,8 @@ public class Game {
 	private void update() {
 		System.out.println("\ncurrent game situation: \n\n");
 		System.out.println("Bag: " + bag.getBag().toString());
-		System.out.println("Hand " + players[0].getName() + ":" + players[0].getHand());
-		System.out.println("Hand " + players[1].getName() + " :" + players[1].getHand());
+		System.out.println("Hand " + players[0].getName() + ":" + players[0].printHand());
+		System.out.println("Hand " + players[1].getName() + " :" + players[1].printHand());
 		System.out.println();
 		System.out.println(board.toString());
 	}

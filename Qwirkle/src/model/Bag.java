@@ -23,12 +23,13 @@ public class Bag {
         return new ArrayList<Tile>(BAG); // Return copy of prototype deck
     }
     
+    public void getFirst() {
+    	BAG.get(0);
+    }
+    
     public void removeFirst() {
     	BAG.remove(0);
     }
- //   public Tile deal(int numberOfPlayers, int cardsPerPlayer) {
-
- //   }
     
 	public static void main(String[] args) {
 //		Bag bag = new Bag();
