@@ -1,13 +1,13 @@
 package model;
 
 public class Move {
-	public int row;
-	public int col;
-	public Tile tile;
+	public final int row;
+	public final int col;
+	public final Tile tile;
 	
 	public Move(int r, int c, Tile t) {
-		row = r;
-		col = c;
-		tile = t;
+		this.row = r;
+		this.col = c;
+		this.tile = t;
 	}
 }

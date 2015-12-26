@@ -32,8 +32,7 @@ public class BoardTiles {
 	    } else {
 	        map = new HashMap<Integer, Tile>();
 	        tileMap.put(key1, map);
-	    }
-	
+	    }	
 	    return map.put(key2, value);
 	}
 	
@@ -43,6 +42,16 @@ public class BoardTiles {
 	    } else {
 	        return null;
 	    }
+	}
+	
+	public Tile remove(Integer key1, Integer key2) {
+		Tile result = null;
+		Map<Integer, Tile> map;
+	    if (tileMap.containsKey(key1)) {
+	        map = tileMap.get(key1);
+	        result = map.remove(key2);
+	    }
+	    return result;
 	}
 	
 	public boolean containsKeys(Integer key1, Integer key2) {
@@ -55,6 +64,15 @@ public class BoardTiles {
 	
 	public boolean isEmpty() {
 		return tileMap.isEmpty();
+	}
+	
+	public int size() {
+		Set<Integer> rows = tileMap.keySet();
+		int size = 0;
+		for (int key1 : rows) {
+			size += tileMap.get(key1).size();
+		}
+		return size;
 	}
 	
 	/** Returns Tile array of columns adjecent to the row and col.
