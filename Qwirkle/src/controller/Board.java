@@ -29,20 +29,22 @@ public class Board {
 		ArrayList<Tile> vline = new ArrayList<Tile>();
 		ArrayList<ArrayList<Tile>> tileLines = tiles.getAdjecentLines(move.row, move.col);
 		// horizontal line
-//		System.out.println("adjecent lines are: " + tileLines);
 		hline.addAll(tileLines.get(0));
 		hline.add(move.tile);
 		hline.addAll(tileLines.get(2));
-//		System.out.println("added " + tileLines.get(2) + " to " + hline);
-		result.add(hline);
-//		System.out.println("halfLine is " + result);
+		if (hline.size() > 1) {
+			result.add(hline);
+		}
 		// vertical line
 		vline.addAll(tileLines.get(1));
 		vline.add(move.tile);
 		vline.addAll(tileLines.get(3));
-		result.add(vline);
+		if (vline.size() > 1) {
+			result.add(vline);
+		}
+
 		
-		System.out.println("lines from " + move.row + move.col + " are " + result);
+//		System.out.println("lines from " + move.row + move.col + " are " + result);
 		return result;
 	}
 
@@ -126,20 +128,17 @@ public class Board {
 	
 	public int getPoints(ArrayList<Move> moves) {
 		int points = 0;
-		Tile tile;
 		ArrayList<ArrayList<Tile>> tileLines;
-		ArrayList<Tile> prevTiles = new ArrayList<Tile>();
+		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
 		for (Move move : moves) { // loop trough placed tiles
-			tile = move.tile;
 			tileLines = getLines(move);
 			for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
 				// check if line was already rewarded points
-				System.out.println("disjoint result for: " + tile + " in line " + line + "v" + prevTiles +" is " + Collections.disjoint(line, prevTiles));
-				// disjoint if true if line and prevTiles have no tiles in common
-				if (Collections.disjoint(line, prevTiles) && line.size() > 1) { 
+				if (!prevLines.contains(line)) { 
 					points += line.size();
-					System.out.println("scored " + points + " for line " + line);
-					prevTiles.add(tile);
+					System.out.println("scored " + line.size() + " points for line " + line);
+					prevLines.add(line);
+//					System.out.println("lines awarded points: " + prevLines);
 				}
 			}
 		}
@@ -165,6 +164,7 @@ public class Board {
 			}
 		}
 		System.out.println("total score: " + getPoints(moves) + " points!");
+		System.out.println("-----------------New Move--------------");
 		return result;
 	}
 	
