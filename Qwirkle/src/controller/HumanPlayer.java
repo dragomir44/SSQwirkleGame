@@ -44,13 +44,10 @@ public class HumanPlayer extends Player {
 			int rowChoice  = readInt(prompt2);
 			boolean validRow = rowChoice <= board.rows && rowChoice >= 0;
 			while (!validRow) {
-<<<<<<< HEAD
 				System.out.println("> *ERROR* The rows only go from 0 to " + (board.rows - 1) + " right now");
-=======
 				System.out.println(" *ERROR* The rows only go from 0 to " +
 						  (board.rows - 1) + " right now");
 
->>>>>>> branch 'master' of https://github.com/dragomir44/SSQwirkleGame.git
 				rowChoice = readInt(prompt2);
 				validRow = rowChoice <= board.rows && rowChoice >= 0;
 			}
@@ -59,12 +56,9 @@ public class HumanPlayer extends Player {
 			int colChoice  = readInt(prompt3);
 			boolean validCol = colChoice <= board.cols && colChoice >= 0;
 			while (!validCol) {
-<<<<<<< HEAD
 				System.out.println("> *ERROR* The rows only go from 0 to " + (board.rows - 1) + " right now");
-=======
 				System.out.println(" *ERROR* The rows only go from 0 to " + 
 							  (board.rows - 1) + " right now");
->>>>>>> branch 'master' of https://github.com/dragomir44/SSQwirkleGame.git
 				colChoice = readInt(prompt3);
 				validCol = colChoice <= board.cols && colChoice >= 0;
 			}
