@@ -2,18 +2,18 @@ package controller;
 
 import java.util.ArrayList;
 
-import model.Bag;
 import model.Hand;
-import model.Tile;
+import model.Move;
 
 public abstract class Player {
 
 
 	private String name;
-	private Hand hand;
+	public Hand hand;
+	private int score;
 	
-	public Player(String theName) {
-		this.name = theName;
+	public Player(String name) {
+		this.name = name;
 	}
 
 	public void setHand(Hand h) {
@@ -24,18 +24,39 @@ public abstract class Player {
 		return name;
 	}
 	
-	public String getHand() {
+	public String handToString() {
 		return hand.toString();
 	}
-
-	public abstract int determineMove(Board board);
-
-	// geef een steen + locatie
-	public void makeMove(Board board) {
-		int keuze = determineMove(board);
-	}
-
 	
-	// Stenen ruilen
+	public abstract ArrayList<Move> determineMove(Board board);
 
+	public void makeMove(Board board) {
+		ArrayList<Move> keuze = determineMove(board);
+		if (keuze.isEmpty()) {
+			System.out.println(name + " traded tiles.");
+		} else {
+			for (Move move : keuze) {
+				System.out.println("Placing " + move.tile + " on "
+							 + move.row + " " + move.col + ".");
+				hand.removeTile(move.tile);
+			}
+			board.setField(keuze);
+
+		}
+		int points = board.getPoints(keuze);
+		incrementScore(points);
+		System.out.println(name + " scored " + points + " points.");
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	public void incrementScore(int points) {
+		score += points;
+	}
 }

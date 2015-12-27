@@ -20,25 +20,15 @@ public class Bag {
     }
     
     public ArrayList<Tile> getBag() {
-        return new ArrayList<Tile>(BAG); // Return copy of prototype deck
+        return BAG;
     }
     
     public void removeFirst() {
     	BAG.remove(0);
     }
- //   public Tile deal(int numberOfPlayers, int cardsPerPlayer) {
-
- //   }
     
-	public static void main(String[] args) {
-//		Bag bag = new Bag();
-//		System.out.println(bag.BAG);
-//		bag.BAG.remove(0);
-//		bag.getBag();
-//		System.out.println(bag.BAG);
-//		bag.BAG.remove(0);
-//		System.out.println(bag.BAG);
-
-	}
-
+    public void addTiles(ArrayList<Tile> tiles) {
+    	BAG.addAll(tiles);
+    	Collections.shuffle(BAG);
+    }
 }

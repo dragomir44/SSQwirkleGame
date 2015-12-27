@@ -41,15 +41,15 @@ public class boardTest {
 		Move move1 = new Move(4, 5, tile);
 		ArrayList<Move> moves = new ArrayList<Move>();
 		moves.add(move1);
-		assertTrue(board.setField(moves));
+		assertTrue(board.isValidMove(moves));
 		
 		Move move2 = new Move(4, 6, tile1);
 		Move move3 = new Move(4, 7, tile2);
-		moves.clear();
 		moves.add(move2);
 		moves.add(move3);
-		assertTrue(board.setField(moves));
+		assertTrue(board.isValidMove(moves));
 		
+		assertTrue(board.setField(moves));
 		// double color
 		Move move4 = new Move(4, 8, tile);
 		moves.clear();
