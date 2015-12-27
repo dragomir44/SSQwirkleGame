@@ -6,7 +6,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+<<<<<<< HEAD
 import model.*;
+=======
+import view.Game;
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 
 public class HumanPlayer extends Player {
 
@@ -14,6 +18,7 @@ public class HumanPlayer extends Player {
 		super(name);
 	}
 
+<<<<<<< HEAD
 	public ArrayList<Move> determineMove(Board board) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		boolean correct = false;
@@ -60,6 +65,63 @@ public class HumanPlayer extends Player {
 					valid = false;
 					break;
 				}
+=======
+	public int determineMove(Board board) {
+		System.out.println("Your hand: " + this.getHand().toString());		
+		String prompt = "> " + getName() 
+						+ ", which tile do you want to use?  [Type -1 if you want to switch tiles]";
+
+		boolean valid = false;
+		while (!valid) {
+			int pieceChoice = readInt(prompt) - 1;
+			boolean validPiece = pieceChoice < Game.TILES_PER_HAND && pieceChoice >= 0;
+			if (validPiece) {
+				System.out.println("> You chose " + this.getHand().getTile(pieceChoice).toString());
+			}
+			while (!validPiece) {
+				if (pieceChoice == -2) {
+					String Switch = "> Which tile do you want to switch?";
+					pieceChoice = readInt(Switch) - 1;
+					validPiece = pieceChoice < Game.TILES_PER_HAND && pieceChoice >= 0;
+					if (validPiece) {
+						System.out.println("> You chose " 
+										+ this.getHand().getTile(pieceChoice).toString());
+					}
+				} else {
+					System.out.println("> *ERROR* Your pieces only go from 1 to 6");
+					pieceChoice = readInt(prompt);
+					validPiece = pieceChoice <= Game.TILES_PER_HAND && pieceChoice > 0;
+					if (validPiece) {
+						System.out.println(">You chose " 
+										+ this.getHand().getTile(pieceChoice - 1).toString());
+					}
+				}
+			}
+			
+			String prompt2 = "> In which row you wanna place it? ";
+			int rowChoice  = readInt(prompt2);
+			boolean validRow = rowChoice <= board.rows && rowChoice >= 0;
+			while (!validRow) {
+				System.out.println("> *ERROR* The rows only go from 0 to " 
+						  + (board.rows - 1) + " right now");
+				System.out.println(" *ERROR* The rows only go from 0 to " +
+						  (board.rows - 1) + " right now");
+
+				rowChoice = readInt(prompt2);
+				validRow = rowChoice <= board.rows && rowChoice >= 0;
+			}
+			
+			String prompt3 = "> In which col you wanna place it? ";
+			int colChoice  = readInt(prompt3);
+			boolean validCol = colChoice <= board.cols && colChoice >= 0;
+			while (!validCol) {
+				System.out.println("> *ERROR* The rows only go from 0 to " 
+							 + (board.rows - 1) + " right now");
+				System.out.println(" *ERROR* The rows only go from 0 to " + 
+							  (board.rows - 1) + " right now");
+				colChoice = readInt(prompt3);
+				validCol = colChoice <= board.cols && colChoice >= 0;
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 			}
 			if (!tiles.isEmpty()) {
 				System.out.println("Removing " + tiles + " from hand, and placing in bag.");
@@ -71,6 +133,7 @@ public class HumanPlayer extends Player {
 		} while (!valid);
 	}
 	
+<<<<<<< HEAD
 	private ArrayList<Move> placeTiles(Board board) {
 		ArrayList<Tile> tmpHand =  new ArrayList<Tile>(this.hand.getHand());
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -81,6 +144,8 @@ public class HumanPlayer extends Player {
 				int pieceChoice = getPiece(tmpHand);
 				int rowChoice = getPosition(board, "row");
 				int colChoice = getPosition(board, "column");
+=======
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 
 				Tile tileToPlace = tmpHand.get(pieceChoice - 1);
 				Move newMove = new Move(rowChoice, colChoice, tileToPlace);

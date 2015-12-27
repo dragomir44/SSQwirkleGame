@@ -13,9 +13,22 @@ public class Hand {
 		this.tilesPerPlayer = tilesPerPlayer;
 		drawTiles();
 	}
+	
+	public Tile getTile(int tile) {
+		return hand.get(tile);
+	}
      
+<<<<<<< HEAD
 	public ArrayList<Tile> getHand() {
 		return this.hand;
+=======
+	public void removeTile(int tileIndex) {
+		hand.remove(tileIndex);
+	}
+	
+	public void addTile(int tileIndex, Tile tile) {
+		hand.add(tileIndex, tile);
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 	}
 	
     public String toString() { 

@@ -23,6 +23,10 @@ public class Bag {
         return BAG;
     }
     
+    public void getFirst() {
+    	BAG.get(0);
+    }
+    
     public void removeFirst() {
     	BAG.remove(0);
     }

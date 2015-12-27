@@ -24,11 +24,22 @@ public abstract class Player {
 		return name;
 	}
 	
+<<<<<<< HEAD
 	public String handToString() {
 		return hand.toString();
 	}
 	
 	public abstract ArrayList<Move> determineMove(Board board);
+=======
+	public String printHand() {
+		return hand.toString();
+	}
+	
+	public Hand getHand() {
+		return hand;
+	}
+
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 
 	public void makeMove(Board board) {
 		ArrayList<Move> keuze = determineMove(board);

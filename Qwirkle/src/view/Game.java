@@ -1,7 +1,11 @@
 package view;
 
+<<<<<<< HEAD
 import java.util.*;
 import java.util.Map.Entry;
+=======
+import java.util.Scanner;
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 
 import controller.Board;
 import controller.Player;
@@ -29,6 +33,9 @@ public class Game {
 		}
 	}
 
+	public void drawNew(Player player, int pieceChoice) {
+		player.getHand().removeTile(pieceChoice);
+	}
 	
 	public void start() {
 		boolean doorgaan = true;
@@ -76,12 +83,19 @@ public class Game {
 	}
 
 	private void update() {
+<<<<<<< HEAD
 		System.out.println("\ncurrent game situation:");
 		System.out.println(bag.getBag().size() + " tiles left in the bag.");
 		for (Player player : players) {
 			System.out.println(player.getName() + "'s score is: " + player.getScore());
 		}
 		
+=======
+		System.out.println("\ncurrent game situation: \n\n");
+		System.out.println("Bag: " + bag.getBag().toString());
+		System.out.println("Hand " + players[0].getName() + ":" + players[0].printHand());
+		System.out.println("Hand " + players[1].getName() + " :" + players[1].printHand());
+>>>>>>> bfe2bf89a4d10ac4431e5bc35fb37d5ab81b1bdb
 		System.out.println();
 		System.out.println(board.toString());
 		System.out.println("-------------- Next player -------------");
