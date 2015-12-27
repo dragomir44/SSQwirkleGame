@@ -5,26 +5,26 @@ import java.util.*;
 
 public class BoardTiles {
 	
-	private final Map<Integer, Map<Integer, Tile>> tileMap;
+	private Map<Integer, Map<Integer, Tile>> tileMap;
 
 	public BoardTiles() {
 		tileMap = new HashMap<Integer, Map<Integer, Tile>>();
 	}
 	
-	/**
-	 * Associates the specified value with the specified keys in this map (optional operation). 
-	 * If the map previously contained a mapping for the key, 
-	 * the old value is replaced by the specified value.
-	 * 
-	 * @param key1
-	 *            the first key
-	 * @param key2
-	 *            the second key
-	 * @param value
-	 *            the value to be set
-	 * @return the value previously associated with (key1,key2), or <code>null</code> if none
-	 * @see Map#put(Object, Object)
-	 */
+	public BoardTiles(BoardTiles toCopy) {
+		tileMap = new HashMap<Integer, Map<Integer, Tile>>();
+		Set<Integer> key1Set = toCopy.getMap().keySet();
+		Map<Integer, Tile> map;
+		for (int key1 : key1Set) {
+			map = new HashMap<Integer, Tile>(toCopy.getMap().get(key1));
+			tileMap.put(key1, map);
+		}	
+	}
+	
+	public Map<Integer, Map<Integer, Tile>> getMap() {
+		return tileMap;
+	}
+
 	public Tile put(Integer key1, Integer key2, Tile value) {
 	    Map<Integer, Tile> map;
 	    if (tileMap.containsKey(key1)) {
@@ -92,13 +92,13 @@ public class BoardTiles {
 					case 0: // walk right
 						colCount++;
 						break;
-					case 1: // walk top
+					case 1: // walk down
 						rowCount++;
 						break;
 					case 2: // walk left
 						colCount--;
 						break;
-					case 3: // walk bottom
+					case 3: // walk up
 						rowCount--;
 						break;
 				}
@@ -107,22 +107,19 @@ public class BoardTiles {
 					walking = false;
 				} else { // else store the tile
 					tileRow.add(nextTile);
+					switch (i) { // make sure it returns lines in same order
+						case 2: // walk left
+							Collections.reverse(tileRow);
+							break;
+						case 1: // walk down
+							Collections.reverse(tileRow);
+							break;
+					}
 				}
 			}
 			returnTiles.add(i, tileRow);
 			
 		}
 		return returnTiles;
-	}
-	
-	public static void main(String[] args) {
-		BoardTiles b = new BoardTiles();
-		Tile tile = new Tile(Tile.Shape.X, Tile.Colour.R);
-		Tile tile1 = new Tile(Tile.Shape.X, Tile.Colour.B);
-		Tile tile2 = new Tile(Tile.Shape.O, Tile.Colour.R);
-		b.put(1, 3, tile);
-		b.put(1, 4, tile1);
-		b.put(1, 5, tile2);
-		System.out.println(b.getAdjecentLines(1, 6));
 	}
 }
