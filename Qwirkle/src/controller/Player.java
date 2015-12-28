@@ -36,8 +36,8 @@ public abstract class Player {
 			System.out.println(name + " traded tiles.");
 		} else {
 			for (Move move : keuze) {
-				System.out.println("Placing " + move.tile + " on "
-							 + move.row + " " + move.col + ".");
+				System.out.println("\nPlacing " + move.tile + " on "
+						 	+ "(" + move.row + "," + move.col + ")");
 				hand.removeTile(move.tile);
 			}
 			board.setField(keuze);

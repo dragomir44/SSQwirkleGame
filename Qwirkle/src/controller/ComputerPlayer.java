@@ -1,15 +1,14 @@
 package controller;
 
+import java.util.ArrayList;
+
+import model.Move;
 import model.Tile;
 
 public class ComputerPlayer extends Player {
 
-	// -- Constants --------------------------------------------------
-
 	private String name;
 	private Strategy strategy;
-
-	// -- Constructors -----------------------------------------------
 
 	public ComputerPlayer(Strategy strategy) {
 		super(strategy.getName());
@@ -23,10 +22,8 @@ public class ComputerPlayer extends Player {
 		strategy = new NaiveStrategy();
 	}
 
-	// -- Queries ----------------------------------------------------
-
 	@Override
-	public int determineMove(Board board) {
+	public ArrayList<Move> determineMove(Board board) {
 		return strategy.determineMove(board);
 	}
 }

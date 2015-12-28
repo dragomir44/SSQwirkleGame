@@ -9,13 +9,9 @@ public class Board {
 	
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
-
-	public Board() {
-	}
-
 	
 	/** Get the horizontal and vertical line that the placed.
-	 *  tile is goint to be part of
+	 *  tile is going to be part of
 	 * @param move
 	 * @return returns two ArrayLists of Tiles
 	 */
@@ -184,6 +180,10 @@ public class Board {
 			result = false;
 		}
 		return result;
+	}
+	
+	public boolean isEmpty() {
+		return tiles.isEmpty();
 	}
 	
 	/** Prints the board and places the tiles contained in tileMap on the board.

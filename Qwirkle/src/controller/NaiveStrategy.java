@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.ArrayList;
+
+import model.Move;
 import model.Tile;
 
 public class NaiveStrategy implements Strategy {
@@ -21,8 +24,6 @@ public class NaiveStrategy implements Strategy {
 	public String getName() {
 		return name;
 	}
-	
-	// -- Commands ---------------------------------------------------
 
 	/**
 	 * Asks the computer where to place the next mark.
@@ -34,7 +35,7 @@ public class NaiveStrategy implements Strategy {
 	 * @return the computer player's choice
 	 */
 	@Override
-	public int determineMove(Board board, Tile mark) {
+	public ArrayList<Move> determineMove(Board board) {
 		int choice = (int) (Math.random() * 100) % COL;
 		boolean valid = board.isColumn(choice) && board.isField(choice);
 		while (!valid) {

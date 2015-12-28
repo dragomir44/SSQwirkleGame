@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
-
+	boolean firstMove = true;
+		
 	public HumanPlayer(String name) {
 		super(name);
 	}
@@ -43,7 +44,7 @@ public class HumanPlayer extends Player {
 		boolean valid = false;
 		do {
 			System.out.println("Your hand: " + hand);
-			String choice = readString("> Which tiles do you want to remove? ");
+			String choice = readString("> Which tiles do you want to remove? (use commas) ");
 			List<String> allMatches = new ArrayList<String>();
 			Matcher m = Pattern.compile("\\d")
 			    .matcher(choice);
@@ -78,11 +79,14 @@ public class HumanPlayer extends Player {
 		while (makingMove) {
 			boolean valid = false;
 			while (!valid) {
+
 				int pieceChoice = getPiece(tmpHand);
-				int rowChoice = getPosition(board, "row");
-				int colChoice = getPosition(board, "column");
+				String[] posChoice = getPosition(board);
+				int rowChoice = Integer.parseInt(posChoice[0]);
+				int colChoice = Integer.parseInt(posChoice[1]);
 
 				Tile tileToPlace = tmpHand.get(pieceChoice - 1);
+
 				Move newMove = new Move(rowChoice, colChoice, tileToPlace);
 				moves.add(newMove);
 				if (board.isValidMove(moves)) {
@@ -173,19 +177,47 @@ public class HumanPlayer extends Player {
 		return pieceChoice;
 	}
 	
-	private int getPosition(Board board, String rowOrCol) {
-		String prompt = "> In which " + rowOrCol + " do you want to place it? ";
-		int posChoice  = readInt(prompt);
-		boolean validPos = posChoice <= board.rows && posChoice >= 0;
-		while (!validPos) {
-			System.out.println(" *ERROR* The " + rowOrCol + " only go from 0 to " +
-					  (board.rows - 1) + " right now");
-
-			posChoice = readInt(prompt);
-			validPos = posChoice <= board.rows && posChoice >= 0;
+	
+	private String[] getPosition(Board board) {
+		String[] posChoice = new String[2];
+		if (board.isEmpty() && firstMove) {
+			posChoice[0] = "7";
+			posChoice[1] = "7";
+			firstMove = false;
+		} else {
+			int row = 0;
+			int col = 0;
+			String prompt = "> In which (row,col) do you want to place it? ";
+			posChoice = readString(prompt).split(",");
+			try {
+				row = Integer.parseInt(posChoice[0]);
+				col = Integer.parseInt(posChoice[1]);
+			} catch (Exception a) {
+				row = -1;
+				col = -1;
+			}
+			boolean validRow = row <= board.rows && row >= 0;
+			boolean validCol = col <= board.cols && col >= 0;
+			while (!(validRow & validCol)) {
+				System.out.println(" *ERROR* The rows only go from 0 to " +
+						  (board.rows - 1) + " and the cols go from 0 to " + 
+						  (board.cols - 1) + " right now");
+		
+				posChoice = readString(prompt).split(",");
+				try {
+					row = Integer.parseInt(posChoice[0]);
+					col = Integer.parseInt(posChoice[1]);
+				} catch (Exception a) {
+					row = -1;
+					col = -1;
+				}
+				validRow = row <= board.rows && row >= 0;
+				validCol = col <= board.cols && col >= 0;
+			}
 		}
 		return posChoice;
 	}
+
 
     private int readInt(String prompt) {
         int value = 0;
