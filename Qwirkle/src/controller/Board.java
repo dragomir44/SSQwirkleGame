@@ -6,6 +6,11 @@ import java.util.*;
 public class Board {
 	public int rows = 15;
 	public int cols = 15;
+	public int middleOfBoard = rows / 2;
+	public String middleOfBoardS = Integer.toString(middleOfBoard);
+	boolean firstMove = true;
+
+	
 	
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();

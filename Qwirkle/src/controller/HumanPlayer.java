@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
-	boolean firstMove = true;
 		
 	public HumanPlayer(String name) {
 		super(name);
@@ -180,10 +179,10 @@ public class HumanPlayer extends Player {
 	
 	private String[] getPosition(Board board) {
 		String[] posChoice = new String[2];
-		if (board.isEmpty() && firstMove) {
-			posChoice[0] = "7";
-			posChoice[1] = "7";
-			firstMove = false;
+		if (board.isEmpty() && board.firstMove) {
+			posChoice[0] = board.middleOfBoardS;
+			posChoice[1] = board.middleOfBoardS;
+			board.firstMove = false;
 		} else {
 			int row = 0;
 			int col = 0;
