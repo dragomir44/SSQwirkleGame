@@ -79,9 +79,9 @@ public class HumanPlayer extends Player {
 					if ((movenrs.size() % 3) == 0 && movenrs.size() > 0) {
 						for (int i = 0; i < movenrs.size(); i = i + 3) {
 							int row = movenrs.get(i);
-							int col = movenrs.get(i + 1) - 1;
-							int tilenr = movenrs.get(i + 2);
-							
+							int col = movenrs.get(i + 1);
+							int tilenr = movenrs.get(i + 2) - 1;
+							// TODO make sure a tile is never used twice..
 							if (tilenr <= hand.getHand().size()) {
 								moves.add(new Move(row, col, hand.getHand().get(tilenr)));
 							} else {
