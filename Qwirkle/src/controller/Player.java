@@ -33,19 +33,14 @@ public abstract class Player {
 	public void makeMove(Board board) {
 		ArrayList<Move> keuze = determineMove(board);
 		if (keuze.isEmpty()) {
-			System.out.println(name + " traded tiles.");
 		} else {
 			for (Move move : keuze) {
-				System.out.println("\nPlacing " + move.tile + " on "
-						 	+ "(" + move.row + "," + move.col + ")");
 				hand.removeTile(move.tile);
 			}
 			board.setField(keuze);
-
 		}
 		int points = board.getPoints(keuze);
 		incrementScore(points);
-		System.out.println(name + " scored " + points + " points.");
 	}
 	
 	public int getScore() {
