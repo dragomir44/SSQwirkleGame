@@ -12,6 +12,7 @@ public class Board {
 
 	
 	
+	public String errorBuffer = "";
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
 	
@@ -63,6 +64,7 @@ public class Board {
 		boolean exclusiveColour = true;
 		boolean exclusiveShape = true;
 		boolean firstMove = false;
+		errorBuffer = ""; // clear error buffer
 		
 		moveLoop:
 		for (Move move : moves) {
@@ -73,10 +75,20 @@ public class Board {
 			int col = move.col;
 			Tile tile = move.tile;
 			
+			if (row > rows || row <= 0) {
+				errorBuffer += "Row is outside board \n";
+				break moveLoop;
+			}
+			
+			if (col > cols || col <= 0) {
+				errorBuffer += "Column is outside board \n";
+				break moveLoop;
+			}
+			
 			if (protoTiles.containsKeys(row, col)) {
 				hasTile = true;
-				System.out.println("Invalid move." + 
-						  "There is already a tile on row " + row + " and column " + col + ".");
+				errorBuffer += "There is already a tile on row " 
+							+ row + " and column " + col + "\n";
 				break moveLoop;
 			}
 			
@@ -86,8 +98,7 @@ public class Board {
 			} else {
 				if (!tileLines.get(0).containsAll(placedTiles) 
 						  || !tileLines.get(1).containsAll(placedTiles)) {
-					System.out.println("Invalid move. "
-							  + "Tiles are not being placed on the same line.");
+					errorBuffer += "Tiles are not being placed on the same line. \n";
 					sameLine = false;
 				}
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
@@ -95,8 +106,7 @@ public class Board {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
 						if (line.size() > 6) {
 							noMoreThenSix = false;
-							System.out.println("Invalid move. " 
-							  		  + "Line is longer than six tiles.");
+							errorBuffer += "Line is longer than six tiles. \n";
 							break moveLoop;
 						}
 						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>(); 
@@ -120,14 +130,12 @@ public class Board {
 										// make sure it is the shape
 								&& uniqueShapes.contains(tile.getShape()); 
 						if (!(exclusiveColour ^ exclusiveShape)) {
-							System.out.println("Invalid move. " 
-										 + "Incorrect color/shape match");
+							errorBuffer += "Incorrect color/shape match \n";
 						}
 					}
 				}
 				if (!hasAdjecent) {
-					System.out.println("Invalid move. " 
-								  + "There are no adjecent tiles to form a line.");
+					errorBuffer += "There are no adjecent tiles to form a line. \n";
 				}
 			}
 			result = hasAdjecent && 
@@ -143,6 +151,11 @@ public class Board {
 			}
 		}
  	    return result;
+	}
+	
+	public String getErrors() {
+		String result = errorBuffer;
+		return result;
 	}
 	
 	public int getPoints(ArrayList<Move> moves) {

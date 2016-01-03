@@ -9,152 +9,114 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
+	boolean firstMove = true;
 		
 	public HumanPlayer(String name) {
 		super(name);
 	}
 
-	public ArrayList<Move> determineMove(Board board) {
-		ArrayList<Move> moves = new ArrayList<Move>();
-		boolean correct = false;
-		System.out.println(getName() + "'s turn.");
-		System.out.println("Your hand: " + hand);
-		do {
-			String choice = readString("Place a tile or draw new tiles? (draw/place)");
-			switch (choice) {
-				case "draw":
-					drawTiles();
-					correct = true;
-					break;
-				case "place": 
-					moves = placeTiles(board);
-					correct = true;
-					break;
-				default:
-					System.out.println("you selected " + choice + ". Try again. (draw/place)");
-					break;
-			}
-		} while (!correct);
-		return moves;
+	private String readString(String prompt) {
+		System.out.print(prompt + ">");
+		//TODO Add comment why we are suppressing this
+		@SuppressWarnings("resource")
+		Scanner scanner = new Scanner(System.in);
+		String result = scanner.nextLine();
+		return result;
 	}
 	
-	private void drawTiles() {
-		ArrayList<Tile> tiles = new ArrayList<Tile>();
+	public ArrayList<Move> determineMove(Board board) {
+		String question;
+		ArrayList<Move> moves = new ArrayList<Move>();
+		String intro = getName() + "'s turn \n"
+				  + "Your hand: " + hand.toString() + "\n";
+		String drawText = "To draw new tiles: 'draw *tilenr* *tilenr* ...' \n";
+		String placeText = "To place tiles: 'place *tilenr* *rownr* *colnr*, repeat \n";
+		String invalidEntry = "This is an invalid command, please try again. \n";
+		String drawError =  "Invalid tiles, please try again. \n";
+		String retry = "Please try again, ";
+		String moveErrors = "";
+		String resultString = "";
+		
+		// Matchers:
+		String findCommand = "^([\\w\\-]+)";
+		String findTilenrs = "([1-9][0-9]*)";
+		String findMovenrs = "([1-9][0-9]*)";
+		
+		question = intro + drawText + placeText;
 		boolean valid = false;
 		do {
-			System.out.println("Your hand: " + hand);
-			String choice = readString("> Which tiles do you want to remove? (use commas) ");
+			String answer = readString(question);
 			List<String> allMatches = new ArrayList<String>();
-			Matcher m = Pattern.compile("\\d")
-			    .matcher(choice);
-			while (m.find()) {
-			    allMatches.add(m.group());
+			Matcher matcher = Pattern.compile(findCommand).matcher(answer);
+			while (matcher.find()) {
+			    allMatches.add(matcher.group());
 			}
-			for (String tilenr : allMatches) {
-				try {
-					tiles.add(hand.getHand().get(Integer.parseInt(tilenr) - 1));
-				}	catch (IndexOutOfBoundsException e) {
-					System.out.println(tilenr + " is outside the range of the hand."
-						   + "please select between 1 and " + hand.getHand().size());
-					tiles.clear();
-					valid = false;
+			// check for valid syntax
+			String command = allMatches.get(0);
+			switch (command) {
+				case "draw":
+					// do something
+					ArrayList<Integer> tilenrs = new ArrayList<Integer>();
+					matcher = Pattern.compile(findTilenrs).matcher(answer);
+					while (matcher.find()) {
+					    tilenrs.add(Integer.parseInt(matcher.group()));
+					}
+					ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
+					if (replacements != null) {
+						resultString = "Drew: " + replacements;
+						valid = true;
+					} else {
+						question = drawError + drawText + placeText;
+					}
 					break;
-				}
-			}
-			if (!tiles.isEmpty()) {
-				System.out.println("Removing " + tiles + " from hand, and placing in bag.");
-				System.out.println("Drew " + hand.replaceTiles(tiles));
-				valid = true;
-			} else {
-				System.out.println("You have to replace at least 1 tile.");
-			}
-		} while (!valid);
-	}
-	
-	private ArrayList<Move> placeTiles(Board board) {
-		ArrayList<Tile> tmpHand =  new ArrayList<Tile>(this.hand.getHand());
-		ArrayList<Move> moves = new ArrayList<Move>();
-		boolean makingMove = true;
-		while (makingMove) {
-			boolean valid = false;
-			while (!valid) {
-
-				int pieceChoice = getPiece(tmpHand);
-				String[] posChoice = getPosition(board);
-				int rowChoice = Integer.parseInt(posChoice[0]);
-				int colChoice = Integer.parseInt(posChoice[1]);
-
-				Tile tileToPlace = tmpHand.get(pieceChoice - 1);
-
-				Move newMove = new Move(rowChoice, colChoice, tileToPlace);
-				moves.add(newMove);
-				if (board.isValidMove(moves)) {
-					valid = true;
-					tmpHand.remove(tileToPlace);
-				} else {
-					System.out.println("This is not a valid move.");
-					moves.remove(newMove);
-					boolean correct = false;
-					do {
-						String choice = readString("> Try again, reset moves, "
-									  + "draw new tiles or end turn"
-								  + "(try/reset/draw/end)");
-						switch (choice) {
-							case "try":
-								correct = true;
-								break;
-							case "draw": 
-								drawTiles();
-								valid = true;
+				case "place":
+					// do something
+					ArrayList<Integer> movenrs = new ArrayList<Integer>();
+					matcher = Pattern.compile(findMovenrs).matcher(answer);
+					while (matcher.find()) {
+					    movenrs.add(Integer.parseInt(matcher.group()));
+					}
+					boolean validCommand = true;
+					if ((movenrs.size() % 3) == 0 && movenrs.size() > 0) {
+						for (int i = 0; i < movenrs.size(); i = i + 3) {
+							int row = movenrs.get(i);
+							int col = movenrs.get(i + 1);
+							int tilenr = movenrs.get(i + 2) - 1;
+							// TODO make sure a tile is never used twice..
+							if (tilenr <= hand.getHand().size()) {
+								moves.add(new Move(row, col, hand.getHand().get(tilenr)));
+							} else {
+								validCommand = false;
 								moves.clear();
-								correct = true;
+								question = "Invalid command," + tilenr + " is not a tilenumber \n";
+								question += retry + drawText + placeText;
 								break;
-							case "end":
-								if (!moves.isEmpty()) {
-									valid = true;
-									correct = true;
-								} else {
-									System.out.println("No tile has been placed, " + 
-												 "Choose try/reset/draw.");	
-								}
-								break;
-							case "reset":
-								moves.clear();
-								tmpHand =  new ArrayList<Tile>(this.hand.getHand());
-								correct = true;
-								break;
-							default:
-								System.out.println("you selected " + choice 
-												+ ". Choose: try/reset/draw/end.");
-								break;
+							}
 						}
-					} while (!correct);
+						if (validCommand) {
+							if (board.isValidMove(moves)) {
+								resultString = getName() + " scored "
+										+ board.getPoints(moves) + " points.";
+								valid = true;
+							} else {
+								moves.clear();
+								moveErrors = board.getErrors();
+								question = "Invalid move: " + moveErrors;
+								question += retry + drawText + placeText;
+							}
+						}
+					} else { // invald syntax
+						question = invalidEntry + drawText + placeText;
+					}
 
-				}
+					break;
+				default:
+					question = invalidEntry + retry + drawText + placeText;
+					break;
 			}
-			boolean correct = false;
-			do {
-				String choice = readString("Place another tile? (y/n or reset to reset moves)");
-				switch (choice) {
-					case "y":
-						System.out.println("current board layout:");
-						System.out.println(board.toString(moves));
-						correct = true;
-						break;
-					case "n": 
-						makingMove = false;
-						correct = true;
-						break;
-					case "reset":
-						moves.clear();
-						correct = true;
-						break;
-					default:
-						System.out.println("you selected " + choice + ". Try again.");
-						break;
-				}
-			} while (!correct);
-		}
+			
+		} while (!valid);
+		System.out.println(resultString + " end of turn.");
 		return moves;
 	}
 	private int getPiece(ArrayList<Tile> hand) {
@@ -234,13 +196,4 @@ public class HumanPlayer extends Player {
         } while (!intRead);
         return value;
     }
-	
-	private String readString(String prompt) {
-		System.out.print(prompt);
-		//TODO Add comment why we are suppressing this
-		@SuppressWarnings("resource")
-		Scanner scanner = new Scanner(System.in);
-		String result = scanner.nextLine();
-		return result;
-	}
 }
