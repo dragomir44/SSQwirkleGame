@@ -1,0 +1,21 @@
+Planning
+
+Deadline: 27jan
+
+6jan: today
+
+11jan: tests 
+
+
+TODO computer AI (naive/smart)
+TODO tests schrijven
+TODO nieuwe regels
+	TODO method: @BoardTiles getEmptyAdjecent(row, col)
+	TODO method: @BoardTiles GetAllKeys()
+	TODO method: @Player validMoveAvailable(arraylist Tiles)
+	TODO method: @board extend firstmove @isValidMove()
+TODO protocol/server
+TODO JML
+TODO comments
+TODO verslag
+
