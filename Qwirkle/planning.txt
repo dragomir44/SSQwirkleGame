@@ -1,10 +1,32 @@
 Planning
 
-Deadline: 27jan
+Vandaag: 5 jan
+Deadline: 27 jan
 
-6jan: today
+8 jan: begin aan JML/comments
+Deze week willen wij beginnen aan de documentatie van de code en de JML specificaties.
 
-11jan: tests 
+9 jan: tests 
+Dit weekend willen wij de tests af hebben. Hierdoor kunnen wij nieuwe classen en methodes maken en dan testen dat de oude code het goed blijft doen
+
+12 jan: nieuwe regels
+De basisregels hebben wij al geimplementeerd. Op Blackboard zijn er nieuwe regels bijgekomen die wij er nog niet in hebben zitten.
+Deze willen wij volgende week af hebben zodat we fatsoenlijk een spel kunnen spelen.
+
+16 jan: Computer ai
+De computer AI komt na de nieuwe regels. Hierdoor weet de computer ook alle regels. We willen eerst een super simpele naive computerplayer maken die random stenen
+uit zijn hand op random(Valid) plekken op het bord plaatst. We weten nog niet zeker hoe geavanceerd we deze willen hebben, maar zeker meer dan alleen Naive.
+
+18 jan: JML en comments
+Nadat we alle tests, computer AI en regels hebben willen wij hier comments bij gaan schrijven en de JML specificatie.
+
+25 jan: Server/protocol
+Voor de server/protocol implementatie willen wij meer tijd aan bestede omdat we weten dat dit niet het makkelijkste gedeelte van het project is.
+
+26 jan Verslag
+De laatste 2 dagen voor de deadline hebben wij ingepland voor het verslag. Deze willen wij niet onderschatten.
+
+
 
 
 TODO computer AI (naive/smart)

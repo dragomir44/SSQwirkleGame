@@ -18,9 +18,9 @@ public class HumanPlayer extends Player {
 	private String readString(String prompt) {
 		System.out.print(prompt + ">");
 		//TODO Add comment why we are suppressing this
-		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		String result = scanner.nextLine();
+		scanner.close();
 		return result;
 	}
 	
