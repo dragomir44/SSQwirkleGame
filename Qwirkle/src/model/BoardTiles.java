@@ -105,8 +105,6 @@ public class BoardTiles {
 				Tile nextTile = this.get(rowCount, colCount);
 				if (nextTile == null) { // if no next tile walk next direction
 					walking = false;
-				} else { // else store the tile
-					tileRow.add(nextTile);
 					switch (i) { // make sure it returns lines in same order
 						case 2: // walk left
 							Collections.reverse(tileRow);
@@ -115,11 +113,13 @@ public class BoardTiles {
 							Collections.reverse(tileRow);
 							break;
 					}
+				} else { // else store the tile
+					tileRow.add(nextTile);
 				}
 			}
 			returnTiles.add(i, tileRow);
 			
 		}
 		return returnTiles;
-	}
+	}	
 }

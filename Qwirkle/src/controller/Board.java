@@ -246,4 +246,15 @@ public class Board {
 		}
 		return boardString.toString();
 	}
+	
+	public void getSmartMove(ArrayList<Tile> hand) {
+		// loop trough tiles
+			// get all possible insert points
+			// loop trough all insert points
+				// insert tile, loop in all directions
+				// at each move store treeSet with points as key
+		
+	}
+	
+	
 }

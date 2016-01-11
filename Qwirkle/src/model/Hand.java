@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Hand {
 	
@@ -33,30 +33,24 @@ public class Hand {
 		return removeTiles(tiles);
 	}
 	
-	public ArrayList<Tile> replaceTiles(ArrayList<Integer> tilenrs) {
-		ArrayList<Tile> handCopy = getHand();
-		ArrayList<Tile> tiles = null;
-		for (int i : tilenrs) {
-			tiles  = new ArrayList<Tile>();
-			if (i <= 0 || i > hand.size()) {
-				tiles = null;
-				break;
-			} else {
-				if (handCopy.contains(hand.get(i))) {
-					tiles.add(hand.get(i));
-					// make sure tile is never chosen twice
-					handCopy.remove(hand.get(i)); 
-				} else {
-					tiles = null;
-					break;
-				}
+	public ArrayList<Tile> replaceTiles(ArrayList<Integer> tileIndex) {
+		Set<Integer> tilenrs = new HashSet<Integer>(tileIndex);
+		ArrayList<Tile> newTiles = new ArrayList<Tile>(tilenrs.size());
+		ArrayList<Tile> oldTiles = new ArrayList<Tile>(tilenrs.size());
+		if (Collections.min(tilenrs) < 0 ||
+			   Collections.max(tilenrs) > hand.size() ||
+			   tilenrs.size() > bag.getBag().size()) {
+			newTiles = null;
+		} else {
+			for (int i : tilenrs) {
+				oldTiles.add(hand.get(i));
+			}
+			if (newTiles != null) {
+				newTiles = removeTiles(oldTiles);
+				bag.addTiles(oldTiles);
 			}
 		}
-		if (tiles != null) {
-			bag.addTiles(tiles);
-			tiles = removeTiles(tiles);
-		}
-		return tiles;
+		return newTiles;
 	}
 	
 	private ArrayList<Tile> drawTiles() {

@@ -68,28 +68,30 @@ public class boardTest {
 	public void testPoints() {
 		Move move1 = new Move(4, 5, tile);
 		Move move2 = new Move(4, 6, tile1);
-		Move move3 = new Move(4, 7, tile3);
-		Move move4 = new Move(4, 8, tile2);
-		Move move5 = new Move(5, 8, tile6);
+		Move move3 = new Move(4, 7, tile2);
+		Move move4 = new Move(4, 8, tile3);
+		Move move5 = new Move(5, 8, tile4);
 		
 		ArrayList<Move> moves = new ArrayList<Move>();
 		moves.add(move1);
-		board.setField(moves);
-
-		
-		moves.clear();
 		moves.add(move2);
 		moves.add(move3);
-		board.setField(moves);
-		assertEquals(3, board.getPoints(moves));
-		
-		moves.clear();
 		moves.add(move4);
-		moves.add(move5);
-		assertTrue(board.setField(moves));
-		assertEquals(6, board.getPoints(moves));
 		
-		
+		board.setField(moves);
+		assertEquals(4, board.getPoints(moves));
+//		
+//		moves.clear();
+//		moves.add(move2);
+//		moves.add(move3);
+//		board.setField(moves);
+//		assertEquals(3, board.getPoints(moves));
+//		
+//		moves.clear();
+//		moves.add(move4);
+//		moves.add(move5);
+//		assertTrue(board.setField(moves));
+//		assertEquals(6, board.getPoints(moves));
 	}
 
 }
