@@ -39,8 +39,9 @@ public class BoardTest {
 
 	@Test
 	public void testValidMove() {
-		Move move1 = new Move(4, 5, tile);
 		ArrayList<Move> moves = new ArrayList<Move>();
+		
+		Move move1 = new Move(4, 5, tile);
 		moves.add(move1);
 		assertTrue(board.isValidMove(moves));
 		
