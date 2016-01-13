@@ -20,7 +20,7 @@ public class HumanPlayer extends Player {
 		//TODO Add comment why we are suppressing this
 		Scanner scanner = new Scanner(System.in);
 		String result = scanner.nextLine();
-		scanner.close();
+//		scanner.close();
 		return result;
 	}
 	
@@ -30,7 +30,7 @@ public class HumanPlayer extends Player {
 		String intro = getName() + "'s turn \n"
 				  + "Your hand: " + hand.toString() + "\n";
 		String drawText = "To draw new tiles: 'draw *tilenr* *tilenr* ...' \n";
-		String placeText = "To place tiles: 'place *tilenr* *rownr* *colnr*, repeat \n";
+		String placeText = "To place tiles: 'place *rownr* *colnr* *tilenr*, repeat \n";
 		String invalidEntry = "This is an invalid command, please try again. \n";
 		String drawError =  "Invalid tiles, please try again. \n";
 		String retry = "Please try again, ";
@@ -55,11 +55,10 @@ public class HumanPlayer extends Player {
 			String command = allMatches.get(0);
 			switch (command) {
 				case "draw":
-					// do something
 					ArrayList<Integer> tilenrs = new ArrayList<Integer>();
 					matcher = Pattern.compile(findTilenrs).matcher(answer);
 					while (matcher.find()) {
-					    tilenrs.add(Integer.parseInt(matcher.group()));
+					    tilenrs.add(Integer.parseInt(matcher.group()) - 1);
 					}
 					ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
 					if (replacements != null) {
@@ -70,7 +69,6 @@ public class HumanPlayer extends Player {
 					}
 					break;
 				case "place":
-					// do something
 					ArrayList<Integer> movenrs = new ArrayList<Integer>();
 					matcher = Pattern.compile(findMovenrs).matcher(answer);
 					while (matcher.find()) {
@@ -108,7 +106,6 @@ public class HumanPlayer extends Player {
 					} else { // invald syntax
 						question = invalidEntry + drawText + placeText;
 					}
-
 					break;
 				default:
 					question = invalidEntry + retry + drawText + placeText;

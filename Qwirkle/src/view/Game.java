@@ -29,7 +29,6 @@ public class Game {
 		}
 	}
 
-	
 	public void start() {
 		boolean doorgaan = true;
 		while (doorgaan) {
@@ -104,7 +103,6 @@ public class Game {
 				System.out.println(i++ + ": " + name + " scored " + score);
 			}
 		}
-		
 	}
 
 	private void reset() {
