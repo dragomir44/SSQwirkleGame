@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class boardTest {
+public class BoardTest {
 	private Board board;
 	private Tile tile;
 	private Tile tile1;
