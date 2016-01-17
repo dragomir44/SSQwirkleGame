@@ -33,6 +33,7 @@ public class NaiveStrategy implements Strategy {
 			return moves;
 		} else {
 			System.err.println("AI created invalid move");
+			System.err.println(moves.toString());
 			moves.clear();
 		}
 		return moves;

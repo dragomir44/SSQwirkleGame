@@ -98,20 +98,22 @@ public class Game {
 		if (winners.size() > 1) {
 			System.out.println("There is a draw: ");
 		} else {
-			System.out.println("The winner is: ");
+			System.out.print("The winner is: ");
 		}
 		for (Entry<String, Integer> winner : winners.entrySet()) {
 			Integer score = winner.getValue();
 			String name = winner.getKey();
 			System.out.println(name + " with a score of " + score);
-			sortedScores.remove(name);
 		}
 		System.out.println("The rest: ");
-		int i = winners.size();
+		int i = 0;
 		for (Entry<String, Integer> player : sortedScores.entrySet()) {
 		    Integer score = player.getValue();
 		    String name = player.getKey();
-		    System.out.println(i++ + ": " + name + " scored " + score);
+		    i++;
+		    if (i > winners.size()) {
+		    	System.out.println(i + ": " + name + " scored " + score);
+		    }
 		}
 	}
 

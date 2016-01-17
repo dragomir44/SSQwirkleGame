@@ -19,6 +19,7 @@ public class Hand {
 	}
 	
     public String toString() { 
+    	// TODO add numbering to tiles
     	return hand.toString(); 
     }
     
