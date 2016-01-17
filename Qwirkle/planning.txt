@@ -24,7 +24,7 @@ Nadat we alle tests, computer AI en regels hebben willen wij hier comments bij g
 Voor de server/protocol implementatie willen wij meer tijd aan bestede omdat we weten dat dit niet het makkelijkste gedeelte van het project is.
 
 26 jan Verslag
-De laatste 2 dagen voor de deadline hebben wij ingepland voor het verslag. Deze willen wij niet onderschatten.
+De laatste 4 dagen voor de deadline hebben wij ingepland voor het verslag. Deze willen wij niet onderschatten.
 Hier gaan wij met zijn 2én aan werken
 
 
