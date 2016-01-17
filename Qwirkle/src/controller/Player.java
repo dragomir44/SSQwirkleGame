@@ -9,7 +9,7 @@ public abstract class Player {
 
 
 	private String name;
-	public Hand hand;
+	protected Hand hand;
 	private int score;
 	
 	public Player(String name) {
@@ -18,6 +18,10 @@ public abstract class Player {
 
 	public void setHand(Hand h) {
 		this.hand = h;
+	}
+	
+	public Hand getHand() {
+		return this.hand;
 	}
 
 	public String getName() {
@@ -31,9 +35,9 @@ public abstract class Player {
 	public abstract ArrayList<Move> determineMove(Board board);
 
 	public void makeMove(Board board) {
+		// TODO make sure either tiles are placed, else tiles are drawn
 		ArrayList<Move> keuze = determineMove(board);
-		if (keuze.isEmpty()) {
-		} else {
+		if (!keuze.isEmpty()) {
 			for (Move move : keuze) {
 				hand.removeTile(move.tile);
 			}

@@ -10,4 +10,10 @@ public class Move {
 		this.col = c;
 		this.tile = t;
 	}
+	
+	public String toString() {
+		String result = Integer.toString(this.row) +
+				  ", " + Integer.toString(this.col) + ", " + this.tile;
+		return result;
+	}
 }

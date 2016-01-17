@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
-	boolean firstMove = true;
 		
 	public HumanPlayer(String name) {
 		super(name);
@@ -18,12 +17,14 @@ public class HumanPlayer extends Player {
 	private String readString(String prompt) {
 		System.out.print(prompt + ">");
 		//TODO Add comment why we are suppressing this
+		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		String result = scanner.nextLine();
 //		scanner.close();
 		return result;
 	}
 	
+	@Override
 	public ArrayList<Move> determineMove(Board board) {
 		String question;
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -80,9 +81,8 @@ public class HumanPlayer extends Player {
 							int row = movenrs.get(i);
 							int col = movenrs.get(i + 1);
 							int tilenr = movenrs.get(i + 2) - 1;
-							// TODO make sure a tile is never used twice..
-							if (tilenr <= hand.getHand().size()) {
-								moves.add(new Move(row, col, hand.getHand().get(tilenr)));
+							if (tilenr <= hand.getTiles().size()) {
+								moves.add(new Move(row, col, hand.getTiles().get(tilenr)));
 							} else {
 								validCommand = false;
 								moves.clear();

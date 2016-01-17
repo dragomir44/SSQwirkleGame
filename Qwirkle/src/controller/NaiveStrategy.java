@@ -1,55 +1,40 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Random;
+import java.util.*;
 
-import model.Hand;
-import model.Move;
-import model.Tile;
+import model.*;
 
 public class NaiveStrategy implements Strategy {
-
-	String name = "Naive";
-	Hand hand;
-	Random randomGenerator = new Random();
+	private String name = "Naive";
 	
-	@Override
 	public String getName() {
 		return name;
 	}
 
-	@Override
-	public ArrayList<Move> determineMove(Board board) {
+	public ArrayList<Move> determineMove(Board board, Hand hand) {
 		ArrayList<Move> moves = new ArrayList<Move>();
-		boolean correct = false;
-		//get random stones
-		//place random stones in found spots
-		//if none of the stones fit 
-		//switch random tiles
-		if (board.firstMove) {
-			Move fMove = new Move(board.middleOfBoard, board.middleOfBoard, hand.getHand().get(randomTile()));
-			moves.add(fMove);
-			board.firstMove = false;
+		TreeMap<ArrayList<Move>, Integer> possibleMoves = 
+				  new TreeMap<ArrayList<Move>, Integer>();
+		System.out.println(hand);
+		possibleMoves = board.getPossibleMoves(hand.getTiles());
+		if (!possibleMoves.isEmpty()) {
+			moves = possibleMoves.firstKey();
+		} else {
+			ArrayList<Integer> tilenrs = new ArrayList<Integer>();
+			tilenrs.add(1);
+			tilenrs.add(2);
+			tilenrs.add(3);
+			ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
+			if (replacements != null) {
+				System.out.println("Drew: " + replacements);
+			}
+		}
+		if (board.isValidMove(moves)) {
 			return moves;
 		} else {
-			//get open spots
+			System.err.println("AI created invalid move");
+			moves.clear();
 		}
 		return moves;
 	}
-	
-	
-	public int randomTile(){
-		int randomInt = randomGenerator.nextInt(6);
-		return randomInt;
-	}
-
-	@Override
-	public void setHand(Hand hand) {
-		this.hand = hand;
-	}
-	
-	
 }

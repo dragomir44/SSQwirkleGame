@@ -2,6 +2,8 @@ package controller;
 
 import model.*;
 import java.util.*;
+import java.util.Map.Entry;
+
 
 public class Board {
 	public int rows = 15;
@@ -9,13 +11,14 @@ public class Board {
 	public int middleOfBoard = rows / 2;
 	public String middleOfBoardS = Integer.toString(middleOfBoard);
 	boolean firstMove = true;
-
-	
 	
 	public String errorBuffer = "";
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
 	
+	public BoardTiles getTiles() {
+		return this.tiles;
+	}
 	/** Get the horizontal and vertical line that the placed.
 	 *  tile is going to be part of
 	 * @param move
@@ -63,7 +66,6 @@ public class Board {
 		boolean noMoreThenSix = true;
 		boolean exclusiveColour = true;
 		boolean exclusiveShape = true;
-		boolean firstMove = false;
 		errorBuffer = ""; // clear error buffer
 		
 		moveLoop:
@@ -131,6 +133,7 @@ public class Board {
 								&& uniqueShapes.contains(tile.getShape()); 
 						if (!(exclusiveColour ^ exclusiveShape)) {
 							errorBuffer += "Incorrect color/shape match \n";
+							break moveLoop;
 						}
 					}
 				}
@@ -162,24 +165,45 @@ public class Board {
 		int points = 0;
 		ArrayList<ArrayList<Tile>> tileLines;
 		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
+		// create hard copy of placed tiles to test on
+		BoardTiles testTiles = new BoardTiles(tiles); 
+		boolean metaMove = false; // boolean for test cases
+		// if move has not yet been made, make moves (be sure moves are valid, before testing!)
+		if (!moves.isEmpty()) {
+			Move headMove = moves.get(0);
+			if (!testTiles.containsKeys(headMove.row, headMove.col)) {
+				metaMove = true;
+				for (Move move : moves) {
+					testTiles.put(move.row, move.col, move.tile); // place tile on the field
+				}
+			}
+		}		
+
+
 		// check if this was the first move of the game and only 1 tile was placed
-		if (tiles.size() == 1) {
+		// TODO double check this
+		if (tiles.size() == 1 && moves.size() == 1) {
 			points = 1; 
 		}
 		for (Move move : moves) { // loop trough placed tiles
-			tileLines = getLines(move, tiles);
+			tileLines = getLines(move, testTiles);
 			for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
 				// check if line was already rewarded points
 				if (!prevLines.contains(line) && !line.isEmpty()) { 
 					points += line.size();
+//					System.out.println("Scored " + line.size() + " for line " + line +
+//									" with move " + move.toString() + " total points: " + points);
 					if (line.size() == 6) {
 						points += 6;
-						System.out.println("Scored a Qwirkle!");
+						if (!metaMove) { // prevents spam during test points
+							System.out.println("Scored a Qwirkle!");
+						}
 					}
 					prevLines.add(line);
 				}
 			}
 		}
+
 		return points;
 	}
 	
@@ -188,16 +212,22 @@ public class Board {
 	 * @param moves an arrayList of moves
 	 * @return returns the points 
 	 */
-	public boolean setField(ArrayList<Move> moves) {
+	public boolean setField(ArrayList<Move> moves, BoardTiles tileMapToPlace) {
+		BoardTiles tileMap = tileMapToPlace;
 		boolean result = true;
 		if (isValidMove(moves)) {
 			for (Move move : moves) {
-				tiles.put(move.row, move.col, move.tile); // place tile on the field
+				tileMap.put(move.row, move.col, move.tile); // place tile on the field
 			}
 		} else {
 			result = false;
 		}
 		return result;
+	}
+	
+	// default setField behaviour: place on tiles opbject
+	public boolean setField(ArrayList<Move> moves) {
+		return setField(moves, tiles);
 	}
 	
 	public boolean isEmpty() {
@@ -247,14 +277,111 @@ public class Board {
 		return boardString.toString();
 	}
 	
-	public void getSmartMove(ArrayList<Tile> hand) {
-		// loop trough tiles
-			// get all possible insert points
-			// loop trough all insert points
-				// insert tile, loop in all directions
-				// at each move store treeSet with points as key
-		
+	public TreeMap<ArrayList<Move>, Integer> getPossibleMoves(ArrayList<Tile> useTiles) {
+		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
+		TreeMap<ArrayList<Move>, Integer> sortedResult = new TreeMap<ArrayList<Move>, Integer>();
+		// if this is the first move, the only possible move is the largest row possible
+		if (tiles.isEmpty()) {
+			Map<String, Integer> tileMap = new HashMap<String, Integer>();
+			for (Tile tile : useTiles) {
+				String tileColor = tile.getColour().toString();
+				String tileShape = tile.getShape().toString();
+				if (!tileMap.containsKey(tileColor)) {
+					tileMap.put(tileColor, 0);
+				}
+				if (!tileMap.containsKey(tileShape)) {
+					tileMap.put(tileShape, 0);
+				}				
+				tileMap.put(tileColor, tileMap.get(tileColor) + 1); // increment specific enum
+				tileMap.put(tileShape, tileMap.get(tileShape) + 1); 
+			}
+			ValueComparator tileComp = new ValueComparator();
+			tileComp.sortByValue(tileMap);
+			LinkedHashMap<String, Integer> possibleRowTypes = tileComp.getHeads();
+			ArrayList<Tile> possibleTiles = new ArrayList<Tile>();
+			for (Entry<String, Integer> type : possibleRowTypes.entrySet()) {
+				String tileType = type.getKey();
+				for (Tile tile : useTiles) {
+					if (tile.getColour().toString().equals(tileType) || 
+							  tile.getShape().toString().equals(tileType)) {
+						possibleTiles.add(tile);
+					}
+				}
+			}
+			// create the first move
+			ArrayList<Move> newMoves = new ArrayList<Move>();
+			int row = rows / 2;
+			int col = cols / 2;
+			for (Tile tile : possibleTiles) {
+				newMoves.add(new Move(row++, col, tile));
+			}
+			result.put(newMoves, getPoints(newMoves));
+			// TODO smarter way to determine first move
+			
+		} else {
+			// loop trough all the empty fields where a tile can be placed
+			for (int[] emptyPos : tiles.getEmptyFields()) { 
+				for (Tile tile : useTiles) { // check for every tile if it can be placed
+					ArrayList<Move> newMove = new ArrayList<Move>(); 
+					newMove.add(new Move(emptyPos[0], emptyPos[1], tile)); 
+					if (this.isValidMove(newMove)) {  // if it can be placed
+						result.put(newMove, getPoints(newMove)); // add as possible move
+						ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
+						testTiles.remove(tile); // create a copy of the hand, and remove placed tile
+						for (int dir = 0; dir < 4; dir++) { // test row creation in every direction
+							HashMap<ArrayList<Move>, Integer> moveMap = 
+											recursiveMoveCalc(testTiles, newMove, dir);
+							if (!moveMap.isEmpty()) {
+								result.putAll(moveMap);
+							}
+						}
+					}
+				}
+			}
+		}
+		MoveComparator moveComp = new MoveComparator(result);
+		sortedResult = moveComp.sortByPoints(result);
+		return sortedResult;
 	}
 	
-	
+	public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
+					ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
+		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
+		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
+		int row = headMove.row;
+		int col = headMove.col; 
+		// could already filter out tiles, but this could be done just as well with isValidMOve()
+		// do prevent unnecessary invalid moves by walking in 1 direction
+		switch (direction) { 
+			case 0: // walk right
+				col++;
+				break;
+			case 1: // walk down
+				row--;
+				break;
+			case 2: // walk left
+				col--;
+				break;
+			case 3: // walk up
+				row++;
+				break;
+		}
+		for (Tile tile : useTiles) { // check all available tiles
+			Move newMove = new Move(row, col, tile);
+			ArrayList<Move> testMoves = new ArrayList<Move>(prevMoves);
+			testMoves.add(newMove);
+			if (this.isValidMove(testMoves)) {
+				result.put(testMoves, this.getPoints(testMoves));
+				// create deep copy of tiles to pass on.
+				ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
+				testTiles.remove(tile);
+				HashMap<ArrayList<Move>, Integer> moveMap = 
+								recursiveMoveCalc(useTiles, testMoves, direction);
+				if (!moveMap.isEmpty()) {
+					result.putAll(moveMap);
+				}
+			}
+		}
+		return result;
+	}
 }

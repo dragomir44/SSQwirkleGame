@@ -14,7 +14,7 @@ public class Hand {
 		drawTiles();
 	}
      
-	public ArrayList<Tile> getHand() {
+	public ArrayList<Tile> getTiles() {
 		return new ArrayList<Tile>(this.hand);
 	}
 	

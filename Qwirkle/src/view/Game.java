@@ -2,11 +2,10 @@ package view;
 
 import java.util.*;
 import java.util.Map.Entry;
+import model.*;
 
 import controller.Board;
 import controller.Player;
-import model.Bag;
-import model.Hand;
 
 public class Game {
 
@@ -33,6 +32,7 @@ public class Game {
 		boolean doorgaan = true;
 		while (doorgaan) {
 			reset();
+//			board.getTiles().put(7, 7, new Tile(Tile.Shape.X, Tile.Colour.R));
 			play();
 			printResult();
 			doorgaan = readBoolean("\n> Play another time? (y/n)?", "y", "n");
@@ -62,7 +62,7 @@ public class Game {
 	public boolean gameOver() {
 		boolean result = false;
 		for (Player player : this.players) {
-			if (player.hand.getHand().isEmpty()) {
+			if (player.getHand().getTiles().isEmpty()) {
 				player.incrementScore(6); // player that ends game gets 6 extra points
 				System.out.println(player.getName() + 
 						  " scored 6 extra points for ending the game"); 
@@ -87,21 +87,31 @@ public class Game {
 	}
 	
 	private void printResult() {
-		// TODO take into account a draw
-		TreeMap<Integer, String> scores = new TreeMap<Integer, String>();
+		HashMap<String, Integer> scores = new HashMap<String, Integer>();
 		for (Player player : players) {
-			scores.put(player.getScore(), player.getName());
+			scores.put(player.getName(), player.getScore());
 		}
-		int i = 1;
-		for (Entry<Integer, String> player : scores.entrySet()) {
-		    Integer score = player.getKey();
-		    String name = player.getValue();
-			if (i == 1) {
-				System.out.println("The winner is " + name
-				    + " with a score of " + score);
-			} else {
-				System.out.println(i++ + ": " + name + " scored " + score);
-			}
+		ValueComparator scoreComp = new ValueComparator();
+		TreeMap<String, Integer> sortedScores = scoreComp.sortByValue(scores);
+
+		LinkedHashMap<String, Integer> winners = scoreComp.getHeads();
+		if (winners.size() > 1) {
+			System.out.println("There is a draw: ");
+		} else {
+			System.out.println("The winner is: ");
+		}
+		for (Entry<String, Integer> winner : winners.entrySet()) {
+			Integer score = winner.getValue();
+			String name = winner.getKey();
+			System.out.println(name + " with a score of " + score);
+			sortedScores.remove(name);
+		}
+		System.out.println("The rest: ");
+		int i = winners.size();
+		for (Entry<String, Integer> player : sortedScores.entrySet()) {
+		    Integer score = player.getValue();
+		    String name = player.getKey();
+		    System.out.println(i++ + ": " + name + " scored " + score);
 		}
 	}
 

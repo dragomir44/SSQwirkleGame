@@ -2,9 +2,9 @@ package tests;
 
 import model.*;
 import controller.*;
-import view.*;
 
 import java.util.*;
+
 
 import org.junit.Before;
 import static org.junit.Assert.*;
@@ -21,6 +21,8 @@ public class boardTest {
 	private Tile tile5;
 	private Tile tile6;
 	private Tile tile7;
+	private Tile tile8;
+	private Tile tile9;
 	
 	@Before
 	public void setUp() {
@@ -33,7 +35,8 @@ public class boardTest {
 		tile5 = new Tile(Tile.Shape.Ø, Tile.Colour.R);
 		tile6 = new Tile(Tile.Shape.¥, Tile.Colour.G);
 		tile7 = new Tile(Tile.Shape.ƒ, Tile.Colour.G);
-		tile7 = new Tile(Tile.Shape.ƒ, Tile.Colour.R);
+		tile8 = new Tile(Tile.Shape.ƒ, Tile.Colour.R);
+		tile9 = new Tile(Tile.Shape.X, Tile.Colour.G);
 	}
 
 	@Test
@@ -56,12 +59,18 @@ public class boardTest {
 		moves.add(move4);
 		assertFalse(board.setField(moves));
 		
+		
+		// test squares
+		moves.clear();
+		moves.add(new Move(5, 5, tile8));
+		moves.add(new Move(5, 6, tile9));
+		assertFalse(board.setField(moves));
+		
 		// same color as neighbour but wrong line shape
 		Move move5 = new Move(4, 8, tile7);
 		moves.clear();
 		moves.add(move5);
 		assertFalse(board.setField(moves));
-		
 	}
 	
 	@Test
@@ -80,18 +89,69 @@ public class boardTest {
 		
 		board.setField(moves);
 		assertEquals(4, board.getPoints(moves));
-//		
-//		moves.clear();
-//		moves.add(move2);
-//		moves.add(move3);
-//		board.setField(moves);
-//		assertEquals(3, board.getPoints(moves));
-//		
-//		moves.clear();
-//		moves.add(move4);
-//		moves.add(move5);
-//		assertTrue(board.setField(moves));
-//		assertEquals(6, board.getPoints(moves));
+
+		moves.clear();
+		moves.add(move2);
+		moves.add(move3);
+		board.setField(moves);
+		assertEquals(3, board.getPoints(moves));
+		
+		moves.clear();
+		moves.add(move4);
+		moves.add(move5);
+		assertTrue(board.setField(moves));
+		assertEquals(6, board.getPoints(moves));
+	}
+	
+	@Test 
+	public void adjecentLines() {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		Move move1 = new Move(4, 5, tile);
+		Move move2 = new Move(4, 6, tile1);
+		Move move3 = new Move(4, 7, tile2);
+		Move move4 = new Move(4, 8, tile3);
+		Move move5 = new Move(5, 8, tile4);
+		moves.add(move1);
+		
+		assertTrue(board.setField(moves));
+		moves.clear();
+		moves.add(move2);
+		moves.add(move3);
+		
+		ArrayList<Tile> line = new ArrayList<Tile>();
+		line.add(tile);
+		line.add(tile1);
+		line.add(tile2);
+		System.out.println(line);
+		System.out.println( board.getLines(move3, board.getTiles()));
+		assertEquals(line, board.getLines(move3, board.getTiles()));
+		
+	}
+	
+	@Test
+	public void movePredicter() {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		Move move1 = new Move(4, 5, tile);
+		Move move2 = new Move(4, 6, tile1);
+		Move move3 = new Move(4, 7, tile2);
+		Move move4 = new Move(4, 8, tile3);
+		Move move5 = new Move(5, 8, tile4);
+		moves.add(move1);
+		board.setField(moves);
+		ArrayList<Tile> useTiles = new ArrayList<Tile>();
+		useTiles.add(tile7);
+		useTiles.add(tile6);
+		TreeMap<ArrayList<Move>, Integer> possibleMoves = board.getPossibleMoves(useTiles);
+		
+//		for (Entry<ArrayList<Move>, Integer> metaMove : possibleMoves.entrySet()) {
+//			ArrayList<Move> moveList = metaMove.getKey();
+//			int points = metaMove.getValue();
+//			for (Move move : moveList) {
+//				System.out.print(move.toString() + " | ");
+//			}
+//			System.out.println(" worth " + points);
+//		}
+
 	}
 
 }

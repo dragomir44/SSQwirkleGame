@@ -122,4 +122,25 @@ public class BoardTiles {
 		}
 		return returnTiles;
 	}	
+	
+	public Set<int[]> getEmptyFields() {
+		Set<int[]> emptyFields = new HashSet<int[]>();
+		for (int row : tileMap.keySet()) {
+			for (int col : tileMap.get(row).keySet()) {
+				if (!this.containsKeys(row, col + 1)) {
+					emptyFields.add(new int[] {row, col + 1});
+				}
+				if (!this.containsKeys(row + 1, col)) {
+					emptyFields.add(new int[] {row + 1, col});
+				}
+				if (!this.containsKeys(row, col - 1)) {
+					emptyFields.add(new int[] {row, col - 1});
+				}
+				if (!this.containsKeys(row - 1, col)) {
+					emptyFields.add(new int[] {row - 1, col});
+				}
+			}
+		}
+		return emptyFields;
+	}
 }
