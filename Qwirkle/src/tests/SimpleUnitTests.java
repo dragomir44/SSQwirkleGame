@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class boardTest {
+public class SimpleUnitTests {
 	private Board board;
 	private Tile tile;
 	private Tile tile1;
