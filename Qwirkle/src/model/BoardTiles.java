@@ -125,22 +125,54 @@ public class BoardTiles {
 	
 	public Set<int[]> getEmptyFields() {
 		Set<int[]> emptyFields = new HashSet<int[]>();
-		for (int row : tileMap.keySet()) {
-			for (int col : tileMap.get(row).keySet()) {
-				if (!this.containsKeys(row, col + 1)) {
-					emptyFields.add(new int[] {row, col + 1});
+		if (!this.isEmpty()) {
+			for (int row : tileMap.keySet()) {
+				for (int col : tileMap.get(row).keySet()) {
+					if (!this.containsKeys(row, col + 1)) {
+						emptyFields.add(new int[] {row, col + 1});
+					}
+					if (!this.containsKeys(row + 1, col)) {
+						emptyFields.add(new int[] {row + 1, col});
+					}
+					if (!this.containsKeys(row, col - 1)) {
+						emptyFields.add(new int[] {row, col - 1});
+					}
+					if (!this.containsKeys(row - 1, col)) {
+						emptyFields.add(new int[] {row - 1, col});
+					}
 				}
-				if (!this.containsKeys(row + 1, col)) {
-					emptyFields.add(new int[] {row + 1, col});
+			}
+		} else {
+			emptyFields.add(new int[] {1, 1});
+		}
+
+		return emptyFields;
+	}
+	
+	public int[] getBoardBounds() {
+		Set<Integer> rowSet = tileMap.keySet();
+		// set minimum board size values
+		int minRow = -10;
+		int maxRow = 10;
+		int minCol = -10;
+		int maxCol = 10;
+		
+		if (!this.isEmpty()) {
+			minRow = Collections.min(rowSet);
+			maxRow = Collections.max(rowSet);
+			for (int row : rowSet) {
+				Set<Integer> colSet = tileMap.get(row).keySet();
+				int minColT = Collections.min(colSet);
+				int maxColT = Collections.max(colSet);
+				if (minColT < minCol) {
+					minCol = minColT;
 				}
-				if (!this.containsKeys(row, col - 1)) {
-					emptyFields.add(new int[] {row, col - 1});
-				}
-				if (!this.containsKeys(row - 1, col)) {
-					emptyFields.add(new int[] {row - 1, col});
+				if (maxColT > maxCol) {
+					maxCol = maxColT;
 				}
 			}
 		}
-		return emptyFields;
+
+		return new int[] {minRow, maxRow, minCol, maxCol};
 	}
 }

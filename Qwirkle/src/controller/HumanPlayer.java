@@ -92,6 +92,7 @@ public class HumanPlayer extends Player {
 							}
 						}
 						if (validCommand) {
+					// TODO add function to make sure most amount of tiles are placed in first move
 							if (board.isValidMove(moves)) {
 								resultString = getName() + " scored "
 										+ board.getPoints(moves) + " points.";

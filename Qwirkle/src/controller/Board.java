@@ -2,16 +2,11 @@ package controller;
 
 import model.*;
 import java.util.*;
-import java.util.Map.Entry;
+
 
 
 public class Board {
-	public int rows = 15;
-	public int cols = 15;
-	public int middleOfBoard = rows / 2;
-	public String middleOfBoardS = Integer.toString(middleOfBoard);
 	boolean firstMove = true;
-	
 	public String errorBuffer = "";
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
@@ -77,16 +72,6 @@ public class Board {
 			int col = move.col;
 			Tile tile = move.tile;
 			
-			if (row > rows || row <= 0) {
-				errorBuffer += "Row is outside board \n";
-				break moveLoop;
-			}
-			
-			if (col > cols || col <= 0) {
-				errorBuffer += "Column is outside board \n";
-				break moveLoop;
-			}
-			
 			if (protoTiles.containsKeys(row, col)) {
 				hasTile = true;
 				errorBuffer += "There is already a tile on row " 
@@ -141,13 +126,14 @@ public class Board {
 					errorBuffer += "There are no adjecent tiles to form a line. \n";
 				}
 			}
-			result = hasAdjecent && 
+			result = (hasAdjecent && 
 					!hasTile && 
 					(exclusiveColour ^ exclusiveShape) 
 					&& noMoreThenSix 
-					&& sameLine 
+					&& sameLine)
 					|| firstMove;
 			if (!result) {
+				System.out.println("Move " + move.toString() + " was invalid");
 				break moveLoop;
 			} else {
 				protoTiles.put(row, col, tile);
@@ -250,21 +236,29 @@ public class Board {
 	}
 	
 	public String toString(BoardTiles boardtiles, ArrayList<Move> moves) {
-		BoardTiles protoTiles = new BoardTiles(boardtiles); // create copy of field to test moves
+		BoardTiles protoTiles = new BoardTiles(boardtiles); // create copy of field 
 		for (Move move: moves) {
 			protoTiles.put(move.row, move.col, move.tile);
 		}
 		// use StringBuilder for better memory performance
 		StringBuilder boardString = new StringBuilder("  ");
 		String rowline = "|\n";
+		// get the size of the board
+		int borderSize = 1;
+		int[] bounds = protoTiles.getBoardBounds();
+		int minRow = bounds[0] - borderSize;
+		int maxRow = bounds[1] + borderSize + 1;
+		int minCol = bounds[2] - borderSize;
+		int maxCol = bounds[3] + borderSize + 1;
 		
-		for (int k = 0; k < cols; k++) {
+		
+		for (int k = minCol; k < maxCol; k++) {
 			boardString.append("|" + String.format("%02d", k)); // add column numbers
 		}
 		boardString.append(rowline);
-		for (int i = 0; i < rows; i++) { // loop trough rows
+		for (int i = minRow; i < maxRow; i++) { // loop trough rows
 			boardString.append(String.format("%02d", i)); // add row numbers
-		    for (int j = 0; j < cols; j++) { // loop trough cols
+		    for (int j = minCol; j < maxCol; j++) { // loop trough cols
 		    	boardString.append("|");
 		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
 		    		boardString.append(protoTiles.get(i, j).toString());
@@ -281,65 +275,28 @@ public class Board {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		TreeMap<ArrayList<Move>, Integer> sortedResult = new TreeMap<ArrayList<Move>, Integer>();
 		// if this is the first move, the only possible move is the largest row possible
-		if (tiles.isEmpty()) {
-			Map<String, Integer> tileMap = new HashMap<String, Integer>();
-			for (Tile tile : useTiles) {
-				String tileColor = tile.getColour().toString();
-				String tileShape = tile.getShape().toString();
-				if (!tileMap.containsKey(tileColor)) {
-					tileMap.put(tileColor, 0);
-				}
-				if (!tileMap.containsKey(tileShape)) {
-					tileMap.put(tileShape, 0);
-				}				
-				tileMap.put(tileColor, tileMap.get(tileColor) + 1); // increment specific enum
-				tileMap.put(tileShape, tileMap.get(tileShape) + 1); 
-			}
-			ValueComparator tileComp = new ValueComparator();
-			tileComp.sortByValue(tileMap);
-			LinkedHashMap<String, Integer> possibleRowTypes = tileComp.getHeads();
-			ArrayList<Tile> possibleTiles = new ArrayList<Tile>();
-			for (Entry<String, Integer> type : possibleRowTypes.entrySet()) {
-				String tileType = type.getKey();
-				for (Tile tile : useTiles) {
-					if (tile.getColour().toString().equals(tileType) || 
-							  tile.getShape().toString().equals(tileType)) {
-						possibleTiles.add(tile);
-					}
-				}
-			}
-			// create the first move
-			ArrayList<Move> newMoves = new ArrayList<Move>();
-			int row = rows / 2;
-			int col = cols / 2;
-			for (Tile tile : possibleTiles) {
-				newMoves.add(new Move(row++, col, tile));
-			}
-			result.put(newMoves, getPoints(newMoves));
-			// TODO smarter way to determine first move
-			
-		} else {
-			// loop trough all the empty fields where a tile can be placed
-			for (int[] emptyPos : tiles.getEmptyFields()) { 
-				for (Tile tile : useTiles) { // check for every tile if it can be placed
-					ArrayList<Move> newMove = new ArrayList<Move>(); 
-					newMove.add(new Move(emptyPos[0], emptyPos[1], tile)); 
-					if (this.isValidMove(newMove)) {  // if it can be placed
-						result.put(newMove, getPoints(newMove)); // add as possible move
-						ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
-						testTiles.remove(tile); // create a copy of the hand, and remove placed tile
-						for (int dir = 0; dir < 4; dir++) { // test row creation in every direction
-							HashMap<ArrayList<Move>, Integer> moveMap = 
-											recursiveMoveCalc(testTiles, newMove, dir);
-							if (!moveMap.isEmpty()) {
-								result.putAll(moveMap);
-							}
+		// loop trough all the empty fields where a tile can be placed
+		for (int[] emptyPos : tiles.getEmptyFields()) { 
+//			System.out.println("Empty spot is " + emptyPos[0] + ", " + emptyPos[1]);
+			for (Tile tile : useTiles) { // check for every tile if it can be placed
+				ArrayList<Move> newMove = new ArrayList<Move>(); 
+				newMove.add(new Move(emptyPos[0], emptyPos[1], tile)); 
+				if (this.isValidMove(newMove)) {  // if it can be placed
+//					System.out.println("test move is: " + newMove.toString());
+					result.put(newMove, getPoints(newMove)); // add as possible move
+					ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
+					testTiles.remove(tile); // create a copy of the hand, and remove placed tile
+					for (int dir = 0; dir < 4; dir++) { // test row creation in every direction
+						HashMap<ArrayList<Move>, Integer> moveMap = 
+										recursiveMoveCalc(testTiles, newMove, dir);
+						if (!moveMap.isEmpty()) {
+							result.putAll(moveMap);
 						}
 					}
 				}
 			}
 		}
-		MoveComparator moveComp = new MoveComparator(result);
+		MoveComparator moveComp = new MoveComparator();
 		sortedResult = moveComp.sortByPoints(result);
 		return sortedResult;
 	}

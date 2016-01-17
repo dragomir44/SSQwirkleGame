@@ -40,6 +40,14 @@ public class SimpleUnitTests {
 	}
 
 	@Test
+	public void testTileOnCorner() {
+		Move move1 = new Move(0, 0, tile);
+		ArrayList<Move> moves = new ArrayList<Move>();
+		moves.add(move1);
+		assertTrue(board.isValidMove(moves));
+	}
+	
+	@Test
 	public void testValidMove() {
 		Move move1 = new Move(4, 5, tile);
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -103,30 +111,6 @@ public class SimpleUnitTests {
 		assertEquals(6, board.getPoints(moves));
 	}
 	
-	@Test 
-	public void adjecentLines() {
-		ArrayList<Move> moves = new ArrayList<Move>();
-		Move move1 = new Move(4, 5, tile);
-		Move move2 = new Move(4, 6, tile1);
-		Move move3 = new Move(4, 7, tile2);
-		Move move4 = new Move(4, 8, tile3);
-		Move move5 = new Move(5, 8, tile4);
-		moves.add(move1);
-		
-		assertTrue(board.setField(moves));
-		moves.clear();
-		moves.add(move2);
-		moves.add(move3);
-		
-		ArrayList<Tile> line = new ArrayList<Tile>();
-		line.add(tile);
-		line.add(tile1);
-		line.add(tile2);
-		System.out.println(line);
-		System.out.println( board.getLines(move3, board.getTiles()));
-		assertEquals(line, board.getLines(move3, board.getTiles()));
-		
-	}
 	
 	@Test
 	public void movePredicter() {
