@@ -77,12 +77,12 @@ public class Board {
 			int col = move.col;
 			Tile tile = move.tile;
 			
-			if (row > rows || row <= 0) {
+			if (row > rows || row < 0) {
 				errorBuffer += "Row is outside board \n";
 				break moveLoop;
 			}
 			
-			if (col > cols || col <= 0) {
+			if (col > cols || col < 0) {
 				errorBuffer += "Column is outside board \n";
 				break moveLoop;
 			}

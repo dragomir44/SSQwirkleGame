@@ -58,14 +58,7 @@ public class SimpleUnitTests {
 		moves.clear();
 		moves.add(move4);
 		assertFalse(board.setField(moves));
-		
-		
-		// test squares
-		moves.clear();
-		moves.add(new Move(5, 5, tile8));
-		moves.add(new Move(5, 6, tile9));
-		assertFalse(board.setField(moves));
-		
+
 		// same color as neighbour but wrong line shape
 		Move move5 = new Move(4, 8, tile7);
 		moves.clear();
