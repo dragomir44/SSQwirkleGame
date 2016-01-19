@@ -5,7 +5,7 @@ public class Tile {
     
 	//Square, Circle, Star, Diamond, Flower, Jew, Empty
 	public enum Shape {
-		$, O, X, ƒ, Ø, ¥,
+		$, O, X, R, G, B,
 	}
 	
 	//Red, Blue, Green, Yellow, Orange, Purple
@@ -28,7 +28,7 @@ public class Tile {
     public Colour getColour() { 
     	return colour; 
     }
-    
+
     public String toString() { 
     	return shape + "" + colour; 
     }

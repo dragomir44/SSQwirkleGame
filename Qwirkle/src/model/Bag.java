@@ -11,9 +11,11 @@ public class Bag {
 	private static final ArrayList<Tile> BAG = new ArrayList<Tile>();
 	
     public Bag() {
-        for (Colour colour : Colour.values()) {
-            for (Shape shape : Shape.values()) {
-                BAG.add(new Tile(shape, colour));
+        for (int i = 0; i < 3; i++) {
+            for (Colour colour : Colour.values()) {
+                for (Shape shape : Shape.values()) {
+                    BAG.add(new Tile(shape, colour));
+                }
             }
         }
         Collections.shuffle(BAG);

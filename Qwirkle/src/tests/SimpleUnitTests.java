@@ -32,10 +32,10 @@ public class SimpleUnitTests {
 		tile2 = new Tile(Tile.Shape.X, Tile.Colour.G);
 		tile3 = new Tile(Tile.Shape.X, Tile.Colour.P);
 		tile4 = new Tile(Tile.Shape.O, Tile.Colour.O);
-		tile5 = new Tile(Tile.Shape.Ø, Tile.Colour.R);
-		tile6 = new Tile(Tile.Shape.¥, Tile.Colour.G);
-		tile7 = new Tile(Tile.Shape.ƒ, Tile.Colour.G);
-		tile8 = new Tile(Tile.Shape.ƒ, Tile.Colour.R);
+		tile5 = new Tile(Tile.Shape.B, Tile.Colour.R);
+		tile6 = new Tile(Tile.Shape.R, Tile.Colour.G);
+		tile7 = new Tile(Tile.Shape.R, Tile.Colour.G);
+		tile8 = new Tile(Tile.Shape.B, Tile.Colour.R);
 		tile9 = new Tile(Tile.Shape.X, Tile.Colour.G);
 	}
 
