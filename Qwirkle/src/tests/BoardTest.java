@@ -97,64 +97,76 @@ public class BoardTest {
 		Move move8 = new Move(10, 10, tile10);
 		moves2.add(move8);
 		assertFalse(board.setField(moves2));
-		System.out.println(board.getErrors());
+		board.getErrors();
+		board.toString();
 	}
 	
 	@Test
-	public void testDimensions() {
-		//Valid tests
-		ArrayList<Move> moves1 = new ArrayList<Move>();
-		
-		Move move1 = new Move(0, 0, tile);
-		Move move2 = new Move(0, board.rows, tile2);
-		Move move3 = new Move(board.cols, 0, tile3);
-		Move move4 = new Move(board.cols, board.rows, tile4);
-
-		moves1.add(move1);
-		assertTrue(board.isValidMove(moves1));
-		
-		moves1.clear();
-		moves1.add(move2);
-		assertTrue(board.isValidMove(moves1));
-		
-		moves1.clear();
-		moves1.add(move3);
-		assertTrue(board.isValidMove(moves1));
-		
-		moves1.clear();
-		moves1.add(move4);
-		assertTrue(board.isValidMove(moves1));
-
-
-		//Invalid tests
-		ArrayList<Move> moves2 = new ArrayList<Move>();
-		
-		//1 too much tests
-		Move move5 = new Move(0 - 1, 0, tile);
-		Move move6 = new Move(0, 0 - 1, tile);
-		Move move7 = new Move(0, board.rows + 1, tile2);
-		Move move8 = new Move(board.cols + 1, 0, tile3);
-		Move move9 = new Move(board.cols + 1, board.rows + 1, tile4);
-
-		moves2.add(move5);
-		assertFalse(board.isValidMove(moves2));
-		
-		moves2.clear();
-		moves2.add(move6);
-		assertFalse(board.isValidMove(moves2));
-		
-		moves2.clear();
-		moves2.add(move7);
-		assertFalse(board.isValidMove(moves2));
-		
-		moves2.clear();
-		moves2.add(move8);
-		assertFalse(board.isValidMove(moves2));
-		
-		moves2.clear();
-		moves2.add(move9);
-		assertFalse(board.isValidMove(moves2));
+	public void testEmptyBoard() {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		assertTrue(board.isEmpty());
+		Move move = new Move(0, 0, tile);
+		moves.add(move);
+		board.setField(moves);
+		assertFalse(board.isEmpty());
 	}
+	
+	
+//	@Test
+//	public void testDimensions() {
+//		//Valid tests
+//		ArrayList<Move> moves1 = new ArrayList<Move>();
+//		
+//		Move move1 = new Move(0, 0, tile);
+//		Move move2 = new Move(0, board.rows, tile2);
+//		Move move3 = new Move(board.cols, 0, tile3);
+//		Move move4 = new Move(board.cols, board.rows, tile4);
+//
+//		moves1.add(move1);
+//		assertTrue(board.isValidMove(moves1));
+//		
+//		moves1.clear();
+//		moves1.add(move2);
+//		assertTrue(board.isValidMove(moves1));
+//		
+//		moves1.clear();
+//		moves1.add(move3);
+//		assertTrue(board.isValidMove(moves1));
+//		
+//		moves1.clear();
+//		moves1.add(move4);
+//		assertTrue(board.isValidMove(moves1));
+//
+//
+//		//Invalid tests
+//		ArrayList<Move> moves2 = new ArrayList<Move>();
+//		
+//		//1 too much tests
+//		Move move5 = new Move(0 - 1, 0, tile);
+//		Move move6 = new Move(0, 0 - 1, tile);
+//		Move move7 = new Move(0, board.rows + 1, tile2);
+//		Move move8 = new Move(board.cols + 1, 0, tile3);
+//		Move move9 = new Move(board.cols + 1, board.rows + 1, tile4);
+//
+//		moves2.add(move5);
+//		assertFalse(board.isValidMove(moves2));
+//		
+//		moves2.clear();
+//		moves2.add(move6);
+//		assertFalse(board.isValidMove(moves2));
+//		
+//		moves2.clear();
+//		moves2.add(move7);
+//		assertFalse(board.isValidMove(moves2));
+//		
+//		moves2.clear();
+//		moves2.add(move8);
+//		assertFalse(board.isValidMove(moves2));
+//		
+//		moves2.clear();
+//		moves2.add(move9);
+//		assertFalse(board.isValidMove(moves2));
+//	}
 	
 	
 	@Test
@@ -192,6 +204,37 @@ public class BoardTest {
 		assertEquals(12, board.getPoints(moves));
 	}
 	
+	@Test
+	public void testPossibleMoves() {
+		ArrayList<Tile> useTiles = new ArrayList<Tile>();
+		useTiles.add(tile);
+		System.out.println(board.getPossibleMoves(useTiles));
+	}
 
+	@Test
+	public void movePredicter() {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		Move move1 = new Move(4, 5, tile);
+		Move move2 = new Move(4, 6, tile1);
+		Move move3 = new Move(4, 7, tile2);
+		Move move4 = new Move(4, 8, tile3);
+		Move move5 = new Move(5, 8, tile4);
+		moves.add(move1);
+		board.setField(moves);
+		ArrayList<Tile> useTiles = new ArrayList<Tile>();
+		useTiles.add(tile7);
+		useTiles.add(tile6);
+		TreeMap<ArrayList<Move>, Integer> possibleMoves = board.getPossibleMoves(useTiles);
+		
+//		for (Entry<ArrayList<Move>, Integer> metaMove : possibleMoves.entrySet()) {
+//			ArrayList<Move> moveList = metaMove.getKey();
+//			int points = metaMove.getValue();
+//			for (Move move : moveList) {
+//				System.out.print(move.toString() + " | ");
+//			}
+//			System.out.println(" worth " + points);
+//		}
+
+	}
 
 }

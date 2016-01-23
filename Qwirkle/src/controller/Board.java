@@ -91,6 +91,7 @@ public class Board {
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
 					if (!line.isEmpty()) {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
+						// TODO Unused method
 						if (line.size() > 6) {
 							noMoreThenSix = false;
 							errorBuffer += "Line is longer than six tiles. \n";
