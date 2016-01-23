@@ -36,10 +36,10 @@ public class BoardTest {
 		tile2 = new Tile(Tile.Shape.X, Tile.Colour.G);
 		tile3 = new Tile(Tile.Shape.X, Tile.Colour.P);
 		tile4 = new Tile(Tile.Shape.O, Tile.Colour.O);
-		tile5 = new Tile(Tile.Shape.Ø, Tile.Colour.R);
-		tile6 = new Tile(Tile.Shape.¥, Tile.Colour.G);
-		tile7 = new Tile(Tile.Shape.ƒ, Tile.Colour.G);
-		tile8 = new Tile(Tile.Shape.ƒ, Tile.Colour.R);
+		tile5 = new Tile(Tile.Shape.O, Tile.Colour.R);
+		tile6 = new Tile(Tile.Shape.O, Tile.Colour.G);
+		tile7 = new Tile(Tile.Shape.O, Tile.Colour.G);
+		tile8 = new Tile(Tile.Shape.O, Tile.Colour.R);
 		tile9 = new Tile(Tile.Shape.X, Tile.Colour.G);
 		tile10 = new Tile(Tile.Shape.X, Tile.Colour.R);
 	}
@@ -97,8 +97,7 @@ public class BoardTest {
 		Move move8 = new Move(10, 10, tile10);
 		moves2.add(move8);
 		assertFalse(board.setField(moves2));
-		board.getErrors();
-		board.toString();
+		System.out.println(board.getErrors());
 	}
 	
 	@Test

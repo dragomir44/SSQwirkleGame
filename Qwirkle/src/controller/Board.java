@@ -14,6 +14,26 @@ public class Board {
 	public BoardTiles getTiles() {
 		return this.tiles;
 	}
+
+
+	public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
+        ArrayList<ArrayList<Tile>> tileLines;
+        ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
+        // create hard copy of placed tiles to test on
+        BoardTiles testTiles = new BoardTiles(tiles);
+        for (Move move : moves) {
+            testTiles.put(move.row, move.col, move.tile); // place tile on the field
+        }
+        for (Move move : moves) { // loop trough placed tiles
+            tileLines = getLines(move, testTiles);
+            for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
+                if (!prevLines.contains(line) && !line.isEmpty()) {
+                    prevLines.add(line);
+                }
+            }
+        }
+        return prevLines;
+	}
 	/** Get the horizontal and vertical line that the placed.
 	 *  tile is going to be part of
 	 * @param move
@@ -144,8 +164,7 @@ public class Board {
 	}
 	
 	public String getErrors() {
-		String result = errorBuffer;
-		return result;
+		return errorBuffer;
 	}
 	
 	public int getPoints(ArrayList<Move> moves) {
@@ -164,9 +183,7 @@ public class Board {
 					testTiles.put(move.row, move.col, move.tile); // place tile on the field
 				}
 			}
-		}		
-
-
+		}
 		// check if this was the first move of the game and only 1 tile was placed
 		// TODO double check this
 		if (tiles.size() == 1 && moves.size() == 1) {

@@ -13,7 +13,7 @@ public class Hand {
 		this.tilesPerPlayer = tilesPerPlayer;
 		drawTiles();
 	}
-     
+
 	public ArrayList<Tile> getTiles() {
 		return new ArrayList<Tile>(this.hand);
 	}
