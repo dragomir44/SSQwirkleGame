@@ -15,9 +15,9 @@ public class Qwirkle {
     				case "-N":
 						players[i] = new ComputerPlayer(new NaiveStrategy(), autoname);
 						break;
-    				case "-S":
-						players[i] = new ComputerPlayer(new SmartStrategy(), autoname);
-    					break;
+//    				case "-S":
+//						players[i] = new ComputerPlayer(new SmartStrategy(), autoname);
+//    					break;
     				default:
     					players[i] = new HumanPlayer(args[i]);
     					break;
