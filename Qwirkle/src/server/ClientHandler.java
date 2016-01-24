@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Random;
 
 import controller.Player;
 import view.Game;
@@ -31,17 +32,20 @@ public class ClientHandler extends Thread {
     //Handle client commands
     public void run() {
         try {
-            while (true) {
-                String input = in.readLine().trim();
-                if (input.equals("Connection.Shutdown")) {
-                    shutdown();
-                } else if (input.startsWith(Protocol.CLIENT_CORE_JOIN)) {
-                	long millis = System.currentTimeMillis() % 1000;
-                    clientName = "player" + millis;
-                //TODO Server string analyzer
-                }
-                //server.analyzeString(this, input);
-            }
+        	String msg = in.readLine().trim();
+            do {
+            	switch (msg) {
+            		case "Connection.Shutdown":
+            			shutdown();
+            			break;
+            		//starts with
+            		case Protocol.CLIENT_CORE_JOIN:
+            			Random rn = new Random();
+            			clientName = "Player" + rn.nextInt(100);
+            			break;
+            	}
+            	server.readString(this, msg);
+            } while (true);
         } catch (IOException e) {
             shutdown();
         }

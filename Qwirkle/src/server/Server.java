@@ -135,14 +135,13 @@ public class Server {
     	return null;
     }
     
-    private void makeMove(ClientHandler handler, Move move) {
+    private void makeMove(ClientHandler handler, String move) {
     	//TODO Make move method
     }
     
     public synchronized void readString(ClientHandler handler, String msg) {
     	serverMessage(handler + " sends " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	boolean valid = false;
 		do {
 			switch (input[0]) {
 				case Protocol.CLIENT_CORE_JOIN:
@@ -159,7 +158,7 @@ public class Server {
 					}
 					break;
 			}
-		} while (!valid);
+		} while (true);
     }
     
     
