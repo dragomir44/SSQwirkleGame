@@ -52,16 +52,15 @@ public class Game {
 	private void play() {
 		update();
 		while (!gameOver()) {
-			players[current].makeMove(board);
+			if (bag.getBag().isEmpty() &&
+					!board.hasPossibleMoves(players[current].getHand().getTiles())) {
+				System.out.println("No move possible, skipped a turn");
+			} else {
+				players[current].makeMove(board);
+			}
 			update();
 			current = (current + 1) % numberOfPlayers;
-			if (bag.getBag().isEmpty()) {
-				// nested if() to prevent unnecessary possible move calculation
-				if (!board.hasPossibleMoves(players[current].getHand().getTiles())) {
-					current = (current + 1) % numberOfPlayers;
-					System.out.println("No move possible, skipped a turn");
-				}
-			}
+
 		}
 		System.out.println("Game over!");
 	}
@@ -91,7 +90,7 @@ public class Game {
 
 	private void update() {
 		System.out.println("\ncurrent game situation:");
-		System.out.println(bag.getBag().size() + " tiles left in the bag.");
+		System.out.println(bag.getSize() + " tiles left in the bag.");
 		for (Player player : players) {
 			System.out.println(player.getName() + "'s score is: " + player.getScore());
 		}

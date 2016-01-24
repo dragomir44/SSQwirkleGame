@@ -14,8 +14,8 @@ public class HumanPlayer extends Player {
 		super(name);
 	}
 
-	private String readString(String prompt) {
-		System.out.print(prompt + ">");
+	protected String readString(String prompt) {
+		writeString(prompt + ">");
 		//TODO Add comment why we are suppressing this
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
@@ -28,8 +28,7 @@ public class HumanPlayer extends Player {
 	public ArrayList<Move> determineMove(Board board) {
 		String question;
 		ArrayList<Move> moves = new ArrayList<Move>();
-		String intro = getName() + "'s turn \n"
-				  + "Your hand: " + hand.toString() + "\n";
+		String intro = "Your hand: " + hand.toString() + "\n";
 		String drawText = "To draw new tiles: 'draw *tilenr* *tilenr* ...' \n";
 		String placeText = "To place tiles: 'place *rownr* *colnr* *tilenr*, repeat \n";
 		String invalidEntry = "This is an invalid command, please try again. \n";
@@ -46,6 +45,8 @@ public class HumanPlayer extends Player {
 		question = intro + drawText + placeText;
 		boolean valid = false;
 		do {
+			question += "Hint: ";
+			question += board.getPossibleMoves(hand.getTiles()).firstKey().toString() + "\n";
 			String answer = readString(question);
 			List<String> allMatches = new ArrayList<String>();
 			Matcher matcher = Pattern.compile(findCommand).matcher(answer);
@@ -56,26 +57,20 @@ public class HumanPlayer extends Player {
 			String command = allMatches.get(0);
 			switch (command) {
 				case "draw":
-					ArrayList<Integer> tilenrs = new ArrayList<Integer>();
+					ArrayList<Integer> tileNrs = new ArrayList<Integer>();
 					matcher = Pattern.compile(findTilenrs).matcher(answer);
 					while (matcher.find()) {
-					    tilenrs.add(Integer.parseInt(matcher.group()) - 1);
+						tileNrs.add(Integer.parseInt(matcher.group()) - 1);
 					}
-					ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
-					if (replacements != null) {
-						resultString = "Drew: " + replacements;
-						valid = true;
-					} else {
-						question = drawError + drawText + placeText;
-					}
+					moves.add(new TradeMove(tileNrs));
+					valid = true;
 					break;
 				case "place":
 					ArrayList<Integer> movenrs = new ArrayList<Integer>();
 					matcher = Pattern.compile(findMovenrs).matcher(answer);
 					while (matcher.find()) {
-					    movenrs.add(Integer.parseInt(matcher.group()));
+						movenrs.add(Integer.parseInt(matcher.group()));
 					}
-					boolean validCommand = true;
 					if ((movenrs.size() % 3) == 0 && movenrs.size() > 0) {
 						for (int i = 0; i < movenrs.size(); i = i + 3) {
 							int row = movenrs.get(i);
@@ -84,32 +79,13 @@ public class HumanPlayer extends Player {
 							if (tilenr <= hand.getTiles().size()) {
 								moves.add(new Move(row, col, hand.getTiles().get(tilenr)));
 							} else {
-								validCommand = false;
 								moves.clear();
 								question = "Invalid command," + tilenr + " is not a tilenumber \n";
 								question += retry + drawText + placeText;
 								break;
 							}
 						}
-						if (validCommand) {
-							// make sure longest move is played in first turn
-							if (board.isEmpty()) {
-								int moveSize = board.getPossibleMoves(hand.getTiles()).firstKey().size();
-								if (moveSize == moves.size()) {
-									valid = true;
-								}
-							} else if (board.isValidMove(moves)) {
-								resultString = getName() + " scored "
-										+ board.getPoints(moves) + " points.";
-								valid = true;
-							}
-							if (!valid) {
-								moves.clear();
-								moveErrors = board.getErrors();
-								question = "Invalid move: " + moveErrors;
-								question += retry + drawText + placeText;
-							}
-						}
+						valid = true;
 					} else { // invald syntax
 						question = invalidEntry + drawText + placeText;
 					}
@@ -118,9 +94,7 @@ public class HumanPlayer extends Player {
 					question = invalidEntry + retry + drawText + placeText;
 					break;
 			}
-			
 		} while (!valid);
-		System.out.println(resultString + " end of turn.");
 		return moves;
 	}
 }

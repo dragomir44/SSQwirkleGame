@@ -15,5 +15,10 @@ public class ComputerPlayer extends Player {
 	public ArrayList<Move>  determineMove(Board board) {
 		return strategy.determineMove(board, hand);
     }
+
+	@Override
+	public void writeString(String msg) {
+		System.out.println("AI: " + msg);
+	}
 }
  

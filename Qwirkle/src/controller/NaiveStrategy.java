@@ -6,7 +6,7 @@ import model.*;
 
 public class NaiveStrategy implements Strategy {
 	private String name = "Naive";
-	
+
 	public String getName() {
 		return name;
 	}
@@ -22,8 +22,6 @@ public class NaiveStrategy implements Strategy {
 		} else {
 			ArrayList<Integer> tilenrs = new ArrayList<Integer>();
 			tilenrs.add(1);
-			tilenrs.add(2);
-			tilenrs.add(3);
 			ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
 			if (replacements != null) {
 				System.out.println("Drew: " + replacements);

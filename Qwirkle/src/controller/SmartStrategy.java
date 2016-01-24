@@ -38,22 +38,13 @@ public class SmartStrategy implements Strategy {
                     }
                 }
             }
-        } else {
-            ArrayList<Integer> tilenrs = new ArrayList<Integer>();
-            tilenrs.add(1);
-            tilenrs.add(2);
-            tilenrs.add(3);
-            ArrayList<Tile> replacements = hand.replaceTiles(tilenrs);
-            if (replacements != null) {
-                System.out.println("Drew: " + replacements);
+            if (moves.isEmpty()) { // make sure no empty move is returned
+                moves = possibleMoves.firstKey();
             }
-        }
-        if (board.isValidMove(moves)) {
-            return moves;
         } else {
-            System.err.println("AI " + getName() + " created invalid move");
-            System.err.println(moves.toString());
-            moves.clear();
+            ArrayList<Integer> tileNrs = new ArrayList<Integer>();
+            tileNrs.add(1);
+            moves.add(new TradeMove(tileNrs));
         }
         return moves;
     }

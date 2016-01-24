@@ -14,13 +14,21 @@ public class Hand {
 		drawTiles();
 	}
 
+	public Bag getBag() {
+		return bag;
+	}
+
 	public ArrayList<Tile> getTiles() {
 		return new ArrayList<Tile>(this.hand);
 	}
 	
     public String toString() { 
-    	// TODO add numbering to tiles
-    	return hand.toString(); 
+    	String output = "";
+		int count = 1;
+		for (Tile tile : hand) {
+			output += count++ + ": " + tile + " | ";
+		}
+    	return output;
     }
     
 	public ArrayList<Tile> removeTiles(ArrayList<Tile> tiles) {
@@ -33,9 +41,13 @@ public class Hand {
 		tiles.add(tile);
 		return removeTiles(tiles);
 	}
-	
+
 	public ArrayList<Tile> replaceTiles(ArrayList<Integer> tileIndex) {
 		Set<Integer> tilenrs = new HashSet<Integer>(tileIndex);
+		return replaceTiles(tilenrs);
+	}
+
+	public ArrayList<Tile> replaceTiles(Set<Integer> tilenrs) {
 		ArrayList<Tile> newTiles = new ArrayList<Tile>(tilenrs.size());
 		ArrayList<Tile> oldTiles = new ArrayList<Tile>(tilenrs.size());
 		if (Collections.min(tilenrs) < 0 ||
@@ -46,10 +58,8 @@ public class Hand {
 			for (int i : tilenrs) {
 				oldTiles.add(hand.get(i));
 			}
-			if (newTiles != null) {
-				newTiles = removeTiles(oldTiles);
-				bag.addTiles(oldTiles);
-			}
+			newTiles = removeTiles(oldTiles);
+			bag.addTiles(oldTiles);
 		}
 		return newTiles;
 	}

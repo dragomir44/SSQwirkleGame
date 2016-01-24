@@ -24,6 +24,10 @@ public class Bag {
     public ArrayList<Tile> getBag() {
         return BAG;
     }
+
+	public int getSize() {
+		return BAG.size();
+	}
     
     public void removeFirst() {
     	BAG.remove(0);
