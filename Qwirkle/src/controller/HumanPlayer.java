@@ -92,12 +92,18 @@ public class HumanPlayer extends Player {
 							}
 						}
 						if (validCommand) {
-					// TODO add function to make sure most amount of tiles are placed in first move
-							if (board.isValidMove(moves)) {
+							// make sure longest move is played in first turn
+							if (board.isEmpty()) {
+								int moveSize = board.getPossibleMoves(hand.getTiles()).firstKey().size();
+								if (moveSize == moves.size()) {
+									valid = true;
+								}
+							} else if (board.isValidMove(moves)) {
 								resultString = getName() + " scored "
 										+ board.getPoints(moves) + " points.";
 								valid = true;
-							} else {
+							}
+							if (!valid) {
 								moves.clear();
 								moveErrors = board.getErrors();
 								question = "Invalid move: " + moveErrors;

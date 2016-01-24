@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import model.Hand;
 import model.Move;
+import model.TradeMove;
 
 public abstract class Player {
 
@@ -35,16 +36,21 @@ public abstract class Player {
 	public abstract ArrayList<Move> determineMove(Board board);
 
 	public void makeMove(Board board) {
-		// TODO make sure either tiles are placed, else tiles are drawn
 		ArrayList<Move> keuze = determineMove(board);
 		if (!keuze.isEmpty()) {
-			for (Move move : keuze) {
-				hand.removeTile(move.tile);
+			if (keuze.get(0) instanceof TradeMove) {
+
+			} else {
+				for (Move move : keuze) {
+					hand.removeTile(move.tile);
+				}
+				board.setField(keuze);
+				int points = board.getPoints(keuze);
+				incrementScore(points);
 			}
-			board.setField(keuze);
+		} else {
+			System.err.println("*ERROR* Empty move was made!");
 		}
-		int points = board.getPoints(keuze);
-		incrementScore(points);
 	}
 	
 	public int getScore() {

@@ -60,7 +60,7 @@ public class ClientHandler extends Thread {
             shutdown();
         }
     }
-    
+
     private void shutdown() {
         server.removeHandler(this);
     }

@@ -24,12 +24,12 @@ public class Server {
     private List<ClientHandler> ingame;
     private Map<Game, ClientHandler[]> gameMap = new HashMap<Game, ClientHandler[]>();
     private ServerSocket sock;
-    
-    
+
+
     public static void main(String[] args) {
         new Server();
     }
-    
+
     public Server() {
         connecting = new ArrayList<ClientHandler>();
         lobby = new ArrayList<ClientHandler>();
@@ -54,7 +54,7 @@ public class Server {
             new Server();
         }
     }
-    
+
     private void startServer() {
         try {
             sock = new ServerSocket(port);
@@ -70,7 +70,7 @@ public class Server {
             serverMessage("*ERROR* Socket couldn't be created.");
         }
 	}
-    
+
 
 	public String getInput(String question) {
         String input = null;
@@ -89,16 +89,16 @@ public class Server {
         return input;
 
     }
-	
+
     public void sendMessage(ClientHandler handler, String message) {
-        if (lobby.contains(handler) || ingame.contains(handler) 
+        if (lobby.contains(handler) || ingame.contains(handler)
                 || connecting.contains(handler)) {
             serverMessage("Sending " + message + "to " + handler.getClientName());
             handler.sendMessage(message);
         }
     }
-	
-    
+
+
 	private void shutdown() {
 		serverMessage("CLOSING SERVER");
         try {
@@ -108,11 +108,11 @@ public class Server {
         }
         System.exit(0);
 	}
-    
+
     public synchronized void addHandler(ClientHandler handler) {
         connecting.add(handler);
     }
-    
+
     public synchronized void removeHandler(ClientHandler handler) {
         if (connecting.contains(handler)) {
             connecting.remove(handler);
@@ -124,21 +124,21 @@ public class Server {
         serverMessage(handler.getClientName() + " has left the game");
         //send message to other players that this guy left
     }
-    
+
     private void serverMessage(String msg) {
     	System.err.println("SERVER: " + msg);
     }
     //TODO  Make method to send to every other player in game
-    
+
     public ClientHandler otherHandler(ClientHandler handler) {
     	//TODO get other players from game
     	return null;
     }
-    
+
     private void makeMove(ClientHandler handler, String move) {
     	//TODO Make move method
     }
-    
+
     public synchronized void readString(ClientHandler handler, String msg) {
     	serverMessage(handler + " sends " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
@@ -146,20 +146,20 @@ public class Server {
 			switch (input[0]) {
 				case Protocol.CLIENT_CORE_JOIN:
 					connecting.remove(handler);
-					
+
 					break;
 				case Protocol.CLIENT_CORE_MOVE:
 					makeMove(handler, input[1]);
 					break;
 				case Protocol.CLIENT_CORE_PLAYERS:
 					for (int i = 0; i < lobby.size(); i++) {
-						sendMessage(handler, Protocol.SERVER_CORE_PLAYERS + 
-							   Protocol.MESSAGESEPERATOR + lobby.get(i).getClientName()); 
+						sendMessage(handler, Protocol.SERVER_CORE_PLAYERS +
+							   Protocol.MESSAGESEPERATOR + lobby.get(i).getClientName());
 					}
 					break;
 			}
 		} while (true);
     }
-    
-    
+
+
 }

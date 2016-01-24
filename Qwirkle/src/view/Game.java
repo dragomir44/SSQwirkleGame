@@ -32,7 +32,6 @@ public class Game {
 		boolean doorgaan = true;
 		while (doorgaan) {
 			reset();
-//			board.getTiles().put(7, 7, new Tile(Tile.Shape.X, Tile.Colour.R));
 			play();
 			printResult();
 			doorgaan = readBoolean("\n> Play another time? (y/n)?", "y", "n");
@@ -56,20 +55,36 @@ public class Game {
 			players[current].makeMove(board);
 			update();
 			current = (current + 1) % numberOfPlayers;
+			if (bag.getBag().isEmpty()) {
+				// nested if() to prevent unnecessary possible move calculation
+				if (!board.hasPossibleMoves(players[current].getHand().getTiles())) {
+					current = (current + 1) % numberOfPlayers;
+					System.out.println("No move possible, skipped a turn");
+				}
+			}
 		}
+		System.out.println("Game over!");
 	}
 	
 	public boolean gameOver() {
 		boolean result = false;
+		ArrayList<Tile> allTiles = new ArrayList<Tile>();
 		for (Player player : this.players) {
-			if (player.getHand().getTiles().isEmpty()) {
+			ArrayList<Tile> playerTiles = player.getHand().getTiles();
+			allTiles.addAll(playerTiles);
+			if (playerTiles.isEmpty()) {
 				player.incrementScore(6); // player that ends game gets 6 extra points
 				System.out.println(player.getName() + 
-						  " scored 6 extra points for ending the game"); 
-				System.out.println("Game over!");
+						  " scored 6 extra points for ending the game");
 				result = true;
 				break;
 			}
+		}
+		allTiles.addAll(bag.getBag());
+		if (!board.hasPossibleMoves(allTiles)) {
+			System.out.println("No more moves possible");
+			result = true; // no more possible moves available
+
 		}
 		return result;
 	}

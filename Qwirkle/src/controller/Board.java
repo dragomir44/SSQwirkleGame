@@ -111,13 +111,8 @@ public class Board {
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
 					if (!line.isEmpty()) {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
-						// TODO Unused method
-						if (line.size() > 6) {
-							noMoreThenSix = false;
-							errorBuffer += "Line is longer than six tiles. \n";
-							break moveLoop;
-						}
-						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>(); 
+
+						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>();
 						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>(); 
 						line.remove(tile); // remove placed tile 
 						for (Tile lineTile : line) {
@@ -288,7 +283,23 @@ public class Board {
 		}
 		return boardString.toString();
 	}
-	
+
+	public boolean hasPossibleMoves(ArrayList<Tile> useTiles) {
+		boolean result = false;
+		fieldLoop:
+		for (int[] emptyPos : tiles.getEmptyFields()) {
+			for (Tile tile : useTiles) {
+				ArrayList<Move> newMove = new ArrayList<Move>();
+				newMove.add(new Move(emptyPos[0], emptyPos[1], tile));
+				if (this.isValidMove(newMove)) {
+					result = true;
+					break fieldLoop;
+				}
+			}
+		}
+		return result;
+	}
+
 	public TreeMap<ArrayList<Move>, Integer> getPossibleMoves(ArrayList<Tile> useTiles) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		TreeMap<ArrayList<Move>, Integer> sortedResult = new TreeMap<ArrayList<Move>, Integer>();
@@ -297,8 +308,9 @@ public class Board {
 		for (int[] emptyPos : tiles.getEmptyFields()) { 
 //			System.out.println("Empty spot is " + emptyPos[0] + ", " + emptyPos[1]);
 			for (Tile tile : useTiles) { // check for every tile if it can be placed
-				ArrayList<Move> newMove = new ArrayList<Move>(); 
-				newMove.add(new Move(emptyPos[0], emptyPos[1], tile)); 
+
+				ArrayList<Move> newMove = new ArrayList<Move>();
+				newMove.add(new Move(emptyPos[0], emptyPos[1], tile));
 				if (this.isValidMove(newMove)) {  // if it can be placed
 //					System.out.println("test move is: " + newMove.toString());
 					result.put(newMove, getPoints(newMove)); // add as possible move
@@ -324,10 +336,10 @@ public class Board {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
 		int row = headMove.row;
-		int col = headMove.col; 
+		int col = headMove.col;
 		// could already filter out tiles, but this could be done just as well with isValidMOve()
 		// do prevent unnecessary invalid moves by walking in 1 direction
-		switch (direction) { 
+		switch (direction) {
 			case 0: // walk right
 				col++;
 				break;
