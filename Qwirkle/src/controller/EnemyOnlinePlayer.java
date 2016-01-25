@@ -17,6 +17,7 @@ public class EnemyOnlinePlayer extends Player {
     public ArrayList<Move> determineMove(Board board) {
         // client handler: ArrayList<Move> moves = handler.determineMove();
         // return moves;
+    	return null;
     }
 
 }

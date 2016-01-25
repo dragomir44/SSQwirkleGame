@@ -19,27 +19,27 @@ public class MultiplayerGame {
 
     }
 
-    private void play() {
-        boolean gameOver = true;
-        while(!gameOver) {
-            // wacht op moves van clientHandler
-            if (client.bufferAvailable()) {
-                ArrayList<Move> clientMoves = client.getMoveBuffer();
-                board.setField(clientMoves);
-            }
-            if (client.playerTurnBuffer().equals(localName)) { // jouw beurt
-                client.makeMove(localOnlinePlayer.makeMove());
-            }
-
-            if (client.gameOverBufferAvailable()) {
-                if(client.getGameOver()) {
-                    print(client.getScores());
-                    gameOver = true;
-                };
-            }
-
-        }
-    }
+//    private void play() {
+//        boolean gameOver = true;
+//        while(!gameOver) {
+//            // wacht op moves van clientHandler
+//            if (client.bufferAvailable()) {
+//                ArrayList<Move> clientMoves = client.getMoveBuffer();
+//                board.setField(clientMoves);
+//            }
+//            if (client.playerTurnBuffer().equals(localName)) { // jouw beurt
+//                client.makeMove(localOnlinePlayer.makeMove());
+//            }
+//
+//            if (client.gameOverBufferAvailable()) {
+//                if(client.getGameOver()) {
+//                    print(client.getScores());
+//                    gameOver = true;
+//                };
+//            }
+//
+//        }
+//    }
 
 
 }

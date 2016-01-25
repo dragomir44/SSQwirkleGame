@@ -19,7 +19,7 @@ import view.Game;
 
 public class Server {
     private int port;
-    private List<ClientHandler> connecting;
+    private List<ClientHandler> threads;
     private List<ClientHandler> lobby;
     private List<ClientHandler> ingame;
     private Map<Game, ClientHandler[]> gameMap = new HashMap<Game, ClientHandler[]>();
@@ -31,7 +31,7 @@ public class Server {
     }
 
     public Server() {
-        connecting = new ArrayList<ClientHandler>();
+        threads = new ArrayList<ClientHandler>();
         lobby = new ArrayList<ClientHandler>();
         ingame = new ArrayList<ClientHandler>();
         try {
@@ -46,12 +46,10 @@ public class Server {
                 		  + " and port: " + port + "\n");
             } catch (UnknownHostException e) {
                 serverMessage("*ERROR* Couldn't find IP");
-                new Server();
             }
             startServer();
         } catch (NumberFormatException e) {
             serverMessage("*ERROR* port is not an integer");
-            new Server();
         }
     }
 
@@ -59,12 +57,12 @@ public class Server {
         try {
             sock = new ServerSocket(port);
             int clientNo = 0;
-            while (true) {
-                Socket socket = sock.accept();
-                ClientHandler handler = new ClientHandler(this, socket);
+            while (sock != null) {
+                Socket clientSocket = sock.accept();
+                ClientHandler handler = new ClientHandler(this, clientSocket);
                 handler.start();
                 addHandler(handler);
-                System.out.println("<Client " + (++clientNo) + "> connected");
+                System.out.println("<Client" + (++clientNo) + "> connected");
             }
         } catch (IOException e) {
             serverMessage("*ERROR* Socket couldn't be created.");
@@ -92,7 +90,7 @@ public class Server {
 
     public void sendMessage(ClientHandler handler, String message) {
         if (lobby.contains(handler) || ingame.contains(handler)
-                || connecting.contains(handler)) {
+                || threads.contains(handler)) {
             serverMessage("Sending " + message + "to " + handler.getClientName());
             handler.sendMessage(message);
         }
@@ -110,19 +108,12 @@ public class Server {
 	}
 
     public synchronized void addHandler(ClientHandler handler) {
-        connecting.add(handler);
+        threads.add(handler);
     }
 
     public synchronized void removeHandler(ClientHandler handler) {
-        if (connecting.contains(handler)) {
-            connecting.remove(handler);
-        } else if (ingame.contains(handler)) {
-            ingame.remove(handler);
-        } else if (lobby.contains(handler)) {
-            ingame.remove(handler);
-        }
+    	threads.remove(handler);
         serverMessage(handler.getClientName() + " has left the game");
-        //send message to other players that this guy left
     }
 
     private void serverMessage(String msg) {
@@ -151,7 +142,7 @@ public class Server {
 		do {
 			switch (input[0]) {
 				case Protocol.CLIENT_CORE_JOIN:
-					connecting.remove(handler);
+					threads.remove(handler);
 
 					break;
 				case Protocol.CLIENT_CORE_MOVE:
@@ -167,5 +158,13 @@ public class Server {
 		} while (true);
     }
 
+    public void broadcast(String msg) {
+    	System.out.println(msg);
+        for (ClientHandler thread : threads) {
+        	if (thread != null) {
+        		thread.sendMessage(msg);
+        	}
+        }
+    }
 
 }
