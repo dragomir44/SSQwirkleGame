@@ -23,7 +23,8 @@ public class Qwirkle {
     					break;
     			}
     		}
-    		Game game = new Game(players);	
+    		Game game = new Game(players);
+			//TODO switch to multiplayerGame
     		game.start();
     	} else {
     		System.err.println("Wrong input arguments");

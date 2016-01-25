@@ -137,6 +137,12 @@ public class Server {
 
     private void makeMove(ClientHandler handler, String move) {
     	//TODO Make move method
+        // zet tile int1 int2 om naar Tile shape, color
+        // zet String move om naar row, col, Tile
+        // voeg toe aan ArrayList<Move>
+        // koppel aan LocalOnlinePlayer
+
+
     }
 
     public synchronized void readString(ClientHandler handler, String msg) {

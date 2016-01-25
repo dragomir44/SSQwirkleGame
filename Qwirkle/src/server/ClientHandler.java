@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 
 import controller.Player;
+import model.Move;
 import view.Game;
 
 public class ClientHandler extends Thread {
@@ -84,5 +86,17 @@ public class ClientHandler extends Thread {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    public boolean makeMove(ArrayList<Move> moves) {
+        // stuur moves naar server
+        // lees of ze correct zijn
+    }
+
+    // ontvang moves van de server
+    public ArrayList<Move> determineMove() {
+
+    }
+
+    public
 
 }

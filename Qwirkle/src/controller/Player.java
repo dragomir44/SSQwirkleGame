@@ -37,6 +37,10 @@ public abstract class Player {
 	public abstract ArrayList<Move> determineMove(Board board);
 
 	public void makeMove(Board board) {
+		//TODO koopel bag los van player
+		//TODO verplaats plaatsen van move naar play (return moves ipv void)
+		//TODO score verplaatsen naar play
+		//TODO gebruik minimum bag size ipv echte bag
 		String retry = " please try again, ";
 		String resultString = "";
 		boolean validMove = false;
