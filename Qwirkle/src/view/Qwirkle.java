@@ -2,6 +2,9 @@ package view;
 
 import controller.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Qwirkle {
 	public static void main(String[] a) {
 		String[] args = new String[2];
@@ -23,7 +26,8 @@ public class Qwirkle {
     					break;
     			}
     		}
-    		Game game = new Game(players);
+
+    		Game game = new Game(new ArrayList<Player>(Arrays.asList(players)));
 			//TODO switch to multiplayerGame
     		game.start();
     	} else {

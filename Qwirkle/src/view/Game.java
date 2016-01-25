@@ -15,13 +15,13 @@ public class Game {
 	public static final int TILES_PER_BAG = 108;
 	private Board board;
 	private Bag bag;
-	private Player[] players;
+	private ArrayList<Player> players;
 	private int current;
 	private int numberOfPlayers;
 	
 	
-	public Game(Player[] players)  {
-		numberOfPlayers = players.length;
+	public Game(ArrayList<Player> players)  {
+		numberOfPlayers = players.size();
 		this.players = players;
 	}
 	
@@ -30,6 +30,12 @@ public class Game {
 			replenishTiles(player);
 		}
 	}
+
+	public void AddPlayer(Player player) {
+		players.add(player);
+		numberOfPlayers++;
+	}
+
 
 	public ArrayList<Tile> replenishTiles(Player p) {
 		ArrayList<Tile> newTiles = new ArrayList<Tile>();
@@ -87,15 +93,15 @@ public class Game {
 		return answer.equals(yes);
 	}
 
-	private void play() {
+	public void play() {
 		update();
 		while (!gameOver()) {
 			if (bag.getBag().isEmpty() &&
-					!board.hasPossibleMoves(players[current].getHand().getTiles())) {
+					!board.hasPossibleMoves(players.get(current).getHand().getTiles())) {
 				System.out.println("No move possible, skipped a turn");
 			} else {
 				boolean validMove = false;
-				Player curPlayer = players[current];
+				Player curPlayer = players.get(current);
 				curPlayer.writeString(curPlayer.getName() + "'s turn:");
 				do {
 					ArrayList<Move> moves = curPlayer.determineMove(board);
@@ -110,7 +116,7 @@ public class Game {
 		System.out.println("Game over!");
 	}
 
-	private boolean makeMove(Player curPlayer, ArrayList<Move> moves) {
+	public boolean makeMove(Player curPlayer, ArrayList<Move> moves) {
 		String retry = " please try again, ";
 		String resultString = "";
 		boolean validMove = false;
