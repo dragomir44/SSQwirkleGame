@@ -7,9 +7,12 @@ import model.*;
 import controller.Board;
 import controller.Player;
 
+import static java.lang.Integer.min;
+
 public class Game {
 
 	public static final int TILES_PER_HAND = 6;
+	public static final int TILES_PER_BAG = 108;
 	private Board board;
 	private Bag bag;
 	private Player[] players;
@@ -56,7 +59,49 @@ public class Game {
 					!board.hasPossibleMoves(players[current].getHand().getTiles())) {
 				System.out.println("No move possible, skipped a turn");
 			} else {
-				players[current].makeMove(board);
+				//TODO koopel bag los van player
+				String retry = " please try again, ";
+				String resultString = "";
+				boolean validMove = false;
+				boolean validFirstMove = true;
+				Player curPlayer = players[current];
+				curPlayer.writeString(curPlayer.getName() + "'s turn:");
+				do {
+					ArrayList<Move> moves = curPlayer.determineMove(board);
+					if (!moves.isEmpty()) {	// trade tiles
+						if (moves.get(0) instanceof TradeMove) {
+							Set<Integer> tileNrs = ((TradeMove) moves.get(0)).tileNrs;
+							 if (tileNrs.size() <= getBagSize()) {
+								ArrayList<Tile> replacements = curPlayer.getHand().replaceTiles(tileNrs);
+								if (replacements != null) {
+									resultString = "Drew: " + replacements;
+									validMove = true;
+								} else {
+									resultString = "Invalid trade," + retry;
+								}
+							} else {
+								resultString = "Not enough tiles in bag to trade," + retry;
+							}
+						} else { // place tiles
+							if (board.isValidMove(moves)) {
+								resultString = curPlayer.getName() + " scored "
+										+ board.getPoints(moves) + " points.";
+								resultString += "\n End of turn.";
+								for (Move move : moves) {
+									curPlayer.getHand().removeTile(move.tile);
+								}
+								board.setField(moves);
+								int points = board.getPoints(moves);
+								curPlayer.incrementScore(points);
+								validMove = true;
+							}
+						}
+					} else {
+						resultString = "No moves were given," + retry;
+					}
+					curPlayer.writeString(resultString);
+				} while (!validMove);
+
 			}
 			update();
 			current = (current + 1) % numberOfPlayers;
@@ -64,7 +109,15 @@ public class Game {
 		}
 		System.out.println("Game over!");
 	}
-	
+
+	private int getBagSize() {
+		int tiles = TILES_PER_BAG - numberOfPlayers * TILES_PER_HAND - board.getTiles().size();
+		if (tiles < 0) {
+			tiles = 0;
+		}
+		return tiles;
+	}
+
 	public boolean gameOver() {
 		boolean result = false;
 		ArrayList<Tile> allTiles = new ArrayList<Tile>();
