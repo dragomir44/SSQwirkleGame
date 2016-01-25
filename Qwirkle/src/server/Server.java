@@ -87,11 +87,8 @@ public class Server {
     }
 
     public void sendMessage(ClientHandler handler, String message) {
-        if (lobby.contains(handler) || ingame.contains(handler)
-                || threads.contains(handler)) {
-            serverMessage("Sending " + message + "to " + handler.getClientName());
-            handler.sendMessage(message);
-        }
+        serverMessage("Sending " + message + " to " + handler.getClientName());
+        handler.sendMessage(message);
     }
 
 
@@ -113,7 +110,15 @@ public class Server {
     	threads.remove(handler);
         serverMessage(handler.getClientName() + " has left the game");
     }
+    
+    public synchronized void addHandlerToLobby(ClientHandler handler) {
+    	lobby.add(handler);
+    }
 
+    public synchronized List<ClientHandler> getLobby() {
+    	return lobby;
+    }
+    
     private void serverMessage(String msg) {
     	System.err.println("SERVER: " + msg);
     }
@@ -132,28 +137,6 @@ public class Server {
         // koppel aan LocalOnlinePlayer
 
 
-    }
-
-    public synchronized void readString(ClientHandler handler, String msg) {
-    	serverMessage(handler + " sends " + msg);
-    	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-		do {
-			switch (input[0]) {
-				case Protocol.CLIENT_CORE_JOIN:
-					threads.remove(handler);
-
-					break;
-				case Protocol.CLIENT_CORE_MOVE:
-					makeMove(handler, input[1]);
-					break;
-				case Protocol.CLIENT_CORE_PLAYERS:
-					for (int i = 0; i < lobby.size(); i++) {
-						sendMessage(handler, Protocol.SERVER_CORE_PLAYERS +
-							   Protocol.MESSAGESEPERATOR + lobby.get(i).getClientName());
-					}
-					break;
-			}
-		} while (true);
     }
 
     public void broadcast(String msg) {
