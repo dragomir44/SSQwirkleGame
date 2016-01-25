@@ -1,25 +1,25 @@
 package model;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Hand {
 	
-	private int tilesPerPlayer;
-	private Bag bag;
-	public ArrayList<Tile> hand = new ArrayList<Tile>();
+	private ArrayList<Tile> hand = new ArrayList<Tile>();
 	
-	public Hand(Bag bag, int tilesPerPlayer) {
-		this.bag = bag;
-		this.tilesPerPlayer = tilesPerPlayer;
-		drawTiles();
-	}
-
-	public Bag getBag() {
-		return bag;
+	public Hand() {
 	}
 
 	public ArrayList<Tile> getTiles() {
 		return new ArrayList<Tile>(this.hand);
+	}
+
+	public int getSize() {
+		return hand.size();
+	}
+
+	public void addTiles(ArrayList<Tile> tiles) {
+		hand.addAll(tiles);
 	}
 	
     public String toString() { 
@@ -30,50 +30,30 @@ public class Hand {
 		}
     	return output;
     }
-    
-	public ArrayList<Tile> removeTiles(ArrayList<Tile> tiles) {
-		hand.removeAll(tiles);
-		return drawTiles();
-	}
-	
-	public ArrayList<Tile> removeTile(Tile tile) {
-		ArrayList<Tile> tiles = new ArrayList<Tile>();
-		tiles.add(tile);
-		return removeTiles(tiles);
-	}
 
-	public ArrayList<Tile> replaceTiles(ArrayList<Integer> tileIndex) {
-		Set<Integer> tilenrs = new HashSet<Integer>(tileIndex);
-		return replaceTiles(tilenrs);
-	}
-
-	public ArrayList<Tile> replaceTiles(Set<Integer> tilenrs) {
-		ArrayList<Tile> newTiles = new ArrayList<Tile>(tilenrs.size());
-		ArrayList<Tile> oldTiles = new ArrayList<Tile>(tilenrs.size());
-		if (Collections.min(tilenrs) < 0 ||
-			   Collections.max(tilenrs) > hand.size() ||
-			   tilenrs.size() > bag.getBag().size()) {
-			newTiles = null;
+	public void removeTile(Tile tile) {
+		if (hand.contains(tile)) {
+			hand.remove(tile);
 		} else {
-			for (int i : tilenrs) {
-				oldTiles.add(hand.get(i));
-			}
-			newTiles = removeTiles(oldTiles);
-			bag.addTiles(oldTiles);
+			System.err.println("Trying to remove tile that is not in hand.");
 		}
-		return newTiles;
+
 	}
-	
-	private ArrayList<Tile> drawTiles() {
-		ArrayList<Tile> tilesDrawn = new ArrayList<Tile>();
-		int tilesToDraw = tilesPerPlayer - hand.size();
-        for (int i = 0; i < tilesToDraw; i++) {
-        	if (!bag.getBag().isEmpty()) {
-        		Tile drawnTile = bag.getBag().remove(0);
-        		tilesDrawn.add(drawnTile);
-        		hand.add(drawnTile);	
-        	}
-        }
-        return tilesDrawn;
+
+	public ArrayList<Tile> removeTiles(Set<Integer> tilenrs) {
+		ArrayList<Tile> removedTiles = new ArrayList<Tile>();
+		for (int nr : tilenrs) {
+			removedTiles.add(hand.get(nr));
+		}
+		hand.removeAll(removedTiles);
+		return removedTiles;
+	}
+
+	public void clearHand() {
+		hand = new ArrayList<Tile>();
+	}
+
+	public boolean isEmpty() {
+		return hand.isEmpty();
 	}
 }

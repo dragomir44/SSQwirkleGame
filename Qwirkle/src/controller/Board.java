@@ -3,8 +3,6 @@ package controller;
 import model.*;
 import java.util.*;
 
-
-
 public class Board {
 	boolean firstMove = true;
 	public String errorBuffer = "";
@@ -14,7 +12,6 @@ public class Board {
 	public BoardTiles getTiles() {
 		return this.tiles;
 	}
-
 
 	public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
         ArrayList<ArrayList<Tile>> tileLines;
@@ -34,11 +31,8 @@ public class Board {
         }
         return prevLines;
 	}
-	/** Get the horizontal and vertical line that the placed.
-	 *  tile is going to be part of
-	 * @param move
-	 * @return returns two ArrayLists of Tiles
-	 */
+
+
 	public ArrayList<ArrayList<Tile>> getLines(Move move, BoardTiles layout) {
 		ArrayList<ArrayList<Tile>> result = new ArrayList<ArrayList<Tile>>(2);
 		ArrayList<Tile> hline = new ArrayList<Tile>();
@@ -67,10 +61,6 @@ public class Board {
 		return result;
 	}
 
-	/** Make sure the move is a valid one.
-	 * @param moves
-	 * @return true if the move is a valid move
-	 */
 	public boolean isValidMove(ArrayList<Move> moves) {
 		BoardTiles protoTiles = new BoardTiles(tiles); // create copy of field to test moves
 		ArrayList<Tile> placedTiles = new  ArrayList<Tile>(); 
@@ -78,7 +68,6 @@ public class Board {
 		boolean sameLine = true;
 		boolean hasTile = false;
 		boolean hasAdjecent = false;
-		boolean noMoreThenSix = true;
 		boolean exclusiveColour = true;
 		boolean exclusiveShape = true;
 		errorBuffer = ""; // clear error buffer
@@ -121,7 +110,7 @@ public class Board {
 						}
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
-						exclusiveShape = 
+						exclusiveShape =
 								!lineShapes.contains(tile.getShape()) // make sure shape is unique
 								&& uniqueColours.size() == 1 // make sure colors are the same
 										// make sure it is the color
@@ -145,7 +134,6 @@ public class Board {
 			result = (hasAdjecent && 
 					!hasTile && 
 					(exclusiveColour ^ exclusiveShape) 
-					&& noMoreThenSix 
 					&& sameLine)
 					|| firstMove;
 			if (!result) {
@@ -207,10 +195,6 @@ public class Board {
 	}
 	
 
-	/** For placing a tile on the board.
-	 * @param moves an arrayList of moves
-	 * @return returns the points 
-	 */
 	public boolean setField(ArrayList<Move> moves, BoardTiles tileMapToPlace) {
 		BoardTiles tileMap = tileMapToPlace;
 		boolean result = true;

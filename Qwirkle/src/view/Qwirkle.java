@@ -5,8 +5,8 @@ import controller.*;
 public class Qwirkle {
 	public static void main(String[] a) {
 		String[] args = new String[2];
-		args[0] = "Jut";
-		args[1] = "Frank";
+		args[0] = "-S";
+		args[1] = "-N";
     	if (args.length > 1 && args.length <= 4) {
     		Player[] players = new Player[args.length];
     		for (int i = 0; i < args.length; i++) {

@@ -32,7 +32,6 @@ public class SmartStrategy implements Strategy {
                             break moveLoop;
                         }
                     } else if (moves.size() == 2 || score > 4) { // endgame situation
-                        System.err.println("Endgame Situation");
                         moves = mMoves;
                         break moveLoop;
                     }
@@ -42,7 +41,7 @@ public class SmartStrategy implements Strategy {
                 moves = possibleMoves.firstKey();
             }
         } else {
-            ArrayList<Integer> tileNrs = new ArrayList<Integer>();
+            Set<Integer> tileNrs = new HashSet<Integer>();
             tileNrs.add(1);
             moves.add(new TradeMove(tileNrs));
         }

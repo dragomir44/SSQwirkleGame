@@ -1,9 +1,6 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,10 +66,18 @@ public class HumanPlayer extends Player {
 						question = "You can't trade tiles on the first turn.\n";
 						question += retry + drawText + placeText;
 					} else {
-						ArrayList<Integer> tileNrs = new ArrayList<Integer>();
+						Set<Integer> tileNrs = new HashSet<Integer>();
 						matcher = Pattern.compile(findTilenrs).matcher(answer);
 						while (matcher.find()) {
-							tileNrs.add(Integer.parseInt(matcher.group()) - 1);
+							int tileNr = Integer.parseInt(matcher.group()) - 1;
+							if (tileNr <= hand.getSize()) {
+								tileNrs.add(tileNr);
+							} else {
+								question = "Tile " + tileNr + " does not exist";
+								question += retry + drawText + placeText;
+								break;
+							}
+
 						}
 						moves.add(new TradeMove(tileNrs));
 						if (moves.size() > 0) {
@@ -124,7 +129,6 @@ public class HumanPlayer extends Player {
 						}
 					} else { // invald syntax
 						question = "Not enough input arguments\n";
-						question += "your input: " + allMatches;
 						question += retry + drawText + placeText;
 					}
 					break;
