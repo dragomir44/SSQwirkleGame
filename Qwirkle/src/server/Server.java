@@ -62,7 +62,8 @@ public class Server {
                 ClientHandler handler = new ClientHandler(this, clientSocket);
                 handler.start();
                 addHandler(handler);
-                System.out.println("<Client" + (++clientNo) + "> connected");
+                System.out.println("<Client" + (++clientNo) + " " 
+                		  + handler.getClientName() + "> connected");
             }
         } catch (IOException e) {
             serverMessage("*ERROR* Socket couldn't be created.");
@@ -73,9 +74,7 @@ public class Server {
 	public String getInput(String question) {
         String input = null;
         try {
-            if (question != "") {
-                System.out.println(question);
-            }
+        	System.out.println(question);    
             input = new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
             if (input.equalsIgnoreCase("exit")) {
                 shutdown();
@@ -85,7 +84,6 @@ public class Server {
             shutdown();
         }
         return input;
-
     }
 
     public void sendMessage(ClientHandler handler, String message) {

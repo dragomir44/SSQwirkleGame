@@ -20,12 +20,15 @@ public class ClientHandler extends Thread {
     private BufferedWriter out;
     private BufferedReader in;
     private String clientName;
+    private Socket socket;
     public boolean rematch;
+  
 
     public ClientHandler(Server serverArg, Socket sock) throws IOException {
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
         server = serverArg;
+        socket = sock;
     }
 
     public void run() {
@@ -59,7 +62,11 @@ public class ClientHandler extends Thread {
     }
     
     public String getClientName() {
-        return clientName;
+    	if (clientName == null) {
+    		return String.valueOf(socket.getInetAddress());
+    	} else {
+    		return clientName;
+    	}
     }
     
     public void announce() throws IOException {
