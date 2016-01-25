@@ -80,29 +80,43 @@ public class ClientHandler extends Thread {
 			switch (input[0]) {
 				case Protocol.CLIENT_CORE_EXTENSION:
 					sendMessage(Protocol.SERVER_CORE_EXTENSION);
+					break;
 				case Protocol.CLIENT_CORE_LOGIN:
 					if (input[1].contains(" ") || server.getLobby().contains(input[1])) {
-						server.addHandler(handler);
 						sendMessage(Protocol.SERVER_CORE_LOGIN_DENIED);	
+						break;
 					} else {
-						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
+						server.addHandler(handler);
 						clientName = input[1];
+						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
+						break;
 					}
 				case Protocol.CLIENT_CORE_JOIN:
 					Random rn = new Random();
-					String clientNo = Integer.toString((rn.nextInt(99) + 1));
+					String clientNo = Integer.toString(rn.nextInt(99) + 1);
 					clientName = "Player" + clientNo;
-					sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + Protocol.MESSAGESEPERATOR + clientName);
+					sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
+								  Protocol.MESSAGESEPERATOR + clientName);
 					break;
+					// when Protocol.CLIENT_CORE_JOIN_DENIED?
+				case Protocol.CLIENT_CORE_PLAYERS:
+					for (int i = 0; i < server.getLobby().size(); i++) {
+						sendMessage(Protocol.SERVER_CORE_PLAYERS + Protocol.MESSAGESEPERATOR 
+									  + server.getLobby().get(i).getClientName());
+					}
+					break;
+				case Protocol.CLIENT_CORE_START:
+					//if enough players --> create game
+					//send all clients clients names +  SERVER_CORE_START
+					//SERVER_CORE_TURN
+					// else SERVER_CORE_START_DENIED
 				case Protocol.CLIENT_CORE_MOVE:
 //					makeMove(handler, input[1]);
 					break;
-				case Protocol.CLIENT_CORE_PLAYERS:
-					for (int i = 0; i < server.getLobby().size(); i++) {
-//						sendMessage(handler, Protocol.SERVER_CORE_PLAYERS +
-//							   Protocol.MESSAGESEPERATOR + server.lobby.get(i).getClientName());
-					}
-					break;
+				case Protocol.CLIENT_CORE_DONE:
+					
+				case Protocol.CLIENT_CORE_SWAP:
+
 				default:
 					System.out.println(msg);
 			}
