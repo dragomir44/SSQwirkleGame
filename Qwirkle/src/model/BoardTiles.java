@@ -143,7 +143,7 @@ public class BoardTiles {
 				}
 			}
 		} else {
-			emptyFields.add(new int[] {1, 1});
+			emptyFields.add(new int[] {0, 0});
 		}
 
 		return emptyFields;

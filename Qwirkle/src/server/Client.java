@@ -6,6 +6,7 @@ import model.Tile;
 import model.TradeMove;
 import model.Tile.Colour;
 import model.Tile.Shape;
+import model.ValueComparator;
 import view.MultiplayerGame;
 
 import static org.junit.Assert.assertEquals;
@@ -20,9 +21,7 @@ import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Client extends Thread {
 
@@ -37,8 +36,8 @@ public class Client extends Thread {
 	private Board board = new Board();
 	private Player player;
 	private ArrayList<String> opponents;
-	private ArrayList<String> playersInServer;
-	private ArrayList<Move> movesMade;
+	private HashMap<String, Integer> playersInServer;
+	private ArrayList<Move> movesMade; // store the last move that was made
 
 	
 	public Client() throws IOException {
@@ -95,123 +94,122 @@ public class Client extends Thread {
     public synchronized void readString(String msg) throws IOException {
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
     	String game;
-    	boolean done = false;
-		do {
-			switch (input[0]) {
-				case Protocol.SERVER_CORE_EXTENSION:
-					if (clientName != null) {
-						sendMessage(Protocol.CLIENT_CORE_LOGIN 
-								  + Protocol.MESSAGESEPERATOR + clientName);
-					} else {
-						sendMessage(Protocol.CLIENT_CORE_JOIN 
-								  + Protocol.MESSAGESEPERATOR + clientName);
-					}
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_LOGIN_DENIED:
-					System.out.println("Login denied. Try again with a different name");
-					shutdown();
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
-					game = getInput("Type 'Y' to start a game");
-					if (game.equals("Y")) {
-						sendMessage(Protocol.CLIENT_CORE_START);
-					}
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_JOIN_DENIED:
-					System.out.println("Join denied. Try again");
-					shutdown();
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_JOIN_ACCEPTED:
-					clientName = input[1];
-					System.out.println("Joined server as: " + input[1]);
-					game = getInput("Type 'Y' to start a game");
-					if (game.equals("Y")) {
-						sendMessage(Protocol.CLIENT_CORE_START);
-					}
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_START_DENIED:
-					System.out.println("Server does not want to start");
-					break;
-				case Protocol.SERVER_CORE_START:
-					for (int i = 1; i < input.length; i++) {
-						String naam = input[i];
-						opponents.add(naam);
-					}
-					// start een bord/game met aantal opponents
-					// met aantal opponents
-					done = true;
-					break;
-				// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
-				case Protocol.SERVER_CORE_PLAYERS:
-					playersInServer = new ArrayList<String>();
-					for (int i = 1; i < input.length; i++) {
-						String naam = input[i];
-						playersInServer.add(naam);
-					}
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_TURN:
-					//bepaal current op eigen bord door turn
-					String turnPlayer = input[1];
-					if (turnPlayer.equals(clientName)) {
-						getMove();
-						//make moves
-						//sendMessage(Protocol.CLIENT_CORE_MOVE + move)
-						//wacht voor Protocol.SERVER_CORE_MOVE_ACCEPTED van client
-						//maak meer moves
-						//if (last move sent) sendMessage(Protocol.CLIENT_CORE_DONE)
-						//if (Protocol.SERVER_CORE_MOVE_DENIED) 
-					}
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_MOVE_MADE:
-					Move move = translateStringToMove(input);
-					movesMade.add(move);
-					break;
-				case Protocol.SERVER_CORE_DONE:
-					// this is sent after tiles from bag got given to player
-					
-					makeMove(movesMade);
-					movesMade.clear();
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_SCORE:
-					addScores(input);
-					break;
-				case Protocol.SERVER_CORE_SEND_TILE:
-					Tile receivedTile = translateTile(input);
-					//give this tile to the player
-					
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_SWAP_ACCEPTED:
-					System.out.println("Done swapping");
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_SWAP_DENIED:
-					System.out.println("Swap denied");
-					
-					break;
-				case Protocol.SERVER_CORE_GAME_ENDED:
-					addScores(input);
-					System.out.println("The game has ended");
-					shutdown();
-					done = true;
-					break;
-				case Protocol.SERVER_CORE_TIMEOUT_EXCEPTION:
-					System.out.println("Player <" + input[1] + "> timed out");
-					shutdown();
-					done = true;
-					break;
-				default:
-					System.out.println(msg);
-			}
-		} while (!done);
+		switch (input[0]) {
+			case Protocol.SERVER_CORE_EXTENSION:
+				if (clientName != null) {
+					sendMessage(Protocol.CLIENT_CORE_LOGIN
+							  + Protocol.MESSAGESEPERATOR + clientName);
+				} else {
+					sendMessage(Protocol.CLIENT_CORE_JOIN
+							  + Protocol.MESSAGESEPERATOR + clientName);
+				}
+				break;
+			case Protocol.SERVER_CORE_LOGIN_DENIED:
+				System.out.println("Login denied. Try again with a different name");
+				shutdown();
+				break;
+			case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
+				game = getInput("Type 'Y' to start a game");
+				if (game.equals("Y")) {
+					sendMessage(Protocol.CLIENT_CORE_START);
+				}
+				break;
+			case Protocol.SERVER_CORE_JOIN_DENIED:
+				System.out.println("Join denied. Try again");
+				shutdown();
+				break;
+			case Protocol.SERVER_CORE_JOIN_ACCEPTED:
+				clientName = input[1];
+				System.out.println("Joined server as: " + input[1]);
+				game = getInput("Type 'Y' to start a game");
+				if (game.equals("Y")) {
+					sendMessage(Protocol.CLIENT_CORE_START);
+				}
+				break;
+			case Protocol.SERVER_CORE_START_DENIED:
+				System.out.println("Server does not want to start");
+				break;
+			case Protocol.SERVER_CORE_START:
+				for (int i = 1; i < input.length; i++) {
+					String naam = input[i];
+					opponents.add(naam);
+				}
+				// start een bord/game met aantal opponents
+				// met aantal opponents
+				break;
+			// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
+			case Protocol.SERVER_CORE_PLAYERS:
+				playersInServer = new HashMap<>();
+				for (int i = 1; i < input.length; i++) {
+					String naam = input[i];
+					playersInServer.put(naam, 0);
+				}
+				break;
+			case Protocol.SERVER_CORE_TURN:
+				//bepaal current op eigen bord door turn
+				String turnPlayer = input[1];
+				if (turnPlayer.equals(clientName)) {
+					//TODO stuck in loop, what if string is received during this loop?
+					// local player's turn, make a move.
+					makeMove();
+				}
+				break;
+			case Protocol.SERVER_CORE_MOVE_ACCEPTED:
+				// move is accepted, remove this tile from player hand
+				if (!movesMade.isEmpty()) {
+					Move lastMove = movesMade.get(0);
+					player.getHand().removeTile(lastMove.tile);
+					movesMade.remove(lastMove);
+				} else {
+					System.err.println("*ERR* removing more moves then were made");
+				}
+				break;
+			case Protocol.SERVER_CORE_MOVE_DENIED:
+				// current move was invalid, try again.
+				System.out.println("Move " + movesMade.get(0) + " was rejected, try again.");
+				makeMove();
+				break;
+			case Protocol.SERVER_CORE_SWAP_ACCEPTED:
+				System.out.println("Swap Accepted");
+				if (!movesMade.isEmpty()) {
+					Move lastMove = movesMade.get(0);
+					player.getHand().removeTile(lastMove.tile);
+					movesMade.remove(lastMove);
+				} else {
+					System.err.println("*ERR* removing more moves then were made");
+				}
+				break;
+			case Protocol.SERVER_CORE_SWAP_DENIED:
+				System.out.println("Move " + movesMade.get(0) + " was rejected, try again.");
+				makeMove();
+				break;
+			case Protocol.SERVER_CORE_MOVE_MADE:
+				// A player made a valid move, place on board.
+				placeTiles(translateStringToMove(input));
+				break;
+			case Protocol.SERVER_CORE_DONE:
+				// this is sent after tiles from bag got given to player
+				System.out.println("Server done sending tiles");
+				break;
+			case Protocol.SERVER_CORE_SCORE:
+				addScores(input);
+				break;
+			case Protocol.SERVER_CORE_SEND_TILE:
+				//give this tile to the player
+				receiveTiles(translateTile(input));
+				break;
+			case Protocol.SERVER_CORE_GAME_ENDED:
+				addScores(input);
+				System.out.println("The game has ended");
+				printResult();
+				shutdown();
+				break;
+			case Protocol.SERVER_CORE_TIMEOUT_EXCEPTION:
+				System.out.println("Player <" + input[1] + "> timed out");
+				break;
+			default:
+				System.out.println(msg);
+		}
     }
     
     public Move translateStringToMove(String[] moveInput) {
@@ -227,28 +225,47 @@ public class Client extends Thread {
     public String translateMoveToString(Move move) {
     	String x = Integer.toString(move.col);
     	String y = Integer.toString(move.row);
-    	String s = null;
-		String c = null;
+		String[] tileNumbers = tileToString(move.tile);
+    	String s = tileNumbers[0]; // shape
+		String c = tileNumbers[1];	// color
+
+		String sp = Protocol.MESSAGESEPERATOR;
+		String sendStart = Protocol.CLIENT_CORE_MOVE;
+		String done = Protocol.CLIENT_CORE_DONE;
+		return sendStart + x + sp + y + sp + s + sp + c + sp + done;
+    }
+
+	public String translateSwapToString(Tile tile) {
+		String[] tileNumbers = tileToString(tile);
+		String s = tileNumbers[0]; // shape
+		String c = tileNumbers[1];	// color
+		String sp = Protocol.MESSAGESEPERATOR;
+		String swapStart = Protocol.CLIENT_CORE_SWAP;
+		String done = Protocol.CLIENT_CORE_SWAP;
+
+		return swapStart + sp + s + sp + c + sp + done;
+	}
+
+	public String[] tileToString(Tile tile) {
+		String[] strings = new String[2];
 		int count1 = 1;
 		for (Shape shape : Shape.values()) {
-			if (move.tile.getShape().equals(shape)) {
-				s = Integer.toString(count1);
+			if (tile.getShape().equals(shape)) {
+				strings[0] = Integer.toString(count1);
 				break;
 			}
 			count1++;
 		}
 		int count2 = 1;
 		for (Colour colour : Colour.values()) {
-			if (move.tile.getColour().equals(colour)) {
-				c = Integer.toString(count2);
+			if (tile.getColour().equals(colour)) {
+				strings[1] = Integer.toString(count2);
 				break;
 			}
 			count2++;
 		}
-		String stringMove = x + " " + y + " " + s + " " + c; 
-		return stringMove;
-    }
-    
+		return strings;
+	}
     public Tile translateTile(String[] tileInput) {
     	Tile tile = new Tile(Integer.parseInt(tileInput[1]), Integer.parseInt(tileInput[2]));
     	return tile;
@@ -258,9 +275,12 @@ public class Client extends Thread {
 		for (int i = 1; i < scoreInput.length; i = i + 2) {
 			String name = scoreInput[i];
 			int score = Integer.parseInt(scoreInput[i + 1]);
-			// add name + score pair to something
+			playersInServer.put(name, score);
+			if (name.equals(clientName)) {
+				player.setScore(score);
+			}
 		}
-    	//return something;
+		printUpdate();
     }
     
     
@@ -293,60 +313,113 @@ public class Client extends Thread {
 		}	
 	}
 
-	public void makeMove(ArrayList<Move> moves) {
+	public void placeTiles(Move move) {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		moves.add(move);
+		placeTiles(moves);
+	}
+
+	public void placeTiles(ArrayList<Move> moves) {
 		board.setField(moves);
 	}
 
-	//TODO tradeTiles
-	public void receiveTiles(Set<Integer> tilenrs) {
-//		player.getHand().addTiles();
+	public void receiveTiles(Tile tile) {
+		player.getHand().addTile(tile);
 	}
 
-	//TODO client's turn to place tiles
-	public void getMove() {
-		ArrayList<Move> moves = player.determineMove(board);
-		if (moves.get(0) instanceof TradeMove) { // decided to trade tiles
-			Set<Integer> tileNrs = ((TradeMove) moves.get(0)).tileNrs;
-			//TODO send trade tiles to server
+	public void makeMove() {
+		movesMade.clear();
+		printUpdate();
+		movesMade = player.determineMove(board);
+		if (movesMade.get(0) instanceof TradeMove) { // decided to trade tiles
+			Set<Integer> tileNrs = ((TradeMove) movesMade.get(0)).tileNrs;
 			ArrayList<Tile> tradeTiles = new ArrayList<Tile>();
 			for (int nr : tileNrs) {
 				tradeTiles.add(player.getHand().getTiles().get(nr));
 			}
-			if (tradeTiles(tradeTiles)) { // trading tiles was succesfull
-				player.getHand().removeTiles(tileNrs);
-			}
+				swapMove(tradeTiles);
 		} else {
-			//TODO send tiles to place to server
-			if (placeTiles(moves)) {
-				//succesfully placed tiles
-				for (Move move : moves) {
-					player.getHand().removeTile(move.tile);
-				}
-			}
+			placeMove(movesMade);
 		}
 	}
 
-	//TODO method that sends tiles for trading
-	public boolean tradeTiles(ArrayList<Tile> tiles) {
+	public void swapMove(ArrayList<Tile> tiles) {
 
-		return false;
+		for (Tile tile : tiles) {
+			sendMessage(translateSwapToString(tile));
+		}
 	}
 
-	//TODO method that sends tiles to be placed
-	public boolean placeTiles(ArrayList<Move> moves) {
-		//TODO if first move, place on 0,0 etc...
-		return false;
+	public void placeMove(ArrayList<Move> moves) {
+		Move tailMove = moves.get(0);
+		if (board.isEmpty() &&
+				tailMove.row != 0 &&
+				tailMove.col != 0) {
+			// first move not on 0,0
+			System.out.println("Invalid move, the first should be on 0, 0");
+			makeMove(); // retry.
+		} else {
+			for (Move move : moves) {
+				sendMessage(translateMoveToString(move));
+			}
+		}
 	}
 
 	public String getClientName() {
 		return clientName;
 	}
 
+	private int getBagSize() {
+		int tiles = 108 - playersInServer.size() * 6 - board.getTiles().size();
+		if (tiles < 0) {
+			tiles = 0;
+		}
+		return tiles;
+	}
+
+	private void printUpdate() {
+		System.out.println("\ncurrent game situation:");
+		System.out.println(getBagSize()+ " tiles left in the bag.");
+		for (Map.Entry<String, Integer> player : playersInServer.entrySet()) {
+			Integer score = player.getValue();
+			String name = player.getKey();
+			System.out.println(name + "'s score is: " + score);
+		}
+
+		System.out.println();
+		System.out.println(board.toString());
+	}
+
+	private void printResult() {
+		ValueComparator scoreComp = new ValueComparator();
+		TreeMap<String, Integer> sortedScores = scoreComp.sortByValue(playersInServer);
+
+		LinkedHashMap<String, Integer> winners = scoreComp.getHeads();
+		if (winners.size() > 1) {
+			System.out.println("There is a draw: ");
+		} else {
+			System.out.print("The winner is: ");
+		}
+		for (Map.Entry<String, Integer> winner : winners.entrySet()) {
+			Integer score = winner.getValue();
+			String name = winner.getKey();
+			System.out.println(name + " with a score of " + score);
+		}
+		System.out.println("The rest: ");
+		int i = 0;
+		for (Map.Entry<String, Integer> player : sortedScores.entrySet()) {
+			Integer score = player.getValue();
+			String name = player.getKey();
+			i++;
+			if (i > winners.size()) {
+				System.out.println(i + ": " + name + " scored " + score);
+			}
+		}
+	}
+
 
     public static void main(String[] args) throws IOException {
         Client c1 = new Client();
         c1.start();
-
-        
     }
 }

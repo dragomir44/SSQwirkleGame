@@ -56,4 +56,9 @@ public class Hand {
 	public boolean isEmpty() {
 		return hand.isEmpty();
 	}
+
+	public void addTile(Tile tile) {
+		hand.add(tile);
+	}
+
 }
