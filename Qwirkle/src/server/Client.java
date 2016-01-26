@@ -17,6 +17,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Set;
 
 public class Client extends Thread {
@@ -31,6 +32,9 @@ public class Client extends Thread {
 	private boolean firstTurn;
 	private Board board = new Board();
 	private Player player;
+	private ArrayList<String> opponents;
+	private ArrayList<String> playersInServer;
+	private ArrayList<Move> movesMade;
 
 	
 	public Client() throws IOException {
@@ -68,7 +72,7 @@ public class Client extends Thread {
 				String line = in.readLine();
 				if (line != null) {
 					System.out.println(line);
-					//analyze strings
+					readString(line);
 				} else {
 					break;
 				}
@@ -77,6 +81,128 @@ public class Client extends Thread {
 			shutdown();
 		}
 	}
+    
+
+    public synchronized void readString(String msg) throws IOException {
+    	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
+    	int x;
+    	int y;
+    	int shape;
+    	int colour;
+    	String game;
+    	boolean done = false;
+		do {
+			switch (input[0]) {
+				case Protocol.SERVER_CORE_EXTENSION:
+					if (clientName != null) {
+						sendMessage(Protocol.CLIENT_CORE_LOGIN + clientName);
+					} else {
+						sendMessage(Protocol.CLIENT_CORE_JOIN + clientName);
+					}
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_LOGIN_DENIED:
+					System.out.println("Login denied. Try again with a different name");
+					shutdown();
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
+					game = getInput("Type 'Y' to start a game");
+					if (game == "Y") {
+						sendMessage(Protocol.CLIENT_CORE_START);
+					}
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_JOIN_DENIED:
+					System.out.println("Join denied. Try again");
+					shutdown();
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_JOIN_ACCEPTED:
+					clientName = input[1];
+					System.out.println("Joined server as: " + input[1]);
+					game = getInput("Type 'Y' to start a game");
+					if (game == "Y") {
+						sendMessage(Protocol.CLIENT_CORE_START);
+					}
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_START_DENIED:
+					System.out.println("Server does not want to start");
+					break;
+				case Protocol.SERVER_CORE_START:
+					for (int i = 1; i < input.length; i++) {
+						String naam = input[i];
+						opponents.add(naam);
+					}
+					// start een bord
+					// met aantal opponents
+					done = true;
+					break;
+				// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
+				case Protocol.SERVER_CORE_PLAYERS:
+					playersInServer = new ArrayList<String>();
+					for (int i = 1; i < input.length; i++) {
+						String naam = input[i];
+						playersInServer.add(naam);
+					}
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_TURN:
+					//bepaal current op eigen bord door turn
+					String turnPlayer = input[1];
+					if (turnPlayer == clientName) {
+						//make moves
+						//sendMessage(Protocol.CLIENT_CORE_MOVE + move)
+						//wacht voor Protocol.SERVER_CORE_MOVE_ACCEPTED van client
+						//maak meer moves
+						//if (last move sent) sendMessage(Protocol.CLIENT_CORE_DONE)
+						//if (Protocol.SERVER_CORE_MOVE_DENIED) 
+					}
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_MOVE_MADE:
+					x = Integer.parseInt(input[1]);
+					y = Integer.parseInt(input[2]);
+					shape = Integer.parseInt(input[3]);
+					colour = Integer.parseInt(input[4]);
+					//add move to movesMade
+					break;
+				case Protocol.SERVER_CORE_DONE:
+					// this is sent after tiles from bag got given to player
+						
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_SCORE:
+					for (int i = 1; i < input.length; i = +2) {
+						String naam = input[i];
+						int score = Integer.parseInt(input[i + 1]);
+						//voeg scorepaar toe aan lijst
+					}
+					done = true;
+					break;
+				case Protocol.CLIENT_CORE_SWAP:
+					x = Integer.parseInt(input[1]);
+					y = Integer.parseInt(input[2]);
+					shape = Integer.parseInt(input[3]);
+					colour = Integer.parseInt(input[4]);
+					// if move = valid
+					if (true) {
+						//plaats move op server gameboard
+						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
+						//stuur alle spelers deze move
+					} else {
+						// if tile is not in hand of client i.e.
+						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
+					}
+					done = true;
+					break;
+				default:
+					System.out.println(msg);
+					done = true;
+			}
+		} while (!done);
+    }
     
 	public String getInput(String question) throws IOException {
 	    String input = null;

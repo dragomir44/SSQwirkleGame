@@ -35,12 +35,12 @@ public class Server {
         lobby = new ArrayList<ClientHandler>();
         ingame = new ArrayList<ClientHandler>();
         try {
-            String portString = getInput("(leave empty for port 1337) \nPort: ");
-            if (portString.equals("")) {
+            //String portString = getInput("(leave empty for port 1337) \nPort: ");
+          //  if (portString.equals("")) {
             	port = Integer.parseInt(Protocol.PORT);
-            } else {
-                port = Integer.parseInt(portString);
-            }
+          //  } else {
+          //      port = Integer.parseInt(portString);
+         //   }
             try {
                 serverMessage("Starting with IP: " + InetAddress.getLocalHost()
                 		  + " and port: " + port + "\n");
