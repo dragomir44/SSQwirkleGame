@@ -2,15 +2,18 @@ package controller;
 
 
 import model.Move;
+import server.ClientHandler;
 
 import java.util.ArrayList;
 
-public class EnemyOnlinePlayer extends Player {
+public class OnlinePlayer extends Player {
     // enemy online player is een player aan de server kant
     // deze class verwerkt handler moves.
+    ClientHandler client;
 
-    public EnemyOnlinePlayer(String name) {
+    public OnlinePlayer(String name, ClientHandler client) {
         super(name);
+        this.client = client;
     }
 
     @Override

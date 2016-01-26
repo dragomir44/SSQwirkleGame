@@ -4,10 +4,7 @@ import controller.*;
 import model.Move;
 import model.Tile;
 import model.TradeMove;
-import model.Tile.Colour;
-import model.Tile.Shape;
 import model.ValueComparator;
-import view.MultiplayerGame;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,19 +13,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.*;
 
-public class Client extends Thread {
+public class Client extends serverMethods{
 
-	private String clientName;
-	private Socket sock;
-	private BufferedReader in;
-	private BufferedWriter out;
+
 	private Board board = new Board();
 	private Player player;
 	private ArrayList<String> opponents;
@@ -177,7 +168,7 @@ public class Client extends Thread {
 				break;
 			case Protocol.SERVER_CORE_MOVE_MADE:
 				// A player made a valid move, place on board.
-				placeTiles(translateStringToMove(input));
+				placeTiles(stringToMove(input));
 				break;
 			case Protocol.SERVER_CORE_DONE:
 				// this is sent after tiles from bag got given to player
@@ -188,7 +179,7 @@ public class Client extends Thread {
 				break;
 			case Protocol.SERVER_CORE_SEND_TILE:
 				//give this tile to the player
-				receiveTiles(translateTile(input));
+				receiveTiles(stringToTile(input));
 				break;
 			case Protocol.SERVER_CORE_GAME_ENDED:
 				addScores(input);
@@ -204,66 +195,7 @@ public class Client extends Thread {
 		}
     }
     
-    public Move translateStringToMove(String[] moveInput) {
-    	int x = Integer.parseInt(moveInput[1]);
-    	int y = Integer.parseInt(moveInput[2]);
-    	int shape = Integer.parseInt(moveInput[3]);
-    	int colour = Integer.parseInt(moveInput[4]);
-    	Tile moveTile = new Tile(shape, colour);
-    	Move move = new Move(y, x, moveTile);
-    	return move;
-    }
-    
-    public String translateMoveToString(Move move) {
-    	String x = Integer.toString(move.col);
-    	String y = Integer.toString(move.row);
-		String[] tileNumbers = tileToString(move.tile);
-    	String s = tileNumbers[0]; // shape
-		String c = tileNumbers[1];	// color
-
-		String sp = Protocol.MESSAGESEPERATOR;
-		String sendStart = Protocol.CLIENT_CORE_MOVE;
-		String done = Protocol.CLIENT_CORE_DONE;
-		return sendStart + x + sp + y + sp + s + sp + c + sp + done;
-    }
-
-	public String translateSwapToString(Tile tile) {
-		String[] tileNumbers = tileToString(tile);
-		String s = tileNumbers[0]; // shape
-		String c = tileNumbers[1];	// color
-		String sp = Protocol.MESSAGESEPERATOR;
-		String swapStart = Protocol.CLIENT_CORE_SWAP;
-		String done = Protocol.CLIENT_CORE_SWAP;
-
-		return swapStart + sp + s + sp + c + sp + done;
-	}
-
-	public String[] tileToString(Tile tile) {
-		String[] strings = new String[2];
-		int count1 = 1;
-		for (Shape shape : Shape.values()) {
-			if (tile.getShape().equals(shape)) {
-				strings[0] = Integer.toString(count1);
-				break;
-			}
-			count1++;
-		}
-		int count2 = 1;
-		for (Colour colour : Colour.values()) {
-			if (tile.getColour().equals(colour)) {
-				strings[1] = Integer.toString(count2);
-				break;
-			}
-			count2++;
-		}
-		return strings;
-	}
-    public Tile translateTile(String[] tileInput) {
-    	Tile tile = new Tile(Integer.parseInt(tileInput[1]), Integer.parseInt(tileInput[2]));
-    	return tile;
-    }
-    
-    public void addScores(String[] scoreInput) {
+	public void addScores(String[] scoreInput) {
 		for (int i = 1; i < scoreInput.length; i = i + 2) {
 			String name = scoreInput[i];
 			int score = Integer.parseInt(scoreInput[i + 1]);
@@ -283,28 +215,6 @@ public class Client extends Thread {
         return input;
     }
 	
-	public void sendMessage(String message) {
-		try {
-			out.write(message);
-			out.newLine();
-			out.flush();
-		} catch (IOException e) {
-			shutdown();
-		}
-    }
-
-	public void shutdown() {
-		System.out.println("CLOSING SOCKET");
-		try {
-			sock.close();
-			in.close();
-			out.close();
-			System.exit(0);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	}
-
 	public void placeTiles(Move move) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		moves.add(move);
@@ -336,9 +246,8 @@ public class Client extends Thread {
 	}
 
 	public void swapMove(ArrayList<Tile> tiles) {
-
 		for (Tile tile : tiles) {
-			sendMessage(translateSwapToString(tile));
+			sendMessage(swapToString(tile));
 		}
 	}
 
@@ -352,7 +261,7 @@ public class Client extends Thread {
 			makeMove(); // retry.
 		} else {
 			for (Move move : moves) {
-				sendMessage(translateMoveToString(move));
+				sendMessage(moveToString(move));
 			}
 		}
 	}

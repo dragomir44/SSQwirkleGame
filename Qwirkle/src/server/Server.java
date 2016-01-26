@@ -73,7 +73,7 @@ public class Server {
 	}
 
 	public MultiplayerGame startGame(ClientHandler handler) {
-		MultiplayerGame game = new MultiplayerGame();
+		MultiplayerGame game = new MultiplayerGame(handler);
 		ArrayList<ClientHandler> players = new ArrayList<ClientHandler>();
 		StringBuilder playersString = new StringBuilder();
 		ClientHandler player;
