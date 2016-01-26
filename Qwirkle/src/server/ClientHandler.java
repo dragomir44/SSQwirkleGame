@@ -162,7 +162,6 @@ public class ClientHandler extends Thread {
 					break;
 				default:
 					System.out.println(msg);
-					done = true;
 			}
 		} while (!done);
     }

@@ -170,36 +170,48 @@ public class Client extends Thread {
 					break;
 				case Protocol.SERVER_CORE_DONE:
 					// this is sent after tiles from bag got given to player
-						
+					// add movesMade to board	
 					done = true;
 					break;
 				case Protocol.SERVER_CORE_SCORE:
-					for (int i = 1; i < input.length; i = +2) {
-						String naam = input[i];
+					for (int i = 1; i < input.length; i = i + 2) {
+						String name = input[i];
 						int score = Integer.parseInt(input[i + 1]);
-						//voeg scorepaar toe aan lijst
+						// add name + score pair to something
 					}
+					break;
+				case Protocol.SERVER_CORE_SEND_TILE:
+					shape = Integer.parseInt(input[1]);
+					colour = Integer.parseInt(input[2]);
+					//give this tile to the player
+					
 					done = true;
 					break;
-				case Protocol.CLIENT_CORE_SWAP:
-					x = Integer.parseInt(input[1]);
-					y = Integer.parseInt(input[2]);
-					shape = Integer.parseInt(input[3]);
-					colour = Integer.parseInt(input[4]);
-					// if move = valid
-					if (true) {
-						//plaats move op server gameboard
-						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-						//stuur alle spelers deze move
-					} else {
-						// if tile is not in hand of client i.e.
-						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
+				case Protocol.SERVER_CORE_SWAP_ACCEPTED:
+					System.out.println("Done swapping");
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_SWAP_DENIED:
+					System.out.println("Swap denied");
+					
+					break;
+				case Protocol.SERVER_CORE_GAME_ENDED:
+					for (int i = 1; i < input.length; i = i + 2) {
+						String name = input[i];
+						int score = Integer.parseInt(input[i + 1]);
+						// add name + score pair to something
 					}
+					System.out.println("The game has ended");
+					shutdown();
+					done = true;
+					break;
+				case Protocol.SERVER_CORE_TIMEOUT_EXCEPTION:
+					System.out.println("Player <" + input[1] + "> timed out");
+					shutdown();
 					done = true;
 					break;
 				default:
 					System.out.println(msg);
-					done = true;
 			}
 		} while (!done);
     }

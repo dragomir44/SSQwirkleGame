@@ -54,13 +54,11 @@ public class ServerTest {
 				  + "Sergey 102 Frank 11 Fred 5923";
 		System.out.println(scores);
 		String[] splitScores = scores.split(Protocol.MESSAGESEPERATOR);
-		for (int i = 1; i < splitScores.length; i = +2) {
+		for (int i = 1; i < splitScores.length; i = i + 2) {
 			String naam = splitScores[i];
-			System.out.println(naam);
-			//int score = Integer.parseInt(splitScores[i + 1]);
-			System.out.println(naam + ": ");
+			int score = Integer.parseInt(splitScores[i + 1]);
+			System.out.println(naam + ": " + score);
 		}
-		System.out.println("lol");
 	}
 	
 }
