@@ -19,5 +19,10 @@ public class EnemyOnlinePlayer extends Player {
         // return moves;
     	return null;
     }
+      
+//    @Override
+//    pulic void sendString(String msg) {
+//    	// send text to player
+//    }
 
 }

@@ -2,31 +2,42 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.omg.Messaging.SyncScopeHelper;
 
+import model.Move;
+import model.Tile;
+import model.Tile.Colour;
+import model.Tile.Shape;
+import server.Client;
 import server.ClientHandler;
 import server.Protocol;
 
 public class ServerTest {
 	private ArrayList<String> lobby;
 	private ArrayList<String> opponents;
+	private Tile tile;
+	private Move move;
 	
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		lobby = new ArrayList<String>();
 		opponents = new ArrayList<String>();
 		lobby.add("Sergey");
 		lobby.add("Frank");
 		lobby.add("Fred");
+		lobby.add("rob");
+		tile = new Tile(Shape.$, Colour.G);
+		move = new Move(1, 2, tile);
 	}
 	
 	
 	@Test
-	public void stringBuilderTest() {
+	public void getLobbyPlayersTest() {
 		StringBuilder players = new StringBuilder();
 		for (int i = 0; i < lobby.size(); i++) {
 			players.append(" " + lobby.get(i));
@@ -59,6 +70,33 @@ public class ServerTest {
 			int score = Integer.parseInt(splitScores[i + 1]);
 			System.out.println(naam + ": " + score);
 		}
+	}
+	
+	@Test
+	public void lobbyGameTest() {
+		int count = lobby.size();
+		System.out.println("Lobby size: " + count);
+		if (count % 4 == 0) {
+			System.out.println("This game can be played with 2");
+		} else if (count % 3 == 0) {
+			System.out.println("This game can be played with 3");
+		} else if (count % 2 == 0) { 
+			System.out.println("This game can be played with 4");
+		}
+	}
+	
+	@Test
+	public void tileTranslateTest() throws IOException {
+		String c = null;
+		int count = 1;
+		for (Colour colour : Colour.values()) {
+			if (tile.getColour().equals(colour)) {
+				c = colour.toString();
+				break;
+			}
+			count++;
+		}
+		assertEquals(c, tile.getColour().toString());
 	}
 	
 }

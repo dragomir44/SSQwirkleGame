@@ -4,7 +4,11 @@ import controller.*;
 import model.Move;
 import model.Tile;
 import model.TradeMove;
+import model.Tile.Colour;
+import model.Tile.Shape;
 import view.MultiplayerGame;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,7 +42,12 @@ public class Client extends Thread {
 
 	
 	public Client() throws IOException {
-		clientName = getInput("Name:");
+		//clientName = getInput("Name:");
+		//port = Integer.parseInt(getInput("Port:"));
+		//TEST: REMOVE AFTER TESTING
+		Random rn = new Random();
+		clientName = "Player" + rn.nextInt(1000);
+		port = 1337;
 		switch (clientName) {
 			case "-N":
 				player = new ComputerPlayer(new NaiveStrategy(), "Fred");
@@ -51,7 +60,7 @@ public class Client extends Thread {
 				break;
 		}
 
-		port = Integer.parseInt(getInput("Port:"));
+
 		host = InetAddress.getLocalHost();
 		playerInput = new BufferedReader(new InputStreamReader(System.in));
 		firstTurn = true;
@@ -85,10 +94,6 @@ public class Client extends Thread {
 
     public synchronized void readString(String msg) throws IOException {
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	int x;
-    	int y;
-    	int shape;
-    	int colour;
     	String game;
     	boolean done = false;
 		do {
@@ -165,7 +170,7 @@ public class Client extends Thread {
 					done = true;
 					break;
 				case Protocol.SERVER_CORE_MOVE_MADE:
-					Move move = translateMove(input);
+					Move move = translateStringToMove(input);
 					movesMade.add(move);
 					break;
 				case Protocol.SERVER_CORE_DONE:
@@ -179,7 +184,7 @@ public class Client extends Thread {
 					addScores(input);
 					break;
 				case Protocol.SERVER_CORE_SEND_TILE:
-					translateTile(input);
+					Tile receivedTile = translateTile(input);
 					//give this tile to the player
 					
 					done = true;
@@ -209,14 +214,39 @@ public class Client extends Thread {
 		} while (!done);
     }
     
-    public Move translateMove(String[] moveInput) {
+    public Move translateStringToMove(String[] moveInput) {
     	int x = Integer.parseInt(moveInput[1]);
     	int y = Integer.parseInt(moveInput[2]);
     	int shape = Integer.parseInt(moveInput[3]);
     	int colour = Integer.parseInt(moveInput[4]);
     	Tile moveTile = new Tile(shape, colour);
-    	Move move = new Move(x, y, moveTile);
+    	Move move = new Move(y, x, moveTile);
     	return move;
+    }
+    
+    public String translateMoveToString(Move move) {
+    	String x = Integer.toString(move.col);
+    	String y = Integer.toString(move.row);
+    	String s = null;
+		String c = null;
+		int count1 = 1;
+		for (Shape shape : Shape.values()) {
+			if (move.tile.getShape().equals(shape)) {
+				s = Integer.toString(count1);
+				break;
+			}
+			count1++;
+		}
+		int count2 = 1;
+		for (Colour colour : Colour.values()) {
+			if (move.tile.getColour().equals(colour)) {
+				c = Integer.toString(count2);
+				break;
+			}
+			count2++;
+		}
+		String stringMove = x + " " + y + " " + s + " " + c; 
+		return stringMove;
     }
     
     public Tile translateTile(String[] tileInput) {

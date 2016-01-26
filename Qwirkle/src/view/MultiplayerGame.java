@@ -27,10 +27,12 @@ public class MultiplayerGame extends Game {
 
     @Override
     public ArrayList<Tile> replenishTiles(Player p) {
-
-        return null;
+    	ArrayList<Tile> newTiles = super.replenishTiles(p);
+    	//TODO send new tiles to player
+        return newTiles;
     }
-
+    
+    //If player wants to replace tiles
     @Override
     public ArrayList<Tile> replaceTiles(Player p,  Set<Integer> tilenrs) {
         return null;

@@ -12,7 +12,9 @@ import java.util.Random;
 
 import controller.Player;
 import model.Move;
+import model.Tile;
 import view.Game;
+import view.MultiplayerGame;
 
 public class ClientHandler extends Thread {
 
@@ -22,7 +24,7 @@ public class ClientHandler extends Thread {
     private String clientName;
     private Socket socket;
     public boolean rematch;
-  
+    private MultiplayerGame game;
 
     public ClientHandler(Server serverArg, Socket sock) throws IOException {
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -47,6 +49,8 @@ public class ClientHandler extends Thread {
 	}
 
     public void sendMessage(String msg) {
+    	//Test
+    	server.print(this, msg);
         try {
             out.write(msg);
             out.newLine();
@@ -75,12 +79,8 @@ public class ClientHandler extends Thread {
     }
 
     public synchronized void readString(ClientHandler handler, String msg) {
-    	System.out.println(msg);
+    	System.out.println("Received: " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	int x;
-    	int y;
-    	int shape;
-    	int colour;
     	boolean done = false;
 		do {
 			switch (input[0]) {
@@ -95,6 +95,8 @@ public class ClientHandler extends Thread {
 						server.addHandler(handler);
 						clientName = input[1];
 						server.addHandlerToLobby(this);
+						System.out.println("Lobby size: " + server.getLobby().size());
+						System.out.println("Lobby : " + server.getLobby().iterator().toString());
 						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
 						System.out.println("Clientname " + clientName + " assigned to " + this);
 					}
@@ -108,6 +110,8 @@ public class ClientHandler extends Thread {
 								  Protocol.MESSAGESEPERATOR + clientName);
 					System.out.println("Clientname " + clientName + " set to " + this.getName());
 					server.addHandlerToLobby(this);
+					System.out.println("Lobbby size: " + server.getLobby().size());
+					System.out.println("Lobby : " + server.getLobby().toArray().toString());
 					done = true;
 					break;
 					// when Protocol.CLIENT_CORE_JOIN_DENIED?
@@ -118,16 +122,16 @@ public class ClientHandler extends Thread {
 					break;
 				case Protocol.CLIENT_CORE_START:
 					//Check amount of players in lobby --> create game with those
+					game = new MultiplayerGame();
+	//				game.addPlayer(Player clientPlayer);
+					game.start();
 					//send all clients clients names +  SERVER_CORE_START
 					//SERVER_CORE_TURN
 					// else SERVER_CORE_START_DENIED
 					done = true;
 					break;
 				case Protocol.CLIENT_CORE_MOVE:
-					x = Integer.parseInt(input[1]);
-					y = Integer.parseInt(input[2]);
-					shape = Integer.parseInt(input[3]);
-					colour = Integer.parseInt(input[4]);
+					Move receivedMove = translateMove(input);
 					// if move = valid
 					if (true) {
 						//plaats move op server gameboard
@@ -147,11 +151,10 @@ public class ClientHandler extends Thread {
 					done = true;
 					break;
 				case Protocol.CLIENT_CORE_SWAP:
-					x = Integer.parseInt(input[1]);
-					y = Integer.parseInt(input[2]);
-					shape = Integer.parseInt(input[3]);
-					colour = Integer.parseInt(input[4]);
-					// if move = valid
+					Tile receivedTile = translateTile(input);
+					// if tile = valid
+					// check if tile is in player hand:
+					//game.replaceTiles(player, tilenrs);
 					if (true) {
 						//plaats move op server gameboard
 						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
@@ -159,13 +162,29 @@ public class ClientHandler extends Thread {
 					} else {
 						// if tile is not in hand of client i.e.
 						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
-					}
+					}	
 					done = true;
 					break;
 				default:
 					System.out.println(msg);
+					break;
 			}
 		} while (!done);
+    }
+    
+    public Move translateMove(String[] moveInput) {
+    	int x = Integer.parseInt(moveInput[1]);
+    	int y = Integer.parseInt(moveInput[2]);
+    	int shape = Integer.parseInt(moveInput[3]);
+    	int colour = Integer.parseInt(moveInput[4]);
+    	Tile moveTile = new Tile(shape, colour);
+    	Move move = new Move(x, y, moveTile);
+    	return move;
+    }
+  
+    public Tile translateTile(String[] tileInput) {
+    	Tile tile = new Tile(Integer.parseInt(tileInput[1]), Integer.parseInt(tileInput[2]));
+    	return tile;
     }
     
     public StringBuilder getPlayersFromLobby() {

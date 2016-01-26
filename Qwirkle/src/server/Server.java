@@ -62,7 +62,7 @@ public class Server {
                 ClientHandler handler = new ClientHandler(this, clientSocket);
                 handler.start();
                 addHandler(handler);
-                System.out.println("<Client" + (++clientNo) + " " 
+                System.out.println("\n<Client" + (++clientNo) + " " 
                 		  + handler.getClientName() + "> connected");
             }
         } catch (IOException e) {
@@ -87,8 +87,13 @@ public class Server {
     }
 
     public void sendMessage(ClientHandler handler, String message) {
-        serverMessage("Sending " + message + " to " + handler.getClientName());
+        System.out.println("Sending: " + message + " to " + handler.getClientName());
         handler.sendMessage(message);
+    }
+    
+    //test
+    public void print(ClientHandler handler, String msg) {
+    	System.out.println("Sending " + msg + " to " + handler.getClientName());
     }
 
 
