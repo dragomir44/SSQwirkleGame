@@ -26,13 +26,9 @@ import java.util.*;
 public class Client extends Thread {
 
 	private String clientName;
-	private int port;
-	private InetAddress host;
 	private Socket sock;
 	private BufferedReader in;
 	private BufferedWriter out;
-	private BufferedReader playerInput;
-	private boolean firstTurn;
 	private Board board = new Board();
 	private Player player;
 	private ArrayList<String> opponents;
@@ -46,7 +42,7 @@ public class Client extends Thread {
 		//TEST: REMOVE AFTER TESTING
 		Random rn = new Random();
 		clientName = "Player" + rn.nextInt(1000);
-		port = 1337;
+		int port = 1337;
 		switch (clientName) {
 			case "-N":
 				player = new ComputerPlayer(new NaiveStrategy(), "Fred");
@@ -60,9 +56,8 @@ public class Client extends Thread {
 		}
 
 
-		host = InetAddress.getLocalHost();
-		playerInput = new BufferedReader(new InputStreamReader(System.in));
-		firstTurn = true;
+		InetAddress host = InetAddress.getLocalHost();
+		BufferedReader playerInput = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			sock = new Socket(host, port);
 	    	in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -130,12 +125,9 @@ public class Client extends Thread {
 				System.out.println("Server does not want to start");
 				break;
 			case Protocol.SERVER_CORE_START:
-				for (int i = 1; i < input.length; i++) {
-					String naam = input[i];
-					opponents.add(naam);
-				}
 				// start een bord/game met aantal opponents
 				// met aantal opponents
+				opponents.addAll(Arrays.asList(input).subList(1, input.length));
 				break;
 			// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
 			case Protocol.SERVER_CORE_PLAYERS:
