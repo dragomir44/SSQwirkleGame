@@ -75,6 +75,7 @@ public class ClientHandler extends Thread {
     }
 
     public synchronized void readString(ClientHandler handler, String msg) {
+    	System.out.println(msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
     	int x;
     	int y;
@@ -94,6 +95,7 @@ public class ClientHandler extends Thread {
 						server.addHandler(handler);
 						clientName = input[1];
 						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
+						System.out.println("Clientname " + clientName + " assigned to " + this);
 					}
 					done = true;
 					break;
@@ -103,11 +105,12 @@ public class ClientHandler extends Thread {
 					clientName = "Player" + clientNo;
 					sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
 								  Protocol.MESSAGESEPERATOR + clientName);
+					System.out.println("Clientname " + clientName + " set to " + this.getName());
 					done = true;
 					break;
 					// when Protocol.CLIENT_CORE_JOIN_DENIED?
 				case Protocol.CLIENT_CORE_PLAYERS:
-					// Lobby or game?
+					// Return players from Lobby
 					StringBuilder players = new StringBuilder();
 					for (int i = 0; i < server.getLobby().size(); i++) {
 						players.append(Protocol.MESSAGESEPERATOR 
@@ -121,6 +124,8 @@ public class ClientHandler extends Thread {
 					//send all clients clients names +  SERVER_CORE_START
 					//SERVER_CORE_TURN
 					// else SERVER_CORE_START_DENIED
+					done = true;
+					break;
 				case Protocol.CLIENT_CORE_MOVE:
 					x = Integer.parseInt(input[1]);
 					y = Integer.parseInt(input[2]);

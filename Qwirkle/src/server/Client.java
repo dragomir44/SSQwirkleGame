@@ -95,9 +95,11 @@ public class Client extends Thread {
 			switch (input[0]) {
 				case Protocol.SERVER_CORE_EXTENSION:
 					if (clientName != null) {
-						sendMessage(Protocol.CLIENT_CORE_LOGIN + clientName);
+						sendMessage(Protocol.CLIENT_CORE_LOGIN 
+								  + Protocol.MESSAGESEPERATOR + clientName);
 					} else {
-						sendMessage(Protocol.CLIENT_CORE_JOIN + clientName);
+						sendMessage(Protocol.CLIENT_CORE_JOIN 
+								  + Protocol.MESSAGESEPERATOR + clientName);
 					}
 					done = true;
 					break;
@@ -108,7 +110,7 @@ public class Client extends Thread {
 					break;
 				case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
 					game = getInput("Type 'Y' to start a game");
-					if (game == "Y") {
+					if (game.equals("Y")) {
 						sendMessage(Protocol.CLIENT_CORE_START);
 					}
 					done = true;
@@ -135,7 +137,7 @@ public class Client extends Thread {
 						String naam = input[i];
 						opponents.add(naam);
 					}
-					// start een bord
+					// start een bord/game met aantal opponents
 					// met aantal opponents
 					done = true;
 					break;
@@ -162,11 +164,8 @@ public class Client extends Thread {
 					done = true;
 					break;
 				case Protocol.SERVER_CORE_MOVE_MADE:
-					x = Integer.parseInt(input[1]);
-					y = Integer.parseInt(input[2]);
-					shape = Integer.parseInt(input[3]);
-					colour = Integer.parseInt(input[4]);
-					//add move to movesMade
+					Move move = translateMove(input);
+					movesMade.add(move);
 					break;
 				case Protocol.SERVER_CORE_DONE:
 					// this is sent after tiles from bag got given to player
@@ -215,6 +214,17 @@ public class Client extends Thread {
 			}
 		} while (!done);
     }
+    
+    public Move translateMove(String[] moveInput) {
+    	int x = Integer.parseInt(moveInput[1]);
+    	int y = Integer.parseInt(moveInput[2]);
+    	int shape = Integer.parseInt(moveInput[3]);
+    	int colour = Integer.parseInt(moveInput[4]);
+    	Tile moveTile = new Tile(shape, colour);
+    	Move move = new Move(x, y, moveTile);
+    	return move;
+    }
+    
     
 	public String getInput(String question) throws IOException {
 	    String input = null;
