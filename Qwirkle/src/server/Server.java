@@ -79,11 +79,10 @@ public class Server {
 		ClientHandler player;
 		if (lobby.size() != 1) {
 			while (players.size() < 4 && !lobby.isEmpty()) {
-				System.out.println(lobby);
 				player = lobby.remove(0);
 				ingame.add(player);
 				players.add(player);
-				playersString.append(Protocol.MESSAGESEPERATOR + player);
+				playersString.append(Protocol.MESSAGESEPERATOR + player.getClientName());
 				game.addPlayer(player.getClientName());
 			}
 		} else {
@@ -91,7 +90,6 @@ public class Server {
 			sendMessage(handler, Protocol.SERVER_CORE_START_DENIED);
 		}
 		gameMap.put(game, players);
-		System.out.println(playersString);
 		sendMessageToGamePlayers(players, Protocol.SERVER_CORE_START + playersString.toString());
 		game.start();
 		return game;
@@ -119,7 +117,6 @@ public class Server {
     }
 
     public void sendMessage(ClientHandler handler, String message) {
-        System.out.println("Sending: " + message + " to " + handler.getClientName());
         handler.sendMessage(message);
     }
     

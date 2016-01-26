@@ -7,6 +7,7 @@ import model.TradeMove;
 import model.Tile.Colour;
 import model.Tile.Shape;
 import model.ValueComparator;
+import view.Game;
 import view.MultiplayerGame;
 
 import static org.junit.Assert.assertEquals;
@@ -125,9 +126,19 @@ public class Client extends Thread {
 				System.out.println("Server does not want to start");
 				break;
 			case Protocol.SERVER_CORE_START:
-				// start een bord/game met aantal opponents
-				// met aantal opponents
-				opponents.addAll(Arrays.asList(input).subList(1, input.length));
+				System.out.println("input: " + input[0]);
+				System.out.println("input[1]: " + input[1]);
+				System.out.println("input[2]: " + input[2]);
+				System.out.println("input length " + input.length);
+				for (int i = 1; i < input.length; i++) {
+					System.out.println(i);
+					System.out.println(input[i]);
+					System.out.println();
+					opponents.add(input[i]);
+				}
+				System.out.println(opponents.toString());
+				board.toString();
+				
 				break;
 			// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
 			case Protocol.SERVER_CORE_PLAYERS:
