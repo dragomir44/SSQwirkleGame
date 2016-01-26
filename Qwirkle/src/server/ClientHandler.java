@@ -51,13 +51,14 @@ public class ClientHandler extends serverMethods {
 	public void shutdown() {
         server.removeHandler(this);
     }
-    
+
+	@Override
     public String getClientName() {
-    	if (clientName == null) {
-    		return String.valueOf(sock.getInetAddress());
-    	} else {
-    		return clientName;
+		String name = super.getClientName();
+    	if (name == null) {
+    		name = String.valueOf(sock.getInetAddress());
     	}
+		return name;
     }
     
     public void announce() throws IOException {
@@ -157,16 +158,4 @@ public class ClientHandler extends serverMethods {
 		}
 		return players;
     }
-
-    public boolean makeMove(ArrayList<Move> moves) {
-        // stuur moves naar server
-        // lees of ze correct zijn
-    	return true;
-    }
-
-    // ontvang moves van de server
-    public ArrayList<Move> determineMove() {
-    	return null;
-    }
-
 }

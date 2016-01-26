@@ -266,10 +266,6 @@ public class Client extends serverMethods{
 		}
 	}
 
-	public String getClientName() {
-		return clientName;
-	}
-
 	private int getBagSize() {
 		int tiles = 108 - playersInServer.size() * 6 - board.getTiles().size();
 		if (tiles < 0) {

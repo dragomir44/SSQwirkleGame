@@ -38,6 +38,12 @@ public abstract class serverMethods extends Thread {
         }
     }
 
+
+
+    public String getClientName() {
+        return clientName;
+    }
+
     public Move stringToMove(String[] moveInput) {
         int x = Integer.parseInt(moveInput[1]);
         int y = Integer.parseInt(moveInput[2]);
