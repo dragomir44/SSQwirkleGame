@@ -5,24 +5,17 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
-import controller.Player;
 import model.Move;
 import model.Tile;
-import view.Game;
 import view.MultiplayerGame;
 
-public class ClientHandler extends Thread {
+public class ClientHandler extends serverMethods {
 
     private Server server;
-    private BufferedWriter out;
-    private BufferedReader in;
-    private String clientName;
-    private Socket socket;
     public boolean rematch;
     private MultiplayerGame game;
 
@@ -30,7 +23,7 @@ public class ClientHandler extends Thread {
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(sock.getOutputStream()));
         server = serverArg;
-        socket = sock;
+        this.sock = sock;
     }
 
     public void run() {
@@ -48,26 +41,20 @@ public class ClientHandler extends Thread {
 		}
 	}
 
+	@Override
     public void sendMessage(String msg) {
-    	//Test
+   		super.sendMessage(msg);
     	server.print(this, msg);
-        try {
-            out.write(msg);
-            out.newLine();
-            out.flush();
-        } catch (IOException e) {
-        	System.out.println("CONNECTION LOST");
-            shutdown();
-        }
     }
 
-    private void shutdown() {
+	@Override
+	public void shutdown() {
         server.removeHandler(this);
     }
     
     public String getClientName() {
     	if (clientName == null) {
-    		return String.valueOf(socket.getInetAddress());
+    		return String.valueOf(sock.getInetAddress());
     	} else {
     		return clientName;
     	}
@@ -120,7 +107,7 @@ public class ClientHandler extends Thread {
 				// else SERVER_CORE_START_DENIED
 				break;
 			case Protocol.CLIENT_CORE_MOVE:
-				Move receivedMove = translateMove(input);
+				Move receivedMove = stringToMove(input);
 				// if move = valid
 				if (true) {
 					//plaats move op server gameboard
@@ -138,7 +125,7 @@ public class ClientHandler extends Thread {
 				//broadcast SERVER_CORE_SCORE met (Naam Integer) paren
 				break;
 			case Protocol.CLIENT_CORE_SWAP:
-				Tile receivedTile = translateTile(input);
+				Tile receivedTile = stringToTile(input);
 				// if tile = valid
 				// check if tile is in player hand:
 				//game.replaceTiles(player, tilenrs);
@@ -156,22 +143,8 @@ public class ClientHandler extends Thread {
 				break;
 		}
     }
-    
-    public Move translateMove(String[] moveInput) {
-    	int x = Integer.parseInt(moveInput[1]);
-    	int y = Integer.parseInt(moveInput[2]);
-    	int shape = Integer.parseInt(moveInput[3]);
-    	int colour = Integer.parseInt(moveInput[4]);
-    	Tile moveTile = new Tile(shape, colour);
-    	Move move = new Move(x, y, moveTile);
-    	return move;
-    }
-  
-    public Tile translateTile(String[] tileInput) {
-    	Tile tile = new Tile(Integer.parseInt(tileInput[1]), Integer.parseInt(tileInput[2]));
-    	return tile;
-    }
-    
+
+
     public StringBuilder getPlayersFromLobby() {
 		StringBuilder players = new StringBuilder();
 		for (int i = 0; i < server.getLobby().size(); i++) {

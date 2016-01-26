@@ -17,8 +17,9 @@ public class MultiplayerGame extends Game {
     private int numberOfPlayers;
     private ClientHandler client;
 
-    public MultiplayerGame() {
+    public MultiplayerGame(ClientHandler client) {
         super(new ArrayList<Player>()); // initally send empty player list
+        this.client = client;
     }
 
     public void addPlayer(String playerName) {
