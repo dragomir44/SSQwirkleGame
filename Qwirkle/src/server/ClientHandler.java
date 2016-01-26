@@ -94,6 +94,7 @@ public class ClientHandler extends Thread {
 					} else {
 						server.addHandler(handler);
 						clientName = input[1];
+						server.addHandlerToLobby(this);
 						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
 						System.out.println("Clientname " + clientName + " assigned to " + this);
 					}
@@ -106,21 +107,17 @@ public class ClientHandler extends Thread {
 					sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
 								  Protocol.MESSAGESEPERATOR + clientName);
 					System.out.println("Clientname " + clientName + " set to " + this.getName());
+					server.addHandlerToLobby(this);
 					done = true;
 					break;
 					// when Protocol.CLIENT_CORE_JOIN_DENIED?
 				case Protocol.CLIENT_CORE_PLAYERS:
-					// Return players from Lobby
-					StringBuilder players = new StringBuilder();
-					for (int i = 0; i < server.getLobby().size(); i++) {
-						players.append(Protocol.MESSAGESEPERATOR 
-									  + server.getLobby().get(i).getClientName());
-					}
-					sendMessage(Protocol.SERVER_CORE_PLAYERS + players);
+					StringBuilder players = getPlayersFromLobby();
+					sendMessage(Protocol.SERVER_CORE_PLAYERS + players.toString());
 					done = true;
 					break;
 				case Protocol.CLIENT_CORE_START:
-					//if enough players --> create game
+					//Check amount of players in lobby --> create game with those
 					//send all clients clients names +  SERVER_CORE_START
 					//SERVER_CORE_TURN
 					// else SERVER_CORE_START_DENIED
@@ -169,6 +166,15 @@ public class ClientHandler extends Thread {
 					System.out.println(msg);
 			}
 		} while (!done);
+    }
+    
+    public StringBuilder getPlayersFromLobby() {
+		StringBuilder players = new StringBuilder();
+		for (int i = 0; i < server.getLobby().size(); i++) {
+			players.append(Protocol.MESSAGESEPERATOR 
+						  + server.getLobby().get(i).getClientName());
+		}
+		return players;
     }
 
     public boolean makeMove(ArrayList<Move> moves) {

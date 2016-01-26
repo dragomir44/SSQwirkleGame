@@ -114,6 +114,10 @@ public class Server {
     public synchronized void addHandlerToLobby(ClientHandler handler) {
     	lobby.add(handler);
     }
+    
+    public synchronized void removeHandlerFromLobby(ClientHandler handler) {
+    	lobby.remove(handler);
+    }
 
     public synchronized List<ClientHandler> getLobby() {
     	return lobby;

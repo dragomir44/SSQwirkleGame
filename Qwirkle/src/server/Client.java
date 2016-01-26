@@ -124,7 +124,7 @@ public class Client extends Thread {
 					clientName = input[1];
 					System.out.println("Joined server as: " + input[1]);
 					game = getInput("Type 'Y' to start a game");
-					if (game == "Y") {
+					if (game.equals("Y")) {
 						sendMessage(Protocol.CLIENT_CORE_START);
 					}
 					done = true;
@@ -153,7 +153,8 @@ public class Client extends Thread {
 				case Protocol.SERVER_CORE_TURN:
 					//bepaal current op eigen bord door turn
 					String turnPlayer = input[1];
-					if (turnPlayer == clientName) {
+					if (turnPlayer.equals(clientName)) {
+						getMove();
 						//make moves
 						//sendMessage(Protocol.CLIENT_CORE_MOVE + move)
 						//wacht voor Protocol.SERVER_CORE_MOVE_ACCEPTED van client
@@ -169,19 +170,16 @@ public class Client extends Thread {
 					break;
 				case Protocol.SERVER_CORE_DONE:
 					// this is sent after tiles from bag got given to player
-					// add movesMade to board	
+					
+					makeMove(movesMade);
+					movesMade.clear();
 					done = true;
 					break;
 				case Protocol.SERVER_CORE_SCORE:
-					for (int i = 1; i < input.length; i = i + 2) {
-						String name = input[i];
-						int score = Integer.parseInt(input[i + 1]);
-						// add name + score pair to something
-					}
+					addScores(input);
 					break;
 				case Protocol.SERVER_CORE_SEND_TILE:
-					shape = Integer.parseInt(input[1]);
-					colour = Integer.parseInt(input[2]);
+					translateTile(input);
 					//give this tile to the player
 					
 					done = true;
@@ -195,11 +193,7 @@ public class Client extends Thread {
 					
 					break;
 				case Protocol.SERVER_CORE_GAME_ENDED:
-					for (int i = 1; i < input.length; i = i + 2) {
-						String name = input[i];
-						int score = Integer.parseInt(input[i + 1]);
-						// add name + score pair to something
-					}
+					addScores(input);
 					System.out.println("The game has ended");
 					shutdown();
 					done = true;
@@ -223,6 +217,20 @@ public class Client extends Thread {
     	Tile moveTile = new Tile(shape, colour);
     	Move move = new Move(x, y, moveTile);
     	return move;
+    }
+    
+    public Tile translateTile(String[] tileInput) {
+    	Tile tile = new Tile(Integer.parseInt(tileInput[1]), Integer.parseInt(tileInput[2]));
+    	return tile;
+    }
+    
+    public void addScores(String[] scoreInput) {
+		for (int i = 1; i < scoreInput.length; i = i + 2) {
+			String name = scoreInput[i];
+			int score = Integer.parseInt(scoreInput[i + 1]);
+			// add name + score pair to something
+		}
+    	//return something;
     }
     
     
@@ -255,7 +263,6 @@ public class Client extends Thread {
 		}	
 	}
 
-	//TODO client received played moves, place them on board
 	public void makeMove(ArrayList<Move> moves) {
 		board.setField(moves);
 	}
@@ -280,7 +287,7 @@ public class Client extends Thread {
 			}
 		} else {
 			//TODO send tiles to place to server
-			if(placeTiles(moves)) {
+			if (placeTiles(moves)) {
 				//succesfully placed tiles
 				for (Move move : moves) {
 					player.getHand().removeTile(move.tile);

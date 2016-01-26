@@ -31,7 +31,7 @@ public class ServerTest {
 		for (int i = 0; i < lobby.size(); i++) {
 			players.append(" " + lobby.get(i));
 		}
-		String stringToSend = Protocol.SERVER_CORE_PLAYERS + players;
+		String stringToSend = Protocol.SERVER_CORE_PLAYERS + players.toString();
 		System.out.println(stringToSend);
 	}
 	
