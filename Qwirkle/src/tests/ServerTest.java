@@ -31,6 +31,7 @@ public class ServerTest {
 		lobby.add("Frank");
 		lobby.add("Fred");
 		lobby.add("rob");
+		lobby.add("henk");
 		tile = new Tile(Shape.$, Colour.G);
 		move = new Move(1, 2, tile);
 	}
@@ -74,15 +75,12 @@ public class ServerTest {
 	
 	@Test
 	public void lobbyGameTest() {
-		int count = lobby.size();
-		System.out.println("Lobby size: " + count);
-		if (count % 4 == 0) {
-			System.out.println("This game can be played with 2");
-		} else if (count % 3 == 0) {
-			System.out.println("This game can be played with 3");
-		} else if (count % 2 == 0) { 
-			System.out.println("This game can be played with 4");
-		}
+		ArrayList<String> players = new ArrayList<String>();
+		ArrayList<String> lobbys = new ArrayList<String>();
+		lobbys.add("Henk");
+		lobbys.add("Sergey");
+		players.add(lobbys.remove(0));
+		assertEquals(players.get(0), "Henk");
 	}
 	
 	@Test
@@ -98,5 +96,7 @@ public class ServerTest {
 		}
 		assertEquals(c, tile.getColour().toString());
 	}
+	
+	
 	
 }

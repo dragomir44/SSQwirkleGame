@@ -16,13 +16,15 @@ import model.Move;
 
 import java.io.BufferedReader;
 import view.Game;
+import view.MultiplayerGame;
 
 public class Server {
     private int port;
     private List<ClientHandler> threads;
     private List<ClientHandler> lobby;
     private List<ClientHandler> ingame;
-    private Map<Game, ClientHandler[]> gameMap = new HashMap<Game, ClientHandler[]>();
+    private Map<Game, ArrayList<ClientHandler>> gameMap = 
+    			  new HashMap<Game, ArrayList<ClientHandler>>();
     private ServerSocket sock;
 
 
@@ -70,6 +72,36 @@ public class Server {
         }
 	}
 
+	public MultiplayerGame startGame(ClientHandler handler) {
+		MultiplayerGame game = new MultiplayerGame();
+		ArrayList<ClientHandler> players = new ArrayList<ClientHandler>();
+		StringBuilder playersString = new StringBuilder();
+		ClientHandler player;
+		if (lobby.size() != 1) {
+			while (players.size() < 4 && !lobby.isEmpty()) {
+				System.out.println(lobby);
+				player = lobby.remove(0);
+				ingame.add(player);
+				players.add(player);
+				playersString.append(Protocol.MESSAGESEPERATOR + player);
+				game.addPlayer(player.getClientName());
+			}
+		} else {
+			sendMessage(handler, "You're alone... can't start a game now");
+			sendMessage(handler, Protocol.SERVER_CORE_START_DENIED);
+		}
+		gameMap.put(game, players);
+		System.out.println(playersString);
+		sendMessageToGamePlayers(players, Protocol.SERVER_CORE_START + playersString.toString());
+		game.start();
+		return game;
+	}
+	
+	public void sendMessageToGamePlayers(ArrayList<ClientHandler> players, String msg) {
+		for (ClientHandler handler : players) {
+			sendMessage(handler, msg);
+		}
+	}
 
 	public String getInput(String question) {
         String input = null;
@@ -115,17 +147,17 @@ public class Server {
     	threads.remove(handler);
         serverMessage(handler.getClientName() + " has left the game");
     }
-    
-    public synchronized void addHandlerToLobby(ClientHandler handler) {
-    	lobby.add(handler);
-    }
-    
-    public synchronized void removeHandlerFromLobby(ClientHandler handler) {
-    	lobby.remove(handler);
-    }
 
     public synchronized List<ClientHandler> getLobby() {
     	return lobby;
+    }
+    
+    public synchronized List<ClientHandler> getIngame() {
+    	return ingame;
+    }
+    
+    public synchronized Map<Game, ArrayList<ClientHandler>> getGameMap() {
+    	return gameMap;
     }
     
     private void serverMessage(String msg) {

@@ -81,95 +81,84 @@ public class ClientHandler extends Thread {
     public synchronized void readString(ClientHandler handler, String msg) {
     	System.out.println("Received: " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	boolean done = false;
-		do {
-			switch (input[0]) {
-				case Protocol.CLIENT_CORE_EXTENSION:
-					sendMessage(Protocol.SERVER_CORE_EXTENSION);
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_LOGIN:
-					if (input[1].contains(" ") || server.getLobby().contains(input[1])) {
-						sendMessage(Protocol.SERVER_CORE_LOGIN_DENIED);
-					} else {
-						server.addHandler(handler);
-						clientName = input[1];
-						server.addHandlerToLobby(this);
-						System.out.println("Lobby size: " + server.getLobby().size());
-						System.out.println("Lobby : " + server.getLobby().iterator().toString());
-						sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
-						System.out.println("Clientname " + clientName + " assigned to " + this);
-					}
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_JOIN:
-					Random rn = new Random();
-					String clientNo = Integer.toString(rn.nextInt(99) + 1);
-					clientName = "Player" + clientNo;
-					sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
-								  Protocol.MESSAGESEPERATOR + clientName);
-					System.out.println("Clientname " + clientName + " set to " + this.getName());
-					server.addHandlerToLobby(this);
-					System.out.println("Lobbby size: " + server.getLobby().size());
-					System.out.println("Lobby : " + server.getLobby().toArray().toString());
-					done = true;
-					break;
-					// when Protocol.CLIENT_CORE_JOIN_DENIED?
-				case Protocol.CLIENT_CORE_PLAYERS:
-					StringBuilder players = getPlayersFromLobby();
-					sendMessage(Protocol.SERVER_CORE_PLAYERS + players.toString());
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_START:
-					//Check amount of players in lobby --> create game with those
-					game = new MultiplayerGame();
-	//				game.addPlayer(Player clientPlayer);
-					game.start();
-					//send all clients clients names +  SERVER_CORE_START
-					//SERVER_CORE_TURN
-					// else SERVER_CORE_START_DENIED
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_MOVE:
-					Move receivedMove = translateMove(input);
-					// if move = valid
-					if (true) {
-						//plaats move op server gameboard
-						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-						//stuur alle spelers deze move
-					} else {
-						// if tile is not in hand of client i.e.
-						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
-					}
-					// makeMove(handler, input[1]);
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_DONE:
-					// sendMessage(SERVER_CORE_SEND_TILE) met het juiste aantal tiles in Shape en Kleur als integer
-					sendMessage(Protocol.SERVER_CORE_DONE);
-					//broadcast SERVER_CORE_SCORE met (Naam Integer) paren
-					done = true;
-					break;
-				case Protocol.CLIENT_CORE_SWAP:
-					Tile receivedTile = translateTile(input);
-					// if tile = valid
-					// check if tile is in player hand:
-					//game.replaceTiles(player, tilenrs);
-					if (true) {
-						//plaats move op server gameboard
-						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-						//stuur alle spelers deze move
-					} else {
-						// if tile is not in hand of client i.e.
-						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
-					}	
-					done = true;
-					break;
-				default:
-					System.out.println(msg);
-					break;
-			}
-		} while (!done);
+		switch (input[0]) {
+			case Protocol.CLIENT_CORE_EXTENSION:
+				sendMessage(Protocol.SERVER_CORE_EXTENSION);
+				break;
+			case Protocol.CLIENT_CORE_LOGIN:
+				if (input[1].contains(" ") || server.getLobby().contains(input[1])) {
+					sendMessage(Protocol.SERVER_CORE_LOGIN_DENIED);
+				} else {
+					server.addHandler(handler);
+					clientName = input[1];
+					server.getLobby().add(this);
+					System.out.println("Lobby size: " + server.getLobby().size());
+					System.out.println("Lobby : " + server.getLobby().iterator().toString());
+					sendMessage(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
+					System.out.println("Clientname " + clientName + " assigned to " + this);
+				}
+				break;
+			case Protocol.CLIENT_CORE_JOIN:
+				Random rn = new Random();
+				String clientNo = Integer.toString(rn.nextInt(99) + 1);
+				clientName = "Player" + clientNo;
+				sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
+							  Protocol.MESSAGESEPERATOR + clientName);
+				System.out.println("Clientname " + clientName + " set to " + this.getClientName());
+				server.getLobby().add(this);
+				System.out.println("Lobbby size: " + server.getLobby().size());
+				System.out.println("Lobby : " + server.getLobby().toArray().toString());
+				break;
+				// when Protocol.CLIENT_CORE_JOIN_DENIED?
+			case Protocol.CLIENT_CORE_PLAYERS:
+				StringBuilder players = getPlayersFromLobby();
+				sendMessage(Protocol.SERVER_CORE_PLAYERS + players.toString());
+				break;
+			case Protocol.CLIENT_CORE_START:
+				server.startGame(this);
+				System.out.println(input[1]);
+				System.out.println(input[2]);
+				System.out.println(input[3]);
+				//send all clients clients names +  SERVER_CORE_START
+				//SERVER_CORE_TURN
+				// else SERVER_CORE_START_DENIED
+				break;
+			case Protocol.CLIENT_CORE_MOVE:
+				Move receivedMove = translateMove(input);
+				// if move = valid
+				if (true) {
+					//plaats move op server gameboard
+					sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
+					//stuur alle spelers deze move
+				} else {
+					// if tile is not in hand of client i.e.
+					sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
+				}
+				// makeMove(handler, input[1]);
+				break;
+			case Protocol.CLIENT_CORE_DONE:
+				// sendMessage(SERVER_CORE_SEND_TILE) met het juiste aantal tiles in Shape en Kleur als integer
+				sendMessage(Protocol.SERVER_CORE_DONE);
+				//broadcast SERVER_CORE_SCORE met (Naam Integer) paren
+				break;
+			case Protocol.CLIENT_CORE_SWAP:
+				Tile receivedTile = translateTile(input);
+				// if tile = valid
+				// check if tile is in player hand:
+				//game.replaceTiles(player, tilenrs);
+				if (true) {
+					//plaats move op server gameboard
+					sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
+					//stuur alle spelers deze move
+				} else {
+					// if tile is not in hand of client i.e.
+					sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
+				}	
+				break;
+			default:
+				System.out.println(msg);
+				break;
+		}
     }
     
     public Move translateMove(String[] moveInput) {
