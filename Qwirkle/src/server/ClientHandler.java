@@ -104,10 +104,6 @@ public class ClientHandler extends serverMethods {
 				break;
 			case Protocol.CLIENT_CORE_START:
 				server.startGame(this);
-				System.out.println(input[1]);
-				System.out.println(input[2]);
-				System.out.println(input[3]);
-				//send all clients clients names +  SERVER_CORE_START
 				//SERVER_CORE_TURN
 				// else SERVER_CORE_START_DENIED
 				break;
