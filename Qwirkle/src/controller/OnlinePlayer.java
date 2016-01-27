@@ -11,8 +11,8 @@ public class OnlinePlayer extends Player {
     // deze class verwerkt handler moves.
     ClientHandler client;
 
-    public OnlinePlayer(String name, ClientHandler client) {
-        super(name);
+    public OnlinePlayer(ClientHandler client) {
+        super(client.getClientName());
         this.client = client;
     }
 

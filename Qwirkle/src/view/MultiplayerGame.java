@@ -1,6 +1,7 @@
 package view;
 
 import controller.Board;
+import controller.OnlinePlayer;
 import controller.Player;
 import model.Bag;
 import model.Move;
@@ -15,11 +16,11 @@ public class MultiplayerGame extends Game {
     private Board board;
     private Player players;
     private int numberOfPlayers;
-    private ClientHandler client;
+    private ArrayList<ClientHandler> handlers;
 
-    public MultiplayerGame(ClientHandler client) {
+    public MultiplayerGame(ArrayList<OnlinePlayer> players, ArrayList<ClientHandler> handlers) {
         super(new ArrayList<Player>()); // initally send empty player list
-        this.client = client;
+        this.handlers = handlers;
     }
 
     public void addPlayer(String playerName) {

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import controller.OnlinePlayer;
 import model.Move;
 
 import java.io.BufferedReader;
@@ -73,25 +74,29 @@ public class Server {
 	}
 
 	public MultiplayerGame startGame(ClientHandler handler) {
-		MultiplayerGame game = new MultiplayerGame(handler);
-		ArrayList<ClientHandler> players = new ArrayList<ClientHandler>();
-		StringBuilder playersString = new StringBuilder();
-		ClientHandler player;
+        MultiplayerGame game;
+        StringBuilder playersString = new StringBuilder();
+		OnlinePlayer player;
 		if (lobby.size() != 1) {
+            ArrayList<OnlinePlayer> players = new ArrayList<OnlinePlayer>();
+            ArrayList<ClientHandler> handlers = new ArrayList<>();
 			while (players.size() < 4 && !lobby.isEmpty()) {
-				player = lobby.remove(0);
-				ingame.add(player);
+                ClientHandler playerHandler = lobby.remove(0);
+                handlers.add(playerHandler);
+				player = new OnlinePlayer(playerHandler);
+				ingame.add(playerHandler);
 				players.add(player);
-				playersString.append(Protocol.MESSAGESEPERATOR + player.getClientName());
-				game.addPlayer(player.getClientName());
+				playersString.append(Protocol.MESSAGESEPERATOR + player.getName());
 			}
+            game = new MultiplayerGame(players, handlers);
+            gameMap.put(game, handlers);
+            sendMessageToGamePlayers(handlers, Protocol.SERVER_CORE_START + playersString.toString());
+            game.start();
 		} else {
 			sendMessage(handler, "You're alone... can't start a game now");
 			sendMessage(handler, Protocol.SERVER_CORE_START_DENIED);
+            game = null;
 		}
-		gameMap.put(game, players);
-		sendMessageToGamePlayers(players, Protocol.SERVER_CORE_START + playersString.toString());
-		game.start();
 		return game;
 	}
 	

@@ -38,8 +38,6 @@ public abstract class serverMethods extends Thread {
         }
     }
 
-
-
     public String getClientName() {
         return clientName;
     }
