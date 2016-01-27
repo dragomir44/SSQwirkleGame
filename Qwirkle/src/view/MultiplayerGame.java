@@ -31,6 +31,7 @@ public class MultiplayerGame extends Game {
     public ArrayList<Tile> replenishTiles(Player p) {
     	ArrayList<Tile> newTiles = super.replenishTiles(p);
     	//TODO send new tiles to player
+    	
         return newTiles;
     }
     
@@ -42,7 +43,7 @@ public class MultiplayerGame extends Game {
 
     @Override
     public void start() {
-
+    	//Send tiles from dealTiles() to server in MultiplayerGame
     }
 
     @Override
@@ -85,6 +86,10 @@ public class MultiplayerGame extends Game {
 //
 //        }
 //    }
+    
+    public Board getBoard() {
+    	return board;
+    }
 
 
 }

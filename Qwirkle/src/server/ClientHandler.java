@@ -67,7 +67,7 @@ public class ClientHandler extends serverMethods {
     }
 
     public synchronized void readString(ClientHandler handler, String msg) {
-    	System.out.println("Received: " + msg);
+    	System.out.println("Received:  " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
 		switch (input[0]) {
 			case Protocol.CLIENT_CORE_EXTENSION:
@@ -99,31 +99,45 @@ public class ClientHandler extends serverMethods {
 				break;
 				// when Protocol.CLIENT_CORE_JOIN_DENIED?
 			case Protocol.CLIENT_CORE_PLAYERS:
+				//TODO changes to get opponents
 				StringBuilder players = getPlayersFromLobby();
 				sendMessage(Protocol.SERVER_CORE_PLAYERS + players.toString());
 				break;
 			case Protocol.CLIENT_CORE_START:
 				server.startGame(this);
-				//SERVER_CORE_TURN
-				// else SERVER_CORE_START_DENIED
+				//TODO SERVER_CORE_TURN
+				//TODO make method in Server to get a list of game
+				server.sendMessageToGamePlayers(server.getPlayersOfHandler(this), 
+								Protocol.SERVER_CORE_TURN + 
+								Protocol.MESSAGESEPERATOR + this.getClientName());
 				break;
 			case Protocol.CLIENT_CORE_MOVE:
 				Move receivedMove = stringToMove(input);
-				// if move = valid
+				//TODO Check is a single move is valid
+				// if (game.getBoard().isValidMove(receivedMove)) {
 				if (true) {
 					//plaats move op server gameboard
 					sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-					//stuur alle spelers deze move
+					//TODO get all values from Move
+					server.sendMessageToGamePlayers(server.getPlayersOfHandler(this), 
+									 Protocol.SERVER_CORE_MOVE_MADE + Protocol.MESSAGESEPERATOR + 
+									 input[1] + Protocol.MESSAGESEPERATOR + 
+									 input[2] + Protocol.MESSAGESEPERATOR + 
+									 input[3] + Protocol.MESSAGESEPERATOR + 
+									 input[4]);
 				} else {
 					// if tile is not in hand of client i.e.
 					sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
 				}
 				// makeMove(handler, input[1]);
 				break;
-			case Protocol.CLIENT_CORE_DONE:
-				// sendMessage(SERVER_CORE_SEND_TILE) met het juiste aantal tiles in Shape en Kleur als integer
+			case Protocol.CLIENT_CORE_DONE:	
+				sendMessage(Protocol.SERVER_CORE_SCORE + Protocol.MESSAGESEPERATOR + 
+							  this.getClientName() + Protocol.MESSAGESEPERATOR + 
+				//TODO add getScore command from game
+						      "100");
+				//sendMessageToGamePlayers(SERVER_CORE_SEND_TILE) met het juiste aantal tiles in Shape en Kleur als integer
 				sendMessage(Protocol.SERVER_CORE_DONE);
-				//broadcast SERVER_CORE_SCORE met (Naam Integer) paren
 				break;
 			case Protocol.CLIENT_CORE_SWAP:
 				Tile receivedTile = stringToTile(input);

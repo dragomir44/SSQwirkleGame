@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import controller.OnlinePlayer;
-import model.Move;
-
 import java.io.BufferedReader;
 import view.Game;
 import view.MultiplayerGame;
@@ -90,7 +88,8 @@ public class Server {
 			}
             game = new MultiplayerGame(players, handlers);
             gameMap.put(game, handlers);
-            sendMessageToGamePlayers(handlers, Protocol.SERVER_CORE_START + playersString.toString());
+            sendMessageToGamePlayers(handlers, Protocol.SERVER_CORE_START 
+            			  + playersString.toString());
             game.start();
 		} else {
 			sendMessage(handler, "You're alone... can't start a game now");
@@ -98,12 +97,6 @@ public class Server {
             game = null;
 		}
 		return game;
-	}
-	
-	public void sendMessageToGamePlayers(ArrayList<ClientHandler> players, String msg) {
-		for (ClientHandler handler : players) {
-			sendMessage(handler, msg);
-		}
 	}
 
 	public String getInput(String question) {
@@ -120,14 +113,10 @@ public class Server {
         }
         return input;
     }
-
-    public void sendMessage(ClientHandler handler, String message) {
-        handler.sendMessage(message);
-    }
     
     //test
     public void print(ClientHandler handler, String msg) {
-    	System.out.println("Sending " + msg + " to " + handler.getClientName());
+    	System.out.println("Sending:   " + msg + " to " + handler.getClientName());
     }
 
 
@@ -147,7 +136,9 @@ public class Server {
 
     public synchronized void removeHandler(ClientHandler handler) {
     	threads.remove(handler);
-        serverMessage(handler.getClientName() + " has left the game");
+        sendMessageToGamePlayers(getOpponentsOfHandler(handler), 
+        				Protocol.SERVER_CORE_TIMEOUT_EXCEPTION 
+        			  + Protocol.MESSAGESEPERATOR + handler.getClientName());
     }
 
     public synchronized List<ClientHandler> getLobby() {
@@ -162,15 +153,26 @@ public class Server {
     	return gameMap;
     }
     
-    private void serverMessage(String msg) {
-    	System.err.println("SERVER: " + msg);
-    }
-    //TODO  Make method to send to every other player in game
-
-    public ClientHandler otherHandler(ClientHandler handler) {
-    	//TODO get other players from game
-    	return null;
-    }
+	public ArrayList<ClientHandler> getPlayersOfHandler(ClientHandler handler) {
+		ArrayList<ClientHandler> playersOfHandler = new ArrayList<ClientHandler>();
+		for (ArrayList<ClientHandler> handlers : gameMap.values()) {
+			if (handlers.contains(handler)) {
+				playersOfHandler = handlers;
+			}
+		}
+		return playersOfHandler;
+	}
+	
+	public ArrayList<ClientHandler> getOpponentsOfHandler(ClientHandler handler) {
+		ArrayList<ClientHandler> opponents = new ArrayList<ClientHandler>();
+		for (ArrayList<ClientHandler> handlers : gameMap.values()) {
+			if (handlers.contains(handler)) {
+				opponents = handlers;
+				opponents.remove(handler);
+			}
+		}
+		return opponents;
+	}
 
     private void makeMove(ClientHandler handler, String move) {
     	//TODO Make move method
@@ -180,6 +182,20 @@ public class Server {
         // koppel aan LocalOnlinePlayer
 
 
+    }
+    
+    public void sendMessage(ClientHandler handler, String message) {
+        handler.sendMessage(message);
+    }
+    
+	public void sendMessageToGamePlayers(ArrayList<ClientHandler> players, String msg) {
+		for (ClientHandler handler : players) {
+			sendMessage(handler, msg);
+		}
+	}
+	
+    private void serverMessage(String msg) {
+    	System.err.println("SERVER: " + msg);
     }
 
     public void broadcast(String msg) {

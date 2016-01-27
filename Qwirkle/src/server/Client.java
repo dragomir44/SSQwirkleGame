@@ -3,6 +3,8 @@ package server;
 import controller.*;
 import model.Move;
 import model.Tile;
+import model.Tile.Colour;
+import model.Tile.Shape;
 import model.TradeMove;
 import model.ValueComparator;
 
@@ -20,9 +22,11 @@ public class Client extends serverMethods {
 
 	private Board board = new Board();
 	private Player player;
-	private ArrayList<String> opponents;
-	private HashMap<String, Integer> playersInServer;
+	private ArrayList<String> playersInServer;
+	private HashMap<String, Integer> opponents;
 	private ArrayList<Move> movesMade; // store the last move that was made
+	private int countMoves = 0;
+	private int countMoveAccepts = 0;
 
 	
 	public Client() throws IOException {
@@ -32,6 +36,7 @@ public class Client extends serverMethods {
 		Random rn = new Random();
 		clientName = "Player" + rn.nextInt(1000);
 		int port = 1337;
+		
 		switch (clientName) {
 			case "-N":
 				player = new ComputerPlayer(new NaiveStrategy(), "Fred");
@@ -46,7 +51,8 @@ public class Client extends serverMethods {
 
 
 		InetAddress host = InetAddress.getLocalHost();
-		BufferedReader playerInput = new BufferedReader(new InputStreamReader(System.in));
+		opponents = new HashMap<String, Integer>();
+		movesMade = new ArrayList<Move>();
 		try {
 			sock = new Socket(host, port);
 	    	in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -93,6 +99,7 @@ public class Client extends serverMethods {
 				shutdown();
 				break;
 			case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
+				//TODO fix this 
 				game = getInput("Type 'Y' to start a game");
 				if (game.equals("Y")) {
 					sendMessage(Protocol.CLIENT_CORE_START);
@@ -114,50 +121,61 @@ public class Client extends serverMethods {
 				System.out.println("Server does not want to start");
 				break;
 			case Protocol.SERVER_CORE_START:
-				System.out.println("input: " + input[0]);
-				System.out.println("input[1]: " + input[1]);
-				System.out.println("input[2]: " + input[2]);
-				System.out.println("input length " + input.length);
 				for (int i = 1; i < input.length; i++) {
-					System.out.println(i);
-					System.out.println(input[i]);
-					System.out.println();
-					opponents.add(input[i]);
+					opponents.put(input[i], 0);
 				}
-				System.out.println(opponents.toString());
-				board.toString();
-				
+				System.out.println(board.toString());
 				break;
 			// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
 			case Protocol.SERVER_CORE_PLAYERS:
-				playersInServer = new HashMap<>();
+				opponents = new HashMap<>();
 				for (int i = 1; i < input.length; i++) {
 					String naam = input[i];
-					playersInServer.put(naam, 0);
+					opponents.put(naam, 0);
 				}
 				break;
 			case Protocol.SERVER_CORE_TURN:
 				//bepaal current op eigen bord door turn
 				String turnPlayer = input[1];
 				if (turnPlayer.equals(clientName)) {
+					System.out.println("It's your turn!");
 					//TODO stuck in loop, what if string is received during this loop?
 					// local player's turn, make a move.
+					player.getHand().addTile(new Tile(Shape.$,Colour.B));
+					player.getHand().addTile(new Tile(Shape.B,Colour.B));
+					player.getHand().addTile(new Tile(Shape.$,Colour.O));
+					player.getHand().addTile(new Tile(Shape.O,Colour.R));
+					player.getHand().addTile(new Tile(Shape.$,Colour.Y));
+					player.getHand().addTile(new Tile(Shape.R,Colour.Y));
+					
 					makeMove();
+					countMoves++;
+				} else {
+					System.out.println("It's not your turn");
+					System.out.println(input[1] + "is playing");
 				}
 				break;
 			case Protocol.SERVER_CORE_MOVE_ACCEPTED:
 				// move is accepted, remove this tile from player hand
+				System.out.println("Move Accepted");
+				countMoveAccepts++;
 				if (!movesMade.isEmpty()) {
 					Move lastMove = movesMade.get(0);
 					player.getHand().removeTile(lastMove.tile);
 					movesMade.remove(lastMove);
+					if (countMoves == countMoveAccepts) {
+						countMoves = 0;
+						countMoveAccepts = 0;
+						sendMessage(Protocol.SERVER_CORE_DONE);
+					}
 				} else {
-					System.err.println("*ERR* removing more moves then were made");
+					System.err.println("*ERROR* removing more moves then were made");
 				}
 				break;
 			case Protocol.SERVER_CORE_MOVE_DENIED:
 				// current move was invalid, try again.
 				System.out.println("Move " + movesMade.get(0) + " was rejected, try again.");
+				countMoves--;
 				makeMove();
 				break;
 			case Protocol.SERVER_CORE_SWAP_ACCEPTED:
@@ -177,10 +195,12 @@ public class Client extends serverMethods {
 			case Protocol.SERVER_CORE_MOVE_MADE:
 				// A player made a valid move, place on board.
 				placeTiles(stringToMove(input));
+				System.out.println(board.toString());
 				break;
 			case Protocol.SERVER_CORE_DONE:
 				// this is sent after tiles from bag got given to player
 				System.out.println("Server done sending tiles");
+				System.out.println(board.toString());
 				break;
 			case Protocol.SERVER_CORE_SCORE:
 				addScores(input);
@@ -207,7 +227,7 @@ public class Client extends serverMethods {
 		for (int i = 1; i < scoreInput.length; i = i + 2) {
 			String name = scoreInput[i];
 			int score = Integer.parseInt(scoreInput[i + 1]);
-			playersInServer.put(name, score);
+			opponents.put(name, score);
 			if (name.equals(clientName)) {
 				player.setScore(score);
 			}
@@ -275,7 +295,7 @@ public class Client extends serverMethods {
 	}
 
 	private int getBagSize() {
-		int tiles = 108 - playersInServer.size() * 6 - board.getTiles().size();
+		int tiles = 108 - opponents.size() * 6 - board.getTiles().size();
 		if (tiles < 0) {
 			tiles = 0;
 		}
@@ -285,7 +305,7 @@ public class Client extends serverMethods {
 	private void printUpdate() {
 		System.out.println("\ncurrent game situation:");
 		System.out.println(getBagSize() + " tiles left in the bag.");
-		for (Map.Entry<String, Integer> playerInServer : playersInServer.entrySet()) {
+		for (Map.Entry<String, Integer> playerInServer : opponents.entrySet()) {
 			Integer score = playerInServer.getValue();
 			String name = playerInServer.getKey();
 			System.out.println(name + "'s score is: " + score);
@@ -297,7 +317,7 @@ public class Client extends serverMethods {
 
 	private void printResult() {
 		ValueComparator scoreComp = new ValueComparator();
-		TreeMap<String, Integer> sortedScores = scoreComp.sortByValue(playersInServer);
+		TreeMap<String, Integer> sortedScores = scoreComp.sortByValue(opponents);
 
 		LinkedHashMap<String, Integer> winners = scoreComp.getHeads();
 		if (winners.size() > 1) {

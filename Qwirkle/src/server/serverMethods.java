@@ -61,8 +61,8 @@ public abstract class serverMethods extends Thread {
 
         String sp = Protocol.MESSAGESEPERATOR;
         String sendStart = Protocol.CLIENT_CORE_MOVE;
-        String done = Protocol.CLIENT_CORE_DONE;
-        return sendStart + x + sp + y + sp + s + sp + c + sp + done;
+ //       String done = Protocol.CLIENT_CORE_DONE;
+        return sendStart + sp + x + sp + y + sp + s + sp + c + sp;
     }
 
     public String swapToString(Tile tile) {

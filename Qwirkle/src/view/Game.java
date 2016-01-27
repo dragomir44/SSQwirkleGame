@@ -238,6 +238,7 @@ public class Game {
 			player.setScore(0);
 		}
 		dealTiles();
+		
 
 		current = 0;
 	}
