@@ -107,6 +107,10 @@ public class Board {
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
+							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
+									lineColours.contains(lineTile.getColour())) { //allready hase color
+								uniqueAll = false;
+							}
 						}
 
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);

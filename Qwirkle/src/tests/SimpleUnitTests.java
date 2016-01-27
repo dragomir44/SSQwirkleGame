@@ -93,7 +93,7 @@ public class SimpleUnitTests {
 		board.getTiles().put(0, 4, tile);
 		board.getTiles().put(0, 6, tile1);
 
-		Move move6 = new Move(0,5, tile10);
+		Move move6 = new Move(0, 5, tile10);
 		moves.clear();
 		moves.add(move6);
 		System.out.println(board.toString());
