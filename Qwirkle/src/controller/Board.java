@@ -6,14 +6,20 @@ import java.util.*;
 public class Board {
 	boolean firstMove = true;
 	public String errorBuffer = "";
+	
+	//@ invariant getPoints() >= 0;
+	//@ invariant toString() != "";
+	//@ invariant getErrors() != null;
+	
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
-
-	public BoardTiles getTiles() {
+	
+	/*@ pure */ public BoardTiles getTiles() {
 		return this.tiles;
 	}
-
-	public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
+	
+	//@ requires moves.isEmpty() != False;
+	/*@ pure */ public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
 		ArrayList<ArrayList<Tile>> tileLines;
 		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
 		// create hard copy of placed tiles to test on
@@ -32,8 +38,10 @@ public class Board {
 		return prevLines;
 	}
 
-
-	public ArrayList<ArrayList<Tile>> getLines(Move move, BoardTiles layout) {
+	/*@ requires moves.isEmpty() != False;
+		requires layout.isEmpty() != False;
+	 */
+	/*@ pure */ public ArrayList<ArrayList<Tile>> getLines(Move move, BoardTiles layout) {
 		ArrayList<ArrayList<Tile>> result = new ArrayList<ArrayList<Tile>>(2);
 		ArrayList<Tile> hline = new ArrayList<Tile>();
 		ArrayList<Tile> vline = new ArrayList<Tile>();
@@ -61,7 +69,10 @@ public class Board {
 		return result;
 	}
 
-	public boolean isValidMove(ArrayList<Move> moves) {
+	/*@ requires moves.isEmpty() != False;
+		ensures result == True || result == False;
+	 */
+	/*@ pure */ public boolean isValidMove(ArrayList<Move> moves) {
 		BoardTiles protoTiles = new BoardTiles(tiles); // create copy of field to test moves
 		ArrayList<Tile> placedTiles = new  ArrayList<Tile>();
 		boolean result = false;
@@ -154,11 +165,15 @@ public class Board {
 		return result;
 	}
 
-	public String getErrors() {
+	//@ ensures \result != null;
+	/*@ pure */ public String getErrors() {
 		return errorBuffer;
 	}
 
-	public int getPoints(ArrayList<Move> moves) {
+	/*@ requires moves.isEmpty() != False;
+		ensures getPoints() >= \old(getPoints());
+	 */
+	/*@ pure */ public int getPoints(ArrayList<Move> moves) {
 		int points = 0;
 		ArrayList<ArrayList<Tile>> tileLines;
 		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
@@ -176,7 +191,6 @@ public class Board {
 			}
 		}
 		// check if this was the first move of the game and only 1 tile was placed
-		// TODO double check this
 		if (tiles.size() == 1 && moves.size() == 1) {
 			points = 1;
 		}
@@ -186,8 +200,6 @@ public class Board {
 				// check if line was already rewarded points
 				if (!prevLines.contains(line) && !line.isEmpty()) {
 					points += line.size();
-//					System.out.println("Scored " + line.size() + " for line " + line +
-//									" with move " + move.toString() + " total points: " + points);
 					if (line.size() == 6) {
 						points += 6;
 						if (!metaMove) { // prevents spam during test points
@@ -202,7 +214,9 @@ public class Board {
 		return points;
 	}
 
-
+	/*@ requires tileMapToPlace.isEmpty() != False;
+		ensures result == True || result == False;
+	 */
 	public boolean setField(ArrayList<Move> moves, BoardTiles tileMapToPlace) {
 		BoardTiles tileMap = tileMapToPlace;
 		boolean result = true;
@@ -216,31 +230,45 @@ public class Board {
 		return result;
 	}
 
+	/*@ requires moves.isEmpty() != False;
+		ensures result == True || result == False;
+	 */
 	// default setField behaviour: place on tiles opbject
 	public boolean setField(ArrayList<Move> moves) {
 		return setField(moves, tiles);
 	}
 
-	public boolean isEmpty() {
+	//@ ensures result == True || result == False;
+	/*@ pure */ public boolean isEmpty() {
 		return tiles.isEmpty();
 	}
 
 	/** Prints the board and places the tiles contained in tileMap on the board.
 	 * @return returns a string containing the board
 	 */
-	public String toString() {
+	/*@ pure */ public String toString() {
 		return toString(tiles);
 	}
 
-	public String toString(BoardTiles boardtiles) {
+	/*@ requires boardTiles.isEmpty() != False;
+		ensures \result != "";
+	 */
+	/*@ pure */ public String toString(BoardTiles boardtiles) {
 		return toString(boardtiles, new ArrayList<Move>());
 	}
 
-	public String toString(ArrayList<Move> moves) {
+	/*@ requires moves.isEmpty() != False;
+		ensures \result != "";
+	 */
+	/*@ pure */ public String toString(ArrayList<Move> moves) {
 		return toString(tiles, moves);
 	}
 
-	public String toString(BoardTiles boardtiles, ArrayList<Move> moves) {
+	/*@ requires boardTiles.isEmpty() != False;
+	    requires moves.isEmpty() != False;
+		ensures boardString != "";
+	 */
+	/*@ pure */ public String toString(BoardTiles boardtiles, ArrayList<Move> moves) {
 		BoardTiles protoTiles = new BoardTiles(boardtiles); // create copy of field
 		for (Move move: moves) {
 			protoTiles.put(move.row, move.col, move.tile);
@@ -276,7 +304,10 @@ public class Board {
 		return boardString.toString();
 	}
 
-	public boolean hasPossibleMoves(ArrayList<Tile> useTiles) {
+	/*@ requires useTiles.isEmpty() != False;
+		ensures result == True || result == False;
+	 */
+	/*@ pure */ public boolean hasPossibleMoves(ArrayList<Tile> useTiles) {
 		boolean result = false;
 		fieldLoop:
 		for (int[] emptyPos : tiles.getEmptyFields()) {
@@ -292,7 +323,10 @@ public class Board {
 		return result;
 	}
 
-	public TreeMap<ArrayList<Move>, Integer> getPossibleMoves(ArrayList<Tile> useTiles) {
+	/*@ requires useTiles.isEmpty() != False;
+		ensures sortedResult.get(0) >= sortedresult.get(1);
+	 */
+	/*@ pure*/ public TreeMap<ArrayList<Move>, Integer> getPossibleMoves(ArrayList<Tile> useTiles) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		TreeMap<ArrayList<Move>, Integer> sortedResult = new TreeMap<ArrayList<Move>, Integer>();
 		// if this is the first move, the only possible move is the largest row possible
@@ -323,7 +357,12 @@ public class Board {
 		return sortedResult;
 	}
 
-	public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
+	/*@ requires useTiles.isEmpty() != False;
+		requires prevMoves.isEmpty() != False;
+		requires direction >= 0 && direction <= 3;
+		ensures result.isEmpty != False;
+	 */
+	/*@ pure */ public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
 		   ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
