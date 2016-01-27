@@ -266,9 +266,9 @@ public class Board {
 		    for (int j = minCol; j < maxCol; j++) { // loop trough cols
 		    	boardString.append("|");
 		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
-		    		boardString.append(protoTiles.get(i, j).toString()+ " ");
+		    		boardString.append(protoTiles.get(i, j).toString() + " ");
 		    	} else {
-			        boardString.append("  ");	    		
+			        boardString.append("   ");	    		
 		    	}
 		    }
 		    boardString.append(rowline); // end of row
