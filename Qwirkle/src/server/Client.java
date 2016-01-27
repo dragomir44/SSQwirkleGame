@@ -24,10 +24,7 @@ public class Client extends serverMethods {
 	private Player player;
 	private HashMap<String, Integer> opponents;
 	private ArrayList<Move> movesMade; // store the last move that was made
-	private int countMoves = 0;
-	private int countMoveAccepts = 0;
 
-	
 	public Client() throws IOException {
 		//clientName = getInput("Name:");
 		//port = Integer.parseInt(getInput("Port:"));
@@ -140,15 +137,7 @@ public class Client extends serverMethods {
 					System.out.println("It's your turn!");
 					//TODO stuck in loop, what if string is received during this loop?
 					// local player's turn, make a move.
-					player.getHand().addTile(new Tile(Shape.$,Colour.B));
-					player.getHand().addTile(new Tile(Shape.B,Colour.B));
-					player.getHand().addTile(new Tile(Shape.$,Colour.O));
-					player.getHand().addTile(new Tile(Shape.O,Colour.R));
-					player.getHand().addTile(new Tile(Shape.$,Colour.Y));
-					player.getHand().addTile(new Tile(Shape.R,Colour.Y));
-					
 					makeMove();
-					countMoves++;
 				} else {
 					System.out.println("It's not your turn");
 					System.out.println(input[1] + "is playing");
@@ -157,32 +146,32 @@ public class Client extends serverMethods {
 			case Protocol.SERVER_CORE_MOVE_ACCEPTED:
 				// move is accepted, remove this tile from player hand
 				System.out.println("Move Accepted");
-				countMoveAccepts++;
 				if (!movesMade.isEmpty()) {
 					Move lastMove = movesMade.get(0);
 					player.getHand().removeTile(lastMove.tile);
 					movesMade.remove(lastMove);
-					if (countMoves == countMoveAccepts) {
-						countMoves = 0;
-						countMoveAccepts = 0;
+					if (movesMade.isEmpty()) {
 						sendMessage(Protocol.SERVER_CORE_DONE);
 					}
 				} else {
 					System.err.println("*ERROR* removing more moves then were made");
 				}
+
 				break;
 			case Protocol.SERVER_CORE_MOVE_DENIED:
 				// current move was invalid, try again.
 				System.out.println("Move " + movesMade.get(0) + " was rejected, try again.");
-				countMoves--;
 				makeMove();
 				break;
 			case Protocol.SERVER_CORE_SWAP_ACCEPTED:
 				System.out.println("Swap Accepted");
 				if (!movesMade.isEmpty()) {
-					Move lastMove = movesMade.get(0);
-					player.getHand().removeTile(lastMove.tile);
-					movesMade.remove(lastMove);
+					Move tailMove = movesMade.get(0);
+					player.getHand().removeTile(tailMove.tile);
+					movesMade.remove(tailMove);
+					if (movesMade.isEmpty()) {
+						sendMessage(Protocol.SERVER_CORE_DONE);
+					}
 				} else {
 					System.err.println("*ERR* removing more moves then were made");
 				}
@@ -257,7 +246,7 @@ public class Client extends serverMethods {
 	}
 
 	public void makeMove() {
-		movesMade.clear();
+		movesMade.clear(); // redundand clear
 		printUpdate();
 		movesMade = player.determineMove(board);
 		if (movesMade.get(0) instanceof TradeMove) { // decided to trade tiles

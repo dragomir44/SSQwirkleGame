@@ -2,6 +2,7 @@ package controller;
 
 
 import model.Move;
+import model.Tile;
 import server.ClientHandler;
 
 import java.util.ArrayList;
@@ -9,18 +10,27 @@ import java.util.ArrayList;
 public class OnlinePlayer extends Player {
     // enemy online player is een player aan de server kant
     // deze class verwerkt handler moves.
-    ClientHandler client;
+    ClientHandler handler;
 
-    public OnlinePlayer(ClientHandler client) {
-        super(client.getClientName());
-        this.client = client;
+    public OnlinePlayer(ClientHandler handler) {
+        super(handler.getClientName());
+        this.handler = handler;
     }
 
+    public ClientHandler getHandler() {
+        return handler;
+    }
     @Override
     public ArrayList<Move> determineMove(Board board) {
-        // client handler: ArrayList<Move> moves = handler.determineMove();
-        // return moves;
-    	return null;
+//        ArrayList<Move> moves = new ArrayList<>();
+//        boolean valid = false;
+//        do {
+//            moves = client.determineMove();
+//            if(board.isValidMove(moves)) {
+//                valid = true;
+//            }
+//        } while(!valid);
+      	return null;
     }
       
 //    @Override

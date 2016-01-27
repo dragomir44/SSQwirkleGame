@@ -38,6 +38,7 @@ public class Game {
 
 
 	public ArrayList<Tile> replenishTiles(Player p) {
+		System.out.println("Replenish tiles in local Game");
 		ArrayList<Tile> newTiles = new ArrayList<Tile>();
 		int TilesToDraw = TILES_PER_HAND - p.getHand().getSize();
 		// make sure to never draw more then bag size
@@ -73,6 +74,7 @@ public class Game {
 	}
 
 	public void start() {
+		System.out.println("Local game started");
 		boolean doorgaan = true;
 		while (doorgaan) {
 			reset();
@@ -82,7 +84,7 @@ public class Game {
 		}
 	}
 	
-	private boolean readBoolean(String prompt, String yes, String no) {
+	protected boolean readBoolean(String prompt, String yes, String no) {
 		String answer;
 		do {
 			System.out.print(prompt);
@@ -231,7 +233,8 @@ public class Game {
 		}
 	}
 
-	private void reset() {
+	public void reset() {
+		System.out.println("resetting the game");
 		board = new Board();
 		bag = new Bag();
 		for (Player player : players) {

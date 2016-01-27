@@ -90,6 +90,7 @@ public class Server {
             gameMap.put(game, handlers);
             sendMessageToGamePlayers(handlers, Protocol.SERVER_CORE_START 
             			  + playersString.toString());
+            System.out.println("Starting the game");
             game.start();
 		} else {
 			sendMessage(handler, "You're alone... can't start a game now");

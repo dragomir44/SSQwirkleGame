@@ -160,6 +160,18 @@ public class ClientHandler extends serverMethods {
     }
 
 
+	public void sendTilesToClient(ArrayList<Tile> tiles) {
+		String cmd = Protocol.SERVER_CORE_SEND_TILE;
+		String sp = Protocol.MESSAGESEPERATOR;
+		String done = Protocol.SERVER_CORE_DONE;
+		for (Tile tile : tiles) {
+			String[] tileNumbers = tileToString(tile);
+			String s = tileNumbers[0]; // shape
+			String c = tileNumbers[1];	// color
+			sendMessage(cmd + sp + s + sp + c);
+		}
+		sendMessage(done);
+	}
     public StringBuilder getPlayersFromLobby() {
 		StringBuilder players = new StringBuilder();
 		for (int i = 0; i < server.getLobby().size(); i++) {

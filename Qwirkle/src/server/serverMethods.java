@@ -61,7 +61,6 @@ public abstract class serverMethods extends Thread {
 
         String sp = Protocol.MESSAGESEPERATOR;
         String sendStart = Protocol.CLIENT_CORE_MOVE;
- //       String done = Protocol.CLIENT_CORE_DONE;
         return sendStart + sp + x + sp + y + sp + s + sp + c + sp;
     }
 
@@ -71,9 +70,8 @@ public abstract class serverMethods extends Thread {
         String c = tileNumbers[1];	// color
         String sp = Protocol.MESSAGESEPERATOR;
         String swapStart = Protocol.CLIENT_CORE_SWAP;
-        String done = Protocol.CLIENT_CORE_SWAP;
 
-        return swapStart + sp + s + sp + c + sp + done;
+        return swapStart + sp + s + sp + c;
     }
 
     public String[] tileToString(Tile tile) {
