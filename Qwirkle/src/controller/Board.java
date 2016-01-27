@@ -12,7 +12,8 @@ public class Board {
 	public BoardTiles getTiles() {
 		return this.tiles;
 	}
-
+	
+	
 	public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
         ArrayList<ArrayList<Tile>> tileLines;
         ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
@@ -103,21 +104,13 @@ public class Board {
 
 						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>();
 						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>(); 
-						line.remove(tile); // remove placed tile
-						boolean uniqueAll = true;
+						line.remove(tile); // remove placed tile 
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
-							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
-									lineColours.contains(lineTile.getColour())) { //allready hase color
-								uniqueAll = false;
-								break;
-							}
 						}
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
-
-
 						exclusiveShape =
 								!lineShapes.contains(tile.getShape()) // make sure shape is unique
 								&& uniqueColours.size() == 1 // make sure colors are the same
