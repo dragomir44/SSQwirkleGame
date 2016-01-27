@@ -105,8 +105,8 @@ public class Board {
 						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>(); 
 						line.remove(tile); // remove placed tile 
 						for (Tile lineTile : line) {
-							lineShapes.add(lineTile.getShape());
-							lineColours.add(lineTile.getColour());
+							lineShapes.add(lineTile.getShape()); // add all shapes in line
+							lineColours.add(lineTile.getColour()); // add all colors in line
 						}
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
@@ -238,7 +238,7 @@ public class Board {
 			protoTiles.put(move.row, move.col, move.tile);
 		}
 		// use StringBuilder for better memory performance
-		StringBuilder boardString = new StringBuilder("  ");
+		StringBuilder boardString = new StringBuilder("   ");
 		String rowline = "|\n";
 		// get the size of the board
 		int borderSize = 1;
@@ -250,15 +250,15 @@ public class Board {
 		
 		
 		for (int k = minCol; k < maxCol; k++) {
-			boardString.append("|" + String.format("%02d", k)); // add column numbers
+			boardString.append("|" + String.format("%03d", k)); // add column numbers
 		}
 		boardString.append(rowline);
 		for (int i = minRow; i < maxRow; i++) { // loop trough rows
-			boardString.append(String.format("%02d", i)); // add row numbers
+			boardString.append(String.format("%03d", i)); // add row numbers
 		    for (int j = minCol; j < maxCol; j++) { // loop trough cols
 		    	boardString.append("|");
 		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
-		    		boardString.append(protoTiles.get(i, j).toString());
+		    		boardString.append(protoTiles.get(i, j).toString()+ " ");
 		    	} else {
 			        boardString.append("  ");	    		
 		    	}
