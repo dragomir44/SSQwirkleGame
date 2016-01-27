@@ -260,7 +260,7 @@ public class Board {
 		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
 		    		boardString.append(protoTiles.get(i, j).toString()+ " ");
 		    	} else {
-			        boardString.append("  ");	    		
+			        boardString.append("   ");	    		
 		    	}
 		    }
 		    boardString.append(rowline); // end of row
