@@ -20,6 +20,7 @@ public abstract class ServerMethods extends Thread {
             out.write(message);
             out.newLine();
             out.flush();
+            System.out.println("Client (" + clientName + ") to server: " + message);
         } catch (IOException e) {
             System.err.println("CONNECTION LOST");
             shutdown();
@@ -48,7 +49,7 @@ public abstract class ServerMethods extends Thread {
         int shape = Integer.parseInt(moveInput[3]);
         int colour = Integer.parseInt(moveInput[4]);
         Tile moveTile = new Tile(shape, colour);
-        Move move = new Move(y, x, moveTile);
+        Move move = new Move(x, y, moveTile);
         return move;
     }
 

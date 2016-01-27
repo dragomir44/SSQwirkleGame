@@ -28,7 +28,6 @@ public class Qwirkle {
     		}
 
     		Game game = new Game(new ArrayList<Player>(Arrays.asList(players)));
-			//TODO switch to multiplayerGame
     		game.start();
     	} else {
     		System.err.println("Wrong input arguments");

@@ -25,7 +25,7 @@ public class Client extends ServerMethods {
 
 	public Client() throws IOException {
 //		clientName = getInput("Name:");
-//		port = Integer.parseInt(getInpuwwwt("Port:"));
+//		port = Integer.parseInt(getInput("Port:"));
 //		TEST: REMOVE AFTER TESTING
 		Random rn = new Random();
 //		clientName = "Player" + rn.nextInt(1000);
@@ -45,8 +45,8 @@ public class Client extends ServerMethods {
 		}
 
 
-//		InetAddress host = InetAddress.getLocalHost();
-		InetAddress host = InetAddress.getByName("130.89.180.108");
+		InetAddress host = InetAddress.getLocalHost();
+//		InetAddress host = InetAddress.getByName("130.89.96.63");
 		opponents = new HashMap<String, Integer>();
 		movesMade = new ArrayList<Move>();
 		try {
@@ -79,7 +79,7 @@ public class Client extends ServerMethods {
 
     public synchronized void readString(String msg) throws IOException {
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	String game;
+    	String startGame;
 		switch (input[0]) {
 			case Protocol.SERVER_CORE_EXTENSION:
 				if (clientName == null) { // Verandering
@@ -96,8 +96,8 @@ public class Client extends ServerMethods {
 				break;
 			case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
 				//TODO fix this 
-				game = getInput("Type 'Y' to start a game");
-				if (game.equals("Y")) {
+				startGame = getInput("Type 'Y' to start a game");
+				if (startGame.equals("Y")) {
 					sendMessage(Protocol.CLIENT_CORE_START);
 				}
 				break;
@@ -108,8 +108,8 @@ public class Client extends ServerMethods {
 			case Protocol.SERVER_CORE_JOIN_ACCEPTED:
 				clientName = input[1];
 				System.out.println("Joined server as: " + input[1]);
-				game = getInput("Type 'Y' to start a game");
-				if (game.equals("Y")) {
+				startGame = getInput("Type 'Y' to start a game");
+				if (startGame.equals("Y")) {
 					sendMessage(Protocol.CLIENT_CORE_START);
 				}
 				break;
@@ -135,7 +135,6 @@ public class Client extends ServerMethods {
 				String turnPlayer = input[1];
 				if (turnPlayer.equals(clientName)) {
 					System.out.println("It's your turn!");
-					//TODO stuck in loop, what if string is received during this loop?
 					// local player's turn, make a move.
 					makeMove();
 				} else {
@@ -259,6 +258,8 @@ public class Client extends ServerMethods {
 		} else {
 			placeMove(movesMade);
 		}
+		System.out.println("This was my move: " + movesMade);
+		System.out.println("I sent them to the server");
 	}
 
 	public void swapMove(ArrayList<Tile> tiles) {

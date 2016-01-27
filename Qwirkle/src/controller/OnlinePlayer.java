@@ -4,6 +4,7 @@ package controller;
 import model.Move;
 import model.Tile;
 import server.ClientHandler;
+import server.Protocol;
 
 import java.util.ArrayList;
 
@@ -20,22 +21,10 @@ public class OnlinePlayer extends Player {
     public ClientHandler getHandler() {
         return handler;
     }
-    @Override
-    public ArrayList<Move> determineMove(Board board) {
-//        ArrayList<Move> moves = new ArrayList<>();
-//        boolean valid = false;
-//        do {
-//            moves = client.determineMove();
-//            if(board.isValidMove(moves)) {
-//                valid = true;
-//            }
-//        } while(!valid);
-      	return null;
-    }
-      
-//    @Override
-//    pulic void sendString(String msg) {
-//    	// send text to player
-//    }
 
+    public ArrayList<Move> determineMove(Board board) {
+        // send message to client that it's his turn
+        handler.sendTurn(getName());
+        return null;
+    }
 }

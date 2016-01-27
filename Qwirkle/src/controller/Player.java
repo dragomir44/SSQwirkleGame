@@ -7,7 +7,7 @@ import model.Move;
 
 public abstract class Player {
 
-	private String name;
+	protected String name;
 	protected Hand hand = new Hand();
 	private int score;
 	

@@ -13,17 +13,17 @@ import java.util.Set;
 
 public class MultiplayerGame extends Game {
     // hier handle je de moves voor localOnlinePlayer en de clientHandler
-    private Board board;
-    private Bag bag;
-    private int current;
-    private int numberOfPlayers;
     private ArrayList<OnlinePlayer> players;
     private ArrayList<ClientHandler> handlers;
 
     public MultiplayerGame(ArrayList<OnlinePlayer> players, ArrayList<ClientHandler> handlers) {
-        super(new ArrayList<Player>()); // initally send empty player list
+        super(new ArrayList<Player>(players)); // initally send empty player list
         this.players = players;
         this.handlers = handlers;
+        for (ClientHandler handler : handlers) {
+            // pass this game object to each handler
+            handler.setGame(this);
+        }
     }
 
     public void addPlayer(String playerName) {
@@ -67,23 +67,15 @@ public class MultiplayerGame extends Game {
     }
 
     @Override
-    public void play() {
-        System.out.println("Started playing game");
-        while(true) {
-            // infinite loop. playing
-        }
-//        System.out.println("Escaped infinite loop");
-
-    }
-
-    @Override
     protected boolean readBoolean(String prompt, String yes, String no) {
         return false;
     }
 
     @Override
     public boolean makeMove(Player curPlayer, ArrayList<Move> moves) {
-        return false;
+        System.out.println("Player " + curPlayer + " made moves: " + moves);
+//        board.setField(moves);
+        return true;
     }
 
     public void placeTiles(ArrayList<Move> moves) {
@@ -91,11 +83,31 @@ public class MultiplayerGame extends Game {
     }
 
     @Override
-    public boolean gameOver() {
-        return false;
+    public void play() {
+        update();
+        while (!gameOver()) {
+            if (bag.getBag().isEmpty() &&
+                    !board.hasPossibleMoves(players.get(current).getHand().getTiles())) {
+                System.out.println("No move possible, skipped a turn");
+            } else {
+                boolean validMove = false;
+                OnlinePlayer curPlayer = players.get(current);
+                curPlayer.writeString(curPlayer.getName() + "'s turn:");
+                do {
+                    ArrayList<Move> moves = curPlayer.determineMove(board);
+                    validMove = curPlayer.getHandler().isMoveDone();
+                } while (!validMove);
+            curPlayer.getHandler().moveIsOver();
+            }
+            update();
+            current = (current + 1) % numberOfPlayers;
+
+        }
+        System.out.println("Game over!");
     }
 
-    public Board getBoard() {
-    	return board;
+    @Override
+    public boolean gameOver() {
+        return false;
     }
 }

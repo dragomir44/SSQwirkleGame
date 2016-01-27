@@ -16,8 +16,11 @@ import view.MultiplayerGame;
 public class ClientHandler extends ServerMethods {
 
     private Server server;
+	private MultiplayerGame game;
     public boolean rematch;
-    private MultiplayerGame game;
+	private ArrayList<Move> clientMoveBuffer = new ArrayList<>();
+	private boolean moveDone = false;
+	protected String name;
 
     public ClientHandler(Server serverArg, Socket sock) throws IOException {
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -25,6 +28,10 @@ public class ClientHandler extends ServerMethods {
         server = serverArg;
         this.sock = sock;
     }
+
+	public void setGame(MultiplayerGame game) {
+		this.game = game;
+	}
 
     public void run() {
 		try {
@@ -112,32 +119,34 @@ public class ClientHandler extends ServerMethods {
 								Protocol.MESSAGESEPERATOR + this.getClientName());
 				break;
 			case Protocol.CLIENT_CORE_MOVE:
-				Move receivedMove = stringToMove(input);
-				//TODO Check is a single move is valid
-				// if (game.getBoard().isValidMove(receivedMove)) {
-				if (true) {
-					//plaats move op server gameboard
-					sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-					//TODO get all values from Move
-					server.sendMessageToGamePlayers(server.getPlayersOfHandler(this), 
-									 Protocol.SERVER_CORE_MOVE_MADE + Protocol.MESSAGESEPERATOR + 
-									 input[1] + Protocol.MESSAGESEPERATOR + 
-									 input[2] + Protocol.MESSAGESEPERATOR + 
-									 input[3] + Protocol.MESSAGESEPERATOR + 
-									 input[4]);
+				System.out.println("Received input: " + input);
+				if (input.length == 5) {
+					Move receivedMove = stringToMove(input);
+					System.out.println("Handler received move: " + receivedMove.toString());
+					clientMoveBuffer.add(receivedMove);
+					// check if buffer is valid
+					System.out.println("The board: " + game.getBoard().toString());
+					if (game.getBoard().isValidMove(clientMoveBuffer)) {
+						//plaats move op server gameboard
+						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
+						game.broadcastMessage(Protocol.SERVER_CORE_MOVE_MADE + Protocol.MESSAGESEPERATOR +
+								input[1] + Protocol.MESSAGESEPERATOR +
+								input[2] + Protocol.MESSAGESEPERATOR +
+								input[3] + Protocol.MESSAGESEPERATOR +
+								input[4]);
+					} else {
+						clientMoveBuffer.remove(receivedMove);
+					}
 				} else {
-					// if tile is not in hand of client i.e.
 					sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
 				}
-				// makeMove(handler, input[1]);
 				break;
 			case Protocol.CLIENT_CORE_DONE:	
 				sendMessage(Protocol.SERVER_CORE_SCORE + Protocol.MESSAGESEPERATOR + 
-							  this.getClientName() + Protocol.MESSAGESEPERATOR + 
+							  clientName + Protocol.MESSAGESEPERATOR +
 				//TODO add getScore command from game
 						      "100");
-				//sendMessageToGamePlayers(SERVER_CORE_SEND_TILE) met het juiste aantal tiles in Shape en Kleur als integer
-				sendMessage(Protocol.SERVER_CORE_DONE);
+				moveDone = true;
 				break;
 			case Protocol.CLIENT_CORE_SWAP:
 				Tile receivedTile = stringToTile(input);
@@ -180,4 +189,15 @@ public class ClientHandler extends ServerMethods {
 		}
 		return players;
     }
+
+	public synchronized boolean isMoveDone() {
+		return moveDone;
+	}
+	public synchronized void moveIsOver() {
+		moveDone = false;
+	}
+
+	public void sendTurn(String name) {
+		sendMessage(Protocol.SERVER_CORE_TURN + Protocol.MESSAGESEPERATOR + clientName);
+	}
 }

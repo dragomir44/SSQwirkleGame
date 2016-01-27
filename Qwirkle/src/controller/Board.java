@@ -111,8 +111,6 @@ public class Board {
 
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
-						System.out.println("lineColors Size: " + lineColours.size());
-						System.out.println("uniqueColors Size: " + uniqueColours.size());
 						exclusiveShape = // All colors are the same in this line
 								!lineShapes.contains(tile.getShape()) // make sure shape is unique
 										&& uniqueColours.size() == 1 // make sure colors are the same
@@ -262,7 +260,7 @@ public class Board {
 				if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
 					boardString.append(protoTiles.get(i, j).toString()+ " ");
 				} else {
-					boardString.append("  ");
+					boardString.append("   ");
 				}
 			}
 			boardString.append(rowline); // end of row

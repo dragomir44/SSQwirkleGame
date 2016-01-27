@@ -11,18 +11,23 @@ public class Game {
 
 	public static final int TILES_PER_HAND = 6;
 	public static final int TILES_PER_BAG = 108;
-	private Board board;
-	private Bag bag;
-	private ArrayList<Player> players;
-	private int current;
-	private int numberOfPlayers;
+	protected Board board;
+	protected Bag bag;
+	protected ArrayList<Player> players;
+	protected int current;
+	protected int numberOfPlayers;
 	
 	
 	public Game(ArrayList<Player> players)  {
 		numberOfPlayers = players.size();
+		System.out.println("There are " + numberOfPlayers + " in this game object");
 		this.players = players;
 	}
-	
+
+	public Board getBoard() {
+		return board;
+	}
+
 	public void dealTiles() {
 		for (Player player : players) {
 			replenishTiles(player);
@@ -32,6 +37,10 @@ public class Game {
 	public void addPlayer(Player player) {
 		players.add(player);
 		numberOfPlayers++;
+	}
+
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 
 
@@ -188,7 +197,7 @@ public class Game {
 		return result;
 	}
 
-	private void update() {
+	protected void update() {
 		System.out.println("\ncurrent game situation:");
 		System.out.println(bag.getSize() + " tiles left in the bag.");
 		for (Player player : players) {
