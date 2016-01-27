@@ -1,12 +1,9 @@
 package controller;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import model.Hand;
 import model.Move;
-import model.Tile;
-import model.TradeMove;
 
 public abstract class Player {
 

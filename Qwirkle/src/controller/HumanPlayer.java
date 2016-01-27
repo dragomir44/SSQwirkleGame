@@ -43,7 +43,8 @@ public class HumanPlayer extends Player {
 		question = intro + drawText + placeText;
 		boolean valid = false;
 		do {
-			TreeMap<ArrayList<Move>, Integer> possibleMoves = board.getPossibleMoves(hand.getTiles());
+			TreeMap<ArrayList<Move>, Integer> possibleMoves = 
+							 board.getPossibleMoves(hand.getTiles());
 			question += "There are " + possibleMoves.size() + " possible moves.\n";
 			question += "Hint: ";
 			if (!possibleMoves.isEmpty()) { // make sure there is atleast 1 possible move.
@@ -62,7 +63,7 @@ public class HumanPlayer extends Player {
 			String command = allMatches.get(0);
 			switch (command) {
 				case "draw":
-					if(board.isEmpty()){
+					if (board.isEmpty()) {
 						question = "You can't trade tiles on the first turn.\n";
 						question += retry + drawText + placeText;
 					} else {
@@ -89,7 +90,8 @@ public class HumanPlayer extends Player {
 					}
 					break;
 				case "place":
-					boolean validFirstMove = true; // flag to make sure longest line is placed in first turn
+					// flag to make sure longest line is placed in first turn
+					boolean validFirstMove = true; 
 					ArrayList<Integer> movenrs = new ArrayList<Integer>();
 					matcher = Pattern.compile(findMovenrs).matcher(answer);
 					while (matcher.find()) {
@@ -114,7 +116,8 @@ public class HumanPlayer extends Player {
 							}
 						}
 						if (board.isEmpty()) { // make sure longest move is played in first turn
-							int firstMoveSize = board.getPossibleMoves(hand.getTiles()).firstKey().size();
+							int firstMoveSize = board.getPossibleMoves(
+										  hand.getTiles()).firstKey().size();
 							if (firstMoveSize != moves.size()) {
 								validFirstMove = false;
 							}
@@ -128,7 +131,8 @@ public class HumanPlayer extends Player {
 								question += retry + drawText + placeText;
 							}
 						} else {
-							question = "In the first turn the longest row possible has to be placed,";
+							question = "In the first turn the longest row possible "
+									+ "has to be placed,";
 							question += retry + drawText + placeText;
 						}
 					} else { // invald syntax

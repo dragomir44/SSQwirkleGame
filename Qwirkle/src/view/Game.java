@@ -7,8 +7,6 @@ import model.*;
 import controller.Board;
 import controller.Player;
 
-import static java.lang.Integer.min;
-
 public class Game {
 
 	public static final int TILES_PER_HAND = 6;
@@ -31,7 +29,7 @@ public class Game {
 		}
 	}
 
-	public void AddPlayer(Player player) {
+	public void addPlayer(Player player) {
 		players.add(player);
 		numberOfPlayers++;
 	}
@@ -40,12 +38,12 @@ public class Game {
 	public ArrayList<Tile> replenishTiles(Player p) {
 		System.out.println("Replenish tiles in local Game");
 		ArrayList<Tile> newTiles = new ArrayList<Tile>();
-		int TilesToDraw = TILES_PER_HAND - p.getHand().getSize();
+		int tilesToDraw = TILES_PER_HAND - p.getHand().getSize();
 		// make sure to never draw more then bag size
-		if (TilesToDraw > bag.getSize()) {
-			TilesToDraw = bag.getSize();
+		if (tilesToDraw > bag.getSize()) {
+			tilesToDraw = bag.getSize();
 		}
-		for (int i = 0; i < TilesToDraw; i ++) {
+		for (int i = 0; i < tilesToDraw; i++) {
 			Tile drawnTile = bag.getBag().remove(0);
 			newTiles.add(drawnTile);
 		}
@@ -63,7 +61,7 @@ public class Game {
 			System.err.println("Drew more tiles then available in bag");
 		}
 		if (Collections.min(tilenrs) < 0 || // check for unrealistic tile numbers
-				Collections.max(tilenrs) >= hand.getSize()) {
+				  Collections.max(tilenrs) >= hand.getSize()) {
 			System.err.println("Unrealistic tile numbers: " + tilenrs);
 		} else {
 			oldTiles = hand.removeTiles(tilenrs); // remove tiles from hand
@@ -99,7 +97,7 @@ public class Game {
 		update();
 		while (!gameOver()) {
 			if (bag.getBag().isEmpty() &&
-					!board.hasPossibleMoves(players.get(current).getHand().getTiles())) {
+					  !board.hasPossibleMoves(players.get(current).getHand().getTiles())) {
 				System.out.println("No move possible, skipped a turn");
 			} else {
 				boolean validMove = false;

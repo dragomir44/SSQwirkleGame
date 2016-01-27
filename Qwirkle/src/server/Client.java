@@ -3,8 +3,6 @@ package server;
 import controller.*;
 import model.Move;
 import model.Tile;
-import model.Tile.Colour;
-import model.Tile.Shape;
 import model.TradeMove;
 import model.ValueComparator;
 
@@ -17,7 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.*;
 
-public class Client extends serverMethods {
+public class Client extends ServerMethods {
 
 
 	private Board board = new Board();

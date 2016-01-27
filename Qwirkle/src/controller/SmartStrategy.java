@@ -27,7 +27,8 @@ public class SmartStrategy implements Strategy {
                 ArrayList<ArrayList<Tile>> newLines = board.getAllLines(mMoves);
                 for (ArrayList<Tile> newLine : newLines) {
                     if (hand.getTiles().size() == 6) {
-                        if (newLine.size() != 5 && (score > 3 || board.isEmpty())) { // don't create lines of 5
+                        if (newLine.size() != 5 && 
+                        		  (score > 3 || board.isEmpty())) { // don't create lines of 5
                             moves = mMoves;
                             break moveLoop;
                         }

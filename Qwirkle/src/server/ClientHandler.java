@@ -13,7 +13,7 @@ import model.Move;
 import model.Tile;
 import view.MultiplayerGame;
 
-public class ClientHandler extends serverMethods {
+public class ClientHandler extends ServerMethods {
 
     private Server server;
     public boolean rematch;

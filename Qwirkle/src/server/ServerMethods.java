@@ -8,7 +8,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
 
-public abstract class serverMethods extends Thread {
+public abstract class ServerMethods extends Thread {
 
     protected BufferedReader in;
     protected BufferedWriter out;

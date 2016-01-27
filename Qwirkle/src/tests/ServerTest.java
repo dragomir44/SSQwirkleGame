@@ -7,21 +7,16 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.Messaging.SyncScopeHelper;
 
-import model.Move;
 import model.Tile;
 import model.Tile.Colour;
 import model.Tile.Shape;
-import server.Client;
-import server.ClientHandler;
 import server.Protocol;
 
 public class ServerTest {
 	private ArrayList<String> lobby;
 	private ArrayList<String> opponents;
 	private Tile tile;
-	private Move move;
 	
 	@Before
 	public void setUp() throws IOException {
@@ -33,7 +28,6 @@ public class ServerTest {
 		lobby.add("rob");
 		lobby.add("henk");
 		tile = new Tile(Shape.$, Colour.G);
-		move = new Move(1, 2, tile);
 	}
 	
 	
@@ -86,13 +80,11 @@ public class ServerTest {
 	@Test
 	public void tileTranslateTest() throws IOException {
 		String c = null;
-		int count = 1;
 		for (Colour colour : Colour.values()) {
 			if (tile.getColour().equals(colour)) {
 				c = colour.toString();
 				break;
 			}
-			count++;
 		}
 		assertEquals(c, tile.getColour().toString());
 	}
