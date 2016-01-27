@@ -38,7 +38,7 @@ public class SimpleUnitTests {
 		tile3 = new Tile(Tile.Shape.X, Tile.Colour.P);
 
 		tile10 = new Tile(Tile.Shape.X, Tile.Colour.O);
-		tile4 = new Tile(Tile.Shape.O, Tile.Colour.O);
+		tile4 = new Tile(Tile.Shape.X, Tile.Colour.Y);
 		tile5 = new Tile(Tile.Shape.B, Tile.Colour.R);
 		tile6 = new Tile(Tile.Shape.R, Tile.Colour.G);
 		tile7 = new Tile(Tile.Shape.R, Tile.Colour.G);
@@ -90,7 +90,9 @@ public class SimpleUnitTests {
 		Move move6 = new Move(0,5, tile10);
 		moves.clear();
 		moves.add(move6);
+		System.out.println(board.toString());
 		assertFalse(board.setField(moves));
+	
 
 	}
 	
