@@ -26,11 +26,12 @@ public class Client extends serverMethods {
 	private ArrayList<Move> movesMade; // store the last move that was made
 
 	public Client() throws IOException {
-		//clientName = getInput("Name:");
-		//port = Integer.parseInt(getInput("Port:"));
-		//TEST: REMOVE AFTER TESTING
+//		clientName = getInput("Name:");
+//		port = Integer.parseInt(getInpuwwwt("Port:"));
+//		TEST: REMOVE AFTER TESTING
 		Random rn = new Random();
-		clientName = "Player" + rn.nextInt(1000);
+//		clientName = "Player" + rn.nextInt(1000);
+		clientName = "-S";
 		int port = 1337;
 		
 		switch (clientName) {
@@ -46,7 +47,8 @@ public class Client extends serverMethods {
 		}
 
 
-		InetAddress host = InetAddress.getLocalHost();
+//		InetAddress host = InetAddress.getLocalHost();
+		InetAddress host = InetAddress.getByName("130.89.180.108");
 		opponents = new HashMap<String, Integer>();
 		movesMade = new ArrayList<Move>();
 		try {
@@ -82,12 +84,12 @@ public class Client extends serverMethods {
     	String game;
 		switch (input[0]) {
 			case Protocol.SERVER_CORE_EXTENSION:
-				if (clientName != null) {
+				if (clientName == null) { // Verandering
 					sendMessage(Protocol.CLIENT_CORE_LOGIN
 							  + Protocol.MESSAGESEPERATOR + clientName);
 				} else {
-					sendMessage(Protocol.CLIENT_CORE_JOIN
-							  + Protocol.MESSAGESEPERATOR + clientName);
+					sendMessage(Protocol.CLIENT_CORE_JOIN);
+//							  + Protocol.MESSAGESEPERATOR + clientName);
 				}
 				break;
 			case Protocol.SERVER_CORE_LOGIN_DENIED:
