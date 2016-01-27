@@ -93,7 +93,7 @@ public class Board {
 				firstMove = true;  // is first move
 			} else {
 				if (!tileLines.get(0).containsAll(placedTiles)
-						|| !tileLines.get(1).containsAll(placedTiles)) {
+				  		  || !tileLines.get(1).containsAll(placedTiles)) {
 					errorBuffer += "Tiles are not being placed on the same line. \n";
 					sameLine = false;
 				}
@@ -115,14 +115,20 @@ public class Board {
 						System.out.println("uniqueColors Size: " + uniqueColours.size());
 						exclusiveShape = // All colors are the same in this line
 								!lineShapes.contains(tile.getShape()) // make sure shape is unique
-										&& uniqueColours.size() == 1 // make sure colors are the same
-										&& uniqueColours.contains(tile.getColour())// make sure it is the color
-										&& (lineShapes.size() == uniqueShapes.size()); // In case of merged lines
+										// make sure colors are the same
+										&& uniqueColours.size() == 1 
+										// make sure it is the color
+										&& uniqueColours.contains(tile.getColour())
+										// In case of merged lines
+										&& (lineShapes.size() == uniqueShapes.size()); 
 						exclusiveColour = // all shapes are the same in this line
 								!lineColours.contains(tile.getColour())
-										&& uniqueShapes.size() == 1 // make sure the shapes are the same
-										&& uniqueShapes.contains(tile.getShape()) // make sure it is the shape
-										&& (lineColours.size() == uniqueColours.size()); // In case of merged lines
+										// make sure the shapes are the same
+										&& uniqueShapes.size() == 1
+										// make sure it is the shape
+										&& uniqueShapes.contains(tile.getShape()) 
+										// In case of merged lines
+										&& (lineColours.size() == uniqueColours.size());
 						if (!(exclusiveColour ^ exclusiveShape)) {
 							errorBuffer += "Incorrect color/shape match \n";
 							break moveLoop;
@@ -260,7 +266,7 @@ public class Board {
 			for (int j = minCol; j < maxCol; j++) { // loop trough cols
 				boardString.append("|");
 				if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
-					boardString.append(protoTiles.get(i, j).toString()+ " ");
+					boardString.append(protoTiles.get(i, j).toString() + " ");
 				} else {
 					boardString.append("  ");
 				}
@@ -304,7 +310,7 @@ public class Board {
 					testTiles.remove(tile); // create a copy of the hand, and remove placed tile
 					for (int dir = 0; dir < 4; dir++) { // test row creation in every direction
 						HashMap<ArrayList<Move>, Integer> moveMap =
-								recursiveMoveCalc(testTiles, newMove, dir);
+								  recursiveMoveCalc(testTiles, newMove, dir);
 						if (!moveMap.isEmpty()) {
 							result.putAll(moveMap);
 						}
@@ -318,7 +324,7 @@ public class Board {
 	}
 
 	public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
-			ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
+		   ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
 		int row = headMove.row;
@@ -349,7 +355,7 @@ public class Board {
 				ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
 				testTiles.remove(tile);
 				HashMap<ArrayList<Move>, Integer> moveMap =
-						recursiveMoveCalc(useTiles, testMoves, direction);
+						  recursiveMoveCalc(useTiles, testMoves, direction);
 				if (!moveMap.isEmpty()) {
 					result.putAll(moveMap);
 				}
