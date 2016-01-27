@@ -101,7 +101,11 @@ public class HumanPlayer extends Player {
 							int col = movenrs.get(i + 1);
 							int tilenr = movenrs.get(i + 2) - 1;
 							if (tilenr <= hand.getTiles().size()) { // check if tile exists
-								moves.add(new Move(row, col, hand.getTiles().get(tilenr)));
+								try {
+									moves.add(new Move(row, col, hand.getTiles().get(tilenr)));
+								} catch (ArrayIndexOutOfBoundsException e) {
+									determineMove(board);
+								}
 							} else {
 								moves.clear();
 								question = "Invalid command," + tilenr + " is not a tilenumber \n";

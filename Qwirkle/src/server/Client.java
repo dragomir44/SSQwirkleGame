@@ -22,7 +22,6 @@ public class Client extends serverMethods {
 
 	private Board board = new Board();
 	private Player player;
-	private ArrayList<String> playersInServer;
 	private HashMap<String, Integer> opponents;
 	private ArrayList<Move> movesMade; // store the last move that was made
 	private int countMoves = 0;
