@@ -7,7 +7,7 @@ import controller.*;
 import java.util.*;
 
 
-import org.junit.Before;
+import org.junit.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -66,6 +66,7 @@ public class SimpleUnitTests {
 		moves.add(move2);
 		moves.add(move3);
 		assertTrue(board.isValidMove(moves));
+		System.out.println(board.getErrors());
 		
 		assertTrue(board.setField(moves));
 		// double color
@@ -81,10 +82,15 @@ public class SimpleUnitTests {
 		assertFalse(board.setField(moves));
 		board.getTiles().clear();
 
+	}
+
+	@Test
+	public void testMergeRow() {
+		ArrayList<Move> moves = new ArrayList<Move>();
 		board.getTiles().put(0, 1, tile1);
 		board.getTiles().put(0, 2, tile2);
 		board.getTiles().put(0, 3, tile3);
-		board.getTiles().put(0, 4, tile4);
+		board.getTiles().put(0, 4, tile);
 		board.getTiles().put(0, 6, tile1);
 
 		Move move6 = new Move(0,5, tile10);
@@ -92,10 +98,8 @@ public class SimpleUnitTests {
 		moves.add(move6);
 		System.out.println(board.toString());
 		assertFalse(board.setField(moves));
-	
-
 	}
-	
+
 //	@Test
 //	public void testPoints() {
 //		Move move1 = new Move(4, 5, tile);

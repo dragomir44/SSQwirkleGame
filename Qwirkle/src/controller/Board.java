@@ -63,7 +63,7 @@ public class Board {
 
 	public boolean isValidMove(ArrayList<Move> moves) {
 		BoardTiles protoTiles = new BoardTiles(tiles); // create copy of field to test moves
-		ArrayList<Tile> placedTiles = new  ArrayList<Tile>(); 
+		ArrayList<Tile> placedTiles = new  ArrayList<Tile>();
 		boolean result = false;
 		boolean sameLine = true;
 		boolean hasTile = false;
@@ -71,7 +71,7 @@ public class Board {
 		boolean exclusiveColour = true;
 		boolean exclusiveShape = true;
 		errorBuffer = ""; // clear error buffer
-		
+
 		moveLoop:
 		for (Move move : moves) {
 			result = false;
@@ -80,54 +80,49 @@ public class Board {
 			int row = move.row;
 			int col = move.col;
 			Tile tile = move.tile;
-			
+
 			if (protoTiles.containsKeys(row, col)) {
 				hasTile = true;
-				errorBuffer += "There is already a tile on row " 
-							+ row + " and column " + col + "\n";
+				errorBuffer += "There is already a tile on row "
+						+ row + " and column " + col + "\n";
 				break moveLoop;
 			}
-			
+
 			ArrayList<ArrayList<Tile>> tileLines = getLines(move, protoTiles);
 			if (protoTiles.isEmpty()) {
 				firstMove = true;  // is first move
 			} else {
-				if (!tileLines.get(0).containsAll(placedTiles) 
-						  || !tileLines.get(1).containsAll(placedTiles)) {
+				if (!tileLines.get(0).containsAll(placedTiles)
+						|| !tileLines.get(1).containsAll(placedTiles)) {
 					errorBuffer += "Tiles are not being placed on the same line. \n";
 					sameLine = false;
 				}
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
-					boolean uniqueAll = true;
 					if (!line.isEmpty()) {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
 
 						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>();
-						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>(); 
+						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>();
 						line.remove(tile); // remove placed tile
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
-							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
-									lineColours.contains(lineTile.getColour())) { //allready hase color
-								uniqueAll = false;
-							}
 						}
+
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
-
-
-						exclusiveShape =
-								uniqueAll // make sure shape is unique
-								&& uniqueColours.size() == 1 // make sure colors are the same
-										// make sure it is the color
-								&& uniqueColours.contains(tile.getColour());
-						exclusiveColour =
-								// make sure the color is unique
-								uniqueAll
-								&& uniqueShapes.size() == 1 // make sure the shapes are the same
-										// make sure it is the shape
-								&& uniqueShapes.contains(tile.getShape());
+						System.out.println("lineColors Size: " + lineColours.size());
+						System.out.println("uniqueColors Size: " + uniqueColours.size());
+						exclusiveShape = // All colors are the same in this line
+								!lineShapes.contains(tile.getShape()) // make sure shape is unique
+										&& uniqueColours.size() == 1 // make sure colors are the same
+										&& uniqueColours.contains(tile.getColour())// make sure it is the color
+										&& (lineShapes.size() == uniqueShapes.size()); // In case of merged lines
+						exclusiveColour = // all shapes are the same in this line
+								!lineColours.contains(tile.getColour())
+										&& uniqueShapes.size() == 1 // make sure the shapes are the same
+										&& uniqueShapes.contains(tile.getShape()) // make sure it is the shape
+										&& (lineColours.size() == uniqueColours.size()); // In case of merged lines
 						if (!(exclusiveColour ^ exclusiveShape)) {
 							errorBuffer += "Incorrect color/shape match \n";
 							break moveLoop;
@@ -150,7 +145,7 @@ public class Board {
 				protoTiles.put(row, col, tile);
 			}
 		}
- 	    return result;
+		return result;
 	}
 
 	public String getErrors() {
