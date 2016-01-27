@@ -98,20 +98,19 @@ public class Board {
 					sameLine = false;
 				}
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
+					boolean uniqueAll = true;
 					if (!line.isEmpty()) {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
 
 						ArrayList<Tile.Shape> lineShapes = new ArrayList<Tile.Shape>();
 						ArrayList<Tile.Colour> lineColours = new ArrayList<Tile.Colour>(); 
 						line.remove(tile); // remove placed tile
-						boolean uniqueAll = true;
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
 							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
 									lineColours.contains(lineTile.getColour())) { //allready hase color
 								uniqueAll = false;
-								break;
 							}
 						}
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
