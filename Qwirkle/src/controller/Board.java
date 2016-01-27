@@ -98,6 +98,7 @@ public class Board {
 					sameLine = false;
 				}
 				for (ArrayList<Tile> line : tileLines) { // loop trough tile lines
+					ArrayList<Tile> backupLine = new ArrayList<Tile>(line);
 					boolean uniqueAll = true;
 					if (!line.isEmpty()) {
 						hasAdjecent = true; // check if there is atleast 1 adjecent tile
@@ -108,26 +109,37 @@ public class Board {
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
-							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
-									lineColours.contains(lineTile.getColour())) { //allready hase color
-								uniqueAll = false;
-							}
 						}
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
 						Set<Tile.Shape> uniqueShapes = new HashSet<Tile.Shape>(lineShapes);
 
 
 						exclusiveShape =
-								uniqueAll // make sure shape is unique
+								!lineShapes.contains(tile.getShape()) // make sure shape is unique
 								&& uniqueColours.size() == 1 // make sure colors are the same
 										// make sure it is the color
 								&& uniqueColours.contains(tile.getColour());
 						exclusiveColour =
 								// make sure the color is unique
-								uniqueAll
+								lineColours.contains(tile.getColour())
 								&& uniqueShapes.size() == 1 // make sure the shapes are the same
 										// make sure it is the shape
 								&& uniqueShapes.contains(tile.getShape());
+						if (exclusiveShape) {
+							for (Tile testTile : backupLine) {
+								if (lineShapes.contains(testTile.getShape())) {
+									exclusiveShape = false;
+								}
+							}
+						}
+						if (exclusiveColour) {
+							for (Tile testTile : backupLine) {
+								if (lineColours.contains(testTile.getColour())) {
+									exclusiveColour = false;
+								}
+							}
+						}
+						
 						if (!(exclusiveColour ^ exclusiveShape)) {
 							errorBuffer += "Incorrect color/shape match \n";
 							break moveLoop;
