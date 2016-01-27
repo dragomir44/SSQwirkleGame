@@ -8,28 +8,28 @@ public class Board {
 	public String errorBuffer = "";
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
-	
+
 	public BoardTiles getTiles() {
 		return this.tiles;
 	}
 
 	public ArrayList<ArrayList<Tile>> getAllLines(ArrayList<Move> moves) {
-        ArrayList<ArrayList<Tile>> tileLines;
-        ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
-        // create hard copy of placed tiles to test on
-        BoardTiles testTiles = new BoardTiles(tiles);
-        for (Move move : moves) {
-            testTiles.put(move.row, move.col, move.tile); // place tile on the field
-        }
-        for (Move move : moves) { // loop trough placed tiles
-            tileLines = getLines(move, testTiles);
-            for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
-                if (!prevLines.contains(line) && !line.isEmpty()) {
-                    prevLines.add(line);
-                }
-            }
-        }
-        return prevLines;
+		ArrayList<ArrayList<Tile>> tileLines;
+		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
+		// create hard copy of placed tiles to test on
+		BoardTiles testTiles = new BoardTiles(tiles);
+		for (Move move : moves) {
+			testTiles.put(move.row, move.col, move.tile); // place tile on the field
+		}
+		for (Move move : moves) { // loop trough placed tiles
+			tileLines = getLines(move, testTiles);
+			for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
+				if (!prevLines.contains(line) && !line.isEmpty()) {
+					prevLines.add(line);
+				}
+			}
+		}
+		return prevLines;
 	}
 
 
@@ -107,10 +107,6 @@ public class Board {
 						for (Tile lineTile : line) {
 							lineShapes.add(lineTile.getShape()); // add all shapes in line
 							lineColours.add(lineTile.getColour()); // add all colors in line
-							if (lineShapes.contains(lineTile.getShape()) || // allready has shape
-									lineColours.contains(lineTile.getColour())) { //allready hase color
-								uniqueAll = false;
-							}
 						}
 
 						Set<Tile.Colour> uniqueColours = new HashSet<Tile.Colour>(lineColours);
@@ -261,15 +257,15 @@ public class Board {
 		boardString.append(rowline);
 		for (int i = minRow; i < maxRow; i++) { // loop trough rows
 			boardString.append(String.format("%03d", i)); // add row numbers
-		    for (int j = minCol; j < maxCol; j++) { // loop trough cols
-		    	boardString.append("|");
-		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
-		    		boardString.append(protoTiles.get(i, j).toString()+ " ");
-		    	} else {
-			        boardString.append("  ");
-		    	}
-		    }
-		    boardString.append(rowline); // end of row
+			for (int j = minCol; j < maxCol; j++) { // loop trough cols
+				boardString.append("|");
+				if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
+					boardString.append(protoTiles.get(i, j).toString()+ " ");
+				} else {
+					boardString.append("  ");
+				}
+			}
+			boardString.append(rowline); // end of row
 		}
 		return boardString.toString();
 	}
@@ -295,7 +291,7 @@ public class Board {
 		TreeMap<ArrayList<Move>, Integer> sortedResult = new TreeMap<ArrayList<Move>, Integer>();
 		// if this is the first move, the only possible move is the largest row possible
 		// loop trough all the empty fields where a tile can be placed
-		for (int[] emptyPos : tiles.getEmptyFields()) { 
+		for (int[] emptyPos : tiles.getEmptyFields()) {
 //			System.out.println("Empty spot is " + emptyPos[0] + ", " + emptyPos[1]);
 			for (Tile tile : useTiles) { // check for every tile if it can be placed
 
@@ -307,8 +303,8 @@ public class Board {
 					ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
 					testTiles.remove(tile); // create a copy of the hand, and remove placed tile
 					for (int dir = 0; dir < 4; dir++) { // test row creation in every direction
-						HashMap<ArrayList<Move>, Integer> moveMap = 
-										recursiveMoveCalc(testTiles, newMove, dir);
+						HashMap<ArrayList<Move>, Integer> moveMap =
+								recursiveMoveCalc(testTiles, newMove, dir);
 						if (!moveMap.isEmpty()) {
 							result.putAll(moveMap);
 						}
@@ -320,9 +316,9 @@ public class Board {
 		sortedResult = moveComp.sortByPoints(result);
 		return sortedResult;
 	}
-	
+
 	public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
-					ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
+			ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
 		int row = headMove.row;
@@ -352,8 +348,8 @@ public class Board {
 				// create deep copy of tiles to pass on.
 				ArrayList<Tile> testTiles = new ArrayList<Tile>(useTiles);
 				testTiles.remove(tile);
-				HashMap<ArrayList<Move>, Integer> moveMap = 
-								recursiveMoveCalc(useTiles, testMoves, direction);
+				HashMap<ArrayList<Move>, Integer> moveMap =
+						recursiveMoveCalc(useTiles, testMoves, direction);
 				if (!moveMap.isEmpty()) {
 					result.putAll(moveMap);
 				}
