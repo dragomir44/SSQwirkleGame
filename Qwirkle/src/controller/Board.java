@@ -119,16 +119,16 @@ public class Board {
 
 
 						exclusiveShape =
-								!lineShapes.contains(tile.getShape()) // make sure shape is unique
+								uniqueAll // make sure shape is unique
 								&& uniqueColours.size() == 1 // make sure colors are the same
 										// make sure it is the color
-								&& uniqueColours.contains(tile.getColour()); 
-						exclusiveColour = 
+								&& uniqueColours.contains(tile.getColour());
+						exclusiveColour =
 								// make sure the color is unique
-								!lineColours.contains(tile.getColour()) 
+								uniqueAll
 								&& uniqueShapes.size() == 1 // make sure the shapes are the same
 										// make sure it is the shape
-								&& uniqueShapes.contains(tile.getShape()); 
+								&& uniqueShapes.contains(tile.getShape());
 						if (!(exclusiveColour ^ exclusiveShape)) {
 							errorBuffer += "Incorrect color/shape match \n";
 							break moveLoop;
@@ -139,9 +139,9 @@ public class Board {
 					errorBuffer += "There are no adjecent tiles to form a line. \n";
 				}
 			}
-			result = (hasAdjecent && 
-					!hasTile && 
-					(exclusiveColour ^ exclusiveShape) 
+			result = (hasAdjecent &&
+					!hasTile &&
+					(exclusiveColour ^ exclusiveShape)
 					&& sameLine)
 					|| firstMove;
 			if (!result) {
@@ -153,17 +153,17 @@ public class Board {
 		}
  	    return result;
 	}
-	
+
 	public String getErrors() {
 		return errorBuffer;
 	}
-	
+
 	public int getPoints(ArrayList<Move> moves) {
 		int points = 0;
 		ArrayList<ArrayList<Tile>> tileLines;
 		ArrayList<ArrayList<Tile>> prevLines = new ArrayList<ArrayList<Tile>>();
 		// create hard copy of placed tiles to test on
-		BoardTiles testTiles = new BoardTiles(tiles); 
+		BoardTiles testTiles = new BoardTiles(tiles);
 		boolean metaMove = false; // boolean for test cases
 		// if move has not yet been made, make moves (be sure moves are valid, before testing!)
 		if (!moves.isEmpty()) {
@@ -178,13 +178,13 @@ public class Board {
 		// check if this was the first move of the game and only 1 tile was placed
 		// TODO double check this
 		if (tiles.size() == 1 && moves.size() == 1) {
-			points = 1; 
+			points = 1;
 		}
 		for (Move move : moves) { // loop trough placed tiles
 			tileLines = getLines(move, testTiles);
 			for (ArrayList<Tile> line : tileLines) { // loop trough adjecent lines of that tile
 				// check if line was already rewarded points
-				if (!prevLines.contains(line) && !line.isEmpty()) { 
+				if (!prevLines.contains(line) && !line.isEmpty()) {
 					points += line.size();
 //					System.out.println("Scored " + line.size() + " for line " + line +
 //									" with move " + move.toString() + " total points: " + points);
@@ -201,7 +201,7 @@ public class Board {
 
 		return points;
 	}
-	
+
 
 	public boolean setField(ArrayList<Move> moves, BoardTiles tileMapToPlace) {
 		BoardTiles tileMap = tileMapToPlace;
@@ -215,33 +215,33 @@ public class Board {
 		}
 		return result;
 	}
-	
+
 	// default setField behaviour: place on tiles opbject
 	public boolean setField(ArrayList<Move> moves) {
 		return setField(moves, tiles);
 	}
-	
+
 	public boolean isEmpty() {
 		return tiles.isEmpty();
 	}
-	
+
 	/** Prints the board and places the tiles contained in tileMap on the board.
-	 * @return returns a string containing the board 
+	 * @return returns a string containing the board
 	 */
 	public String toString() {
 		return toString(tiles);
 	}
-	
+
 	public String toString(BoardTiles boardtiles) {
 		return toString(boardtiles, new ArrayList<Move>());
 	}
-	
+
 	public String toString(ArrayList<Move> moves) {
 		return toString(tiles, moves);
 	}
-	
+
 	public String toString(BoardTiles boardtiles, ArrayList<Move> moves) {
-		BoardTiles protoTiles = new BoardTiles(boardtiles); // create copy of field 
+		BoardTiles protoTiles = new BoardTiles(boardtiles); // create copy of field
 		for (Move move: moves) {
 			protoTiles.put(move.row, move.col, move.tile);
 		}
@@ -255,8 +255,8 @@ public class Board {
 		int maxRow = bounds[1] + borderSize + 1;
 		int minCol = bounds[2] - borderSize;
 		int maxCol = bounds[3] + borderSize + 1;
-		
-		
+
+
 		for (int k = minCol; k < maxCol; k++) {
 			boardString.append("|" + String.format("%03d", k)); // add column numbers
 		}
@@ -266,9 +266,9 @@ public class Board {
 		    for (int j = minCol; j < maxCol; j++) { // loop trough cols
 		    	boardString.append("|");
 		    	if (protoTiles.containsKeys(i, j)) { // check if grid contains tile
-		    		boardString.append(protoTiles.get(i, j).toString() + " ");
+		    		boardString.append(protoTiles.get(i, j).toString()+ " ");
 		    	} else {
-			        boardString.append("   ");	    		
+			        boardString.append("  ");
 		    	}
 		    }
 		    boardString.append(rowline); // end of row
