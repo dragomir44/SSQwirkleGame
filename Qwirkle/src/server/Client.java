@@ -6,8 +6,6 @@ import model.Tile;
 import model.TradeMove;
 import model.ValueComparator;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,7 +15,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.*;
 
-public class Client extends serverMethods{
+public class Client extends serverMethods {
 
 
 	private Board board = new Board();
@@ -204,7 +202,8 @@ public class Client extends serverMethods{
 				System.out.println(msg);
 		}
     }
-    	public void addScores(String[] scoreInput) {
+    
+    public void addScores(String[] scoreInput) {
 		for (int i = 1; i < scoreInput.length; i = i + 2) {
 			String name = scoreInput[i];
 			int score = Integer.parseInt(scoreInput[i + 1]);
@@ -248,7 +247,7 @@ public class Client extends serverMethods{
 			for (int nr : tileNrs) {
 				tradeTiles.add(player.getHand().getTiles().get(nr));
 			}
-				swapMove(tradeTiles);
+			swapMove(tradeTiles);
 		} else {
 			placeMove(movesMade);
 		}
@@ -263,8 +262,8 @@ public class Client extends serverMethods{
 	public void placeMove(ArrayList<Move> moves) {
 		Move tailMove = moves.get(0);
 		if (board.isEmpty() &&
-				tailMove.row != 0 &&
-				tailMove.col != 0) {
+			   tailMove.row != 0 &&
+			   tailMove.col != 0) {
 			// first move not on 0,0
 			System.out.println("Invalid move, the first should be on 0, 0");
 			makeMove(); // retry.
@@ -285,10 +284,10 @@ public class Client extends serverMethods{
 
 	private void printUpdate() {
 		System.out.println("\ncurrent game situation:");
-		System.out.println(getBagSize()+ " tiles left in the bag.");
-		for (Map.Entry<String, Integer> player : playersInServer.entrySet()) {
-			Integer score = player.getValue();
-			String name = player.getKey();
+		System.out.println(getBagSize() + " tiles left in the bag.");
+		for (Map.Entry<String, Integer> playerInServer : playersInServer.entrySet()) {
+			Integer score = playerInServer.getValue();
+			String name = playerInServer.getKey();
 			System.out.println(name + "'s score is: " + score);
 		}
 
@@ -313,9 +312,9 @@ public class Client extends serverMethods{
 		}
 		System.out.println("The rest: ");
 		int i = 0;
-		for (Map.Entry<String, Integer> player : sortedScores.entrySet()) {
-			Integer score = player.getValue();
-			String name = player.getKey();
+		for (Map.Entry<String, Integer> playerInScore : sortedScores.entrySet()) {
+			Integer score = playerInScore.getValue();
+			String name = playerInScore.getKey();
 			i++;
 			if (i > winners.size()) {
 				System.out.println(i + ": " + name + " scored " + score);
