@@ -29,6 +29,19 @@ public class ClientHandler extends ServerMethods {
         this.sock = sock;
     }
 
+	@Override
+	public void sendMessage(String message) {
+		try {
+			out.write(message);
+			out.newLine();
+			out.flush();
+			System.out.println("Handler (" + clientName + ") to client: " + message);
+		} catch (IOException e) {
+			System.err.println("CONNECTION LOST");
+			shutdown();
+		}
+	}
+
 	public void setGame(MultiplayerGame game) {
 		this.game = game;
 	}
@@ -47,12 +60,6 @@ public class ClientHandler extends ServerMethods {
 			shutdown();
 		}
 	}
-
-	@Override
-    public void sendMessage(String msg) {
-   		super.sendMessage(msg);
-    	server.print(this, msg);
-    }
 
 	@Override
 	public void shutdown() {
@@ -74,7 +81,7 @@ public class ClientHandler extends ServerMethods {
     }
 
     public synchronized void readString(ClientHandler handler, String msg) {
-    	System.out.println("Received:  " + msg);
+    	System.out.println("Handler (" + clientName + ") received:  " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
 		switch (input[0]) {
 			case Protocol.CLIENT_CORE_EXTENSION:
@@ -119,13 +126,11 @@ public class ClientHandler extends ServerMethods {
 								Protocol.MESSAGESEPERATOR + this.getClientName());
 				break;
 			case Protocol.CLIENT_CORE_MOVE:
-				System.out.println("Received input: " + input);
 				if (input.length == 5) {
 					Move receivedMove = stringToMove(input);
-					System.out.println("Handler received move: " + receivedMove.toString());
 					clientMoveBuffer.add(receivedMove);
 					// check if buffer is valid
-					System.out.println("The board: " + game.getBoard().toString());
+//					System.out.println("The board: " + game.getBoard().toString());
 					if (game.getBoard().isValidMove(clientMoveBuffer)) {
 						//plaats move op server gameboard
 						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
@@ -136,6 +141,7 @@ public class ClientHandler extends ServerMethods {
 								input[4]);
 					} else {
 						clientMoveBuffer.remove(receivedMove);
+						sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
 					}
 				} else {
 					sendMessage(Protocol.SERVER_CORE_MOVE_DENIED);
@@ -200,4 +206,5 @@ public class ClientHandler extends ServerMethods {
 	public void sendTurn(String name) {
 		sendMessage(Protocol.SERVER_CORE_TURN + Protocol.MESSAGESEPERATOR + clientName);
 	}
+
 }
