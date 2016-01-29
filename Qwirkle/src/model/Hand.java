@@ -30,11 +30,11 @@ public class Hand {
     	return output;
     }
 
-	public void removeTile(Tile tile) {
+	public void removeTile(Tile tile) throws InvalidTile {
 		if (hand.contains(tile)) {
 			hand.remove(tile);
 		} else {
-			System.err.println("Trying to remove tile that is not in hand.");
+			throw new InvalidTile();
 		}
 
 	}

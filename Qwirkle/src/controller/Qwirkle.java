@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Qwirkle {
-	public static void main(String[] a) {
-		String[] args = new String[2];
+	public static void main(String[] a) throws InputException {
+		String[] args = new String[4]; // uncomment for preset players
 		args[0] = "-S";
 		args[1] = "-N";
+		args[2] = "-N";
+		args[3] = "-N";
     	if (args.length > 1 && args.length <= 4) {
     		Player[] players = new Player[args.length];
     		for (int i = 0; i < args.length; i++) {
@@ -31,7 +33,7 @@ public class Qwirkle {
     		Game game = new Game(new ArrayList<Player>(Arrays.asList(players)));
     		game.start();
     	} else {
-    		System.err.println("Wrong input arguments");
+    		throw new InputException();
     	}
 	}
 }

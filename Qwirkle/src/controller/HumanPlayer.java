@@ -7,12 +7,21 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
-	
+
+	/**
+	 * This constructs the class object.
+	 * @param name The name of the player
+     */
 	//@ requires name != null;
 	public HumanPlayer(String name) {
 		super(name);
 	}
-
+	
+	/**
+	 * This class allows for user input.
+	 * @param prompt The question asked before requesting input.
+	 * @return A string entered by the user.
+     */
 	//@ requires prompt != null;
 	//@ ensures \result != null;
 	/*@ pure */protected String readString(String prompt) {
@@ -23,6 +32,12 @@ public class HumanPlayer extends Player {
 		return result;
 	}
 	
+	/**
+	 * This method communicates with the user to determine the move .
+	 * the player wants to make. Thsi can be either a swap or a place.
+	 * @param board the board on which the moves should be made
+	 * @return a series of moves the player want's to play
+     */
 	@Override
 	//@ requires board != null;
 	//@ ensures \result != null;
