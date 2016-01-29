@@ -1,6 +1,5 @@
 package model;
 
-
 public class Tile {
     
 	//Square, Circle, Star, Diamond, Flower, Jew, Empty

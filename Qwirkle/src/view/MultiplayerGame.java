@@ -1,9 +1,7 @@
 package view;
 
-import controller.Board;
 import controller.OnlinePlayer;
 import controller.Player;
-import model.Bag;
 import model.Move;
 import model.Tile;
 import server.ClientHandler;
@@ -97,7 +95,7 @@ public class MultiplayerGame extends Game {
                     ArrayList<Move> moves = curPlayer.determineMove(board);
                     validMove = curPlayer.getHandler().isMoveDone();
                 } while (!validMove);
-            curPlayer.getHandler().moveIsOver();
+                curPlayer.getHandler().moveIsOver();
             }
             update();
             current = (current + 1) % numberOfPlayers;

@@ -61,9 +61,9 @@ public class ClientHandler extends ServerMethods {
 
 	@Override
     public String getClientName() {
-		String name = super.getClientName();
-    	if (name == null) {
-    		name = String.valueOf(sock.getInetAddress());
+		String clientName = super.getClientName();
+    	if (clientName == null) {
+    		clientName = String.valueOf(sock.getInetAddress());
     	}
 		return name;
     }
@@ -129,11 +129,12 @@ public class ClientHandler extends ServerMethods {
 					if (game.getBoard().isValidMove(clientMoveBuffer)) {
 						//plaats move op server gameboard
 						sendMessage(Protocol.SERVER_CORE_MOVE_ACCEPTED);
-						game.broadcastMessage(Protocol.SERVER_CORE_MOVE_MADE + Protocol.MESSAGESEPERATOR +
-								input[1] + Protocol.MESSAGESEPERATOR +
-								input[2] + Protocol.MESSAGESEPERATOR +
-								input[3] + Protocol.MESSAGESEPERATOR +
-								input[4]);
+						game.broadcastMessage(Protocol.SERVER_CORE_MOVE_MADE + 
+										Protocol.MESSAGESEPERATOR +
+										input[1] + Protocol.MESSAGESEPERATOR +
+										input[2] + Protocol.MESSAGESEPERATOR +
+										input[3] + Protocol.MESSAGESEPERATOR +
+										input[4]);
 					} else {
 						clientMoveBuffer.remove(receivedMove);
 					}
@@ -197,7 +198,7 @@ public class ClientHandler extends ServerMethods {
 		moveDone = false;
 	}
 
-	public void sendTurn(String name) {
+	public void sendTurn(String clientName) {
 		sendMessage(Protocol.SERVER_CORE_TURN + Protocol.MESSAGESEPERATOR + clientName);
 	}
 }

@@ -5,7 +5,7 @@ public class Move {
 	public final int col;
 	public final Tile tile;
 
-public Move(int r, int c, Tile t) {
+	public Move(int r, int c, Tile t) {
 		this.row = r;
 		this.col = c;
 		this.tile = t;
