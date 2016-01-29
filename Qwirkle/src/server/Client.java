@@ -1,10 +1,7 @@
 package server;
 
 import controller.*;
-import model.Move;
-import model.Tile;
-import model.TradeMove;
-import model.ValueComparator;
+import model.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -73,11 +70,14 @@ public class Client extends ServerMethods {
 			}
 		} catch (IOException e) {
 			shutdown();
+		} catch (ServerClientDisaggreeException e) {
+			e.printStackTrace();
+			shutdown();
 		}
 	}
     
 
-    public synchronized void readString(String msg) throws IOException {
+    public synchronized void readString(String msg) throws IOException, ServerClientDisaggreeException {
 		System.out.println("Client (" + clientName + ") received:  " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
     	String startGame;
@@ -143,13 +143,18 @@ public class Client extends ServerMethods {
 				System.out.println("Move Accepted");
 				if (!movesMade.isEmpty()) {
 					Move lastMove = movesMade.get(0);
-					player.getHand().removeTile(lastMove.tile);
+					try {
+						player.getHand().removeTile(lastMove.tile);
+					} catch (InvalidTile invalidTile) {
+						invalidTile.printStackTrace();
+						shutdown();
+					}
 					movesMade.remove(lastMove);
 					if (movesMade.isEmpty()) {
 						sendMessage(Protocol.SERVER_CORE_DONE);
 					}
 				} else {
-					System.err.println("*ERROR* removing more moves then were made");
+					throw new ServerClientDisaggreeException("Removing more moves then were made");
 				}
 
 				break;
@@ -162,13 +167,18 @@ public class Client extends ServerMethods {
 				System.out.println("Swap Accepted");
 				if (!movesMade.isEmpty()) {
 					Move tailMove = movesMade.get(0);
-					player.getHand().removeTile(tailMove.tile);
+					try {
+						player.getHand().removeTile(tailMove.tile);
+					} catch (InvalidTile invalidTile) {
+						invalidTile.printStackTrace();
+						shutdown();
+					}
 					movesMade.remove(tailMove);
 					if (movesMade.isEmpty()) {
 						sendMessage(Protocol.SERVER_CORE_DONE);
 					}
 				} else {
-					System.err.println("*ERR* removing more moves then were made");
+					throw new ServerClientDisaggreeException("Removing more moves then were made");
 				}
 				break;
 			case Protocol.SERVER_CORE_SWAP_DENIED:

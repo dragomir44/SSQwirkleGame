@@ -17,7 +17,6 @@ public class HumanPlayer extends Player {
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		String result = scanner.nextLine();
-//		scanner.close();
 		return result;
 	}
 	

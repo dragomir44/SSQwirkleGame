@@ -150,7 +150,12 @@ public class Game {
 							+ board.getPoints(moves) + " points.";
 					resultString += "\n End of turn.";
 					for (Move move : moves) {
-						curPlayer.getHand().removeTile(move.tile);
+						try {
+							curPlayer.getHand().removeTile(move.tile);
+						} catch (InvalidTile invalidTile) {
+							invalidTile.printStackTrace();
+							// should not occur
+						}
 					}
 					replenishTiles(curPlayer);
 					board.setField(moves);
