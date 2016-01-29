@@ -14,13 +14,17 @@ import java.util.*;
 
 public class Client extends ServerMethods {
 
-
 	private Board board = new Board();
 	private Player player;
 	private HashMap<String, Integer> opponents;
 	private ArrayList<Move> movesMade; // store the last move that was made
 	private InputStreamReader inStream;
 
+	/**
+	 * This constructor is used to decide what kind of client is made. A human
+	 * or a computer. Here the Server adress can also be defined and the host
+	 * port.
+     */
 	public Client() throws IOException {
 //		clientName = getInput("Name:");
 //		port = Integer.parseInt(getInput("Port:"));
@@ -42,9 +46,7 @@ public class Client extends ServerMethods {
 				break;
 		}
 
-
 		InetAddress host = InetAddress.getLocalHost();
-//		InetAddress host = InetAddress.getByName("130.89.96.63");
 		opponents = new HashMap<String, Integer>();
 		movesMade = new ArrayList<Move>();
 		try {
@@ -58,7 +60,11 @@ public class Client extends ServerMethods {
 		}	
 	}
 	
-    public void run() {
+	/**
+	 * This method is used from the extension of Thread. It runs the client and if
+	 * something goes wrong it shuts it down.
+     */
+	/*@ pure */ public void run() {
 		try {
 			while (true) {
 				String line = in.readLine();
@@ -75,12 +81,18 @@ public class Client extends ServerMethods {
 			shutdown();
 		}
 	}
-    
-
-    public synchronized void readString(String msg) throws IOException, ServerClientDisaggreeException {
+	/**
+	 * This is the most important method in the class. It received input from the ClientHandler
+	 * and translates it to actions or moves. This method follows the BIT Group 2 
+	 * Protocol. For every incoming message there is an answer. And if not it just
+	 * prints it out.
+	 * @param msg the String received from the ClientHandler
+	 * @return sendMessage with a protocol message to the ClientHandler
+     */
+    public synchronized void readString(String msg) throws IOException, 
+    ServerClientDisaggreeException {
 		System.out.println("Client (" + clientName + ") received:  " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
-    	String startGame;
 		switch (input[0]) {
 			case Protocol.SERVER_CORE_EXTENSION:
 				if (clientName == null) { // Verandering
@@ -217,6 +229,9 @@ public class Client extends ServerMethods {
 		}
     }
     
+	/*@ requires scoreInput.length() != 0;
+	 	ensures player.getScore() > \old(player.getScore())
+	 */
     public void addScores(String[] scoreInput) {
 		for (int i = 1; i < scoreInput.length; i = i + 2) {
 			String name = scoreInput[i];
@@ -229,8 +244,11 @@ public class Client extends ServerMethods {
 		printUpdate();
     }
     
-    
-	public void doStartGame() throws IOException {
+	/**
+	 * This method asks for input from the client when he wants to start a game.
+	 * The Client has to type "Y" to start a game
+     */
+    /*@ pure */ public void doStartGame() throws IOException {
 	    String input = null;
         System.out.println("Type 'Y' to start a game");
 		inStream = new InputStreamReader(System.in);
@@ -240,20 +258,38 @@ public class Client extends ServerMethods {
 		}
     }
 	
+	/**
+	 * Places the moves on your own board
+	 * @param move the move that is going to be placed
+     */
+	//@ requires move.isEmpty() != False;
 	public void placeTiles(Move move) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		moves.add(move);
 		placeTiles(moves);
 	}
 
+	/**
+	 * Sets the received ArrayList moves into the board. 
+	 * Also checks if it's valid or not.
+	 * @param moves the moves to be placed on the board
+     */
 	public void placeTiles(ArrayList<Move> moves) {
 		board.setField(moves);
 	}
-
+	
+	/**
+	 * Adds the received Tile into the hand of this Client.
+	 * @param tile the tile to be added into the hand
+     */
 	public void receiveTiles(Tile tile) {
 		player.getHand().addTile(tile);
 	}
 
+	/**
+	 * This method checks if its a TradeMove or a placed move. 
+	 * Trades the moves if its a TradeMove
+    */
 	public void makeMove() {
 		movesMade.clear(); // redundand clear
 		printUpdate();
@@ -269,13 +305,27 @@ public class Client extends ServerMethods {
 			placeMove(movesMade);
 		}
 	}
-
-	public void swapMove(ArrayList<Tile> tiles) {
+	
+	/**
+	 * Sends a message to the ClientHandler with the tiles you want to be swapped
+	 * out of your hand.
+	 * @param tiles the tiles you want to be swapped
+	 * @return Message to the client with the tiles
+     */
+	//@ requires tiles.isEmpty() != False;
+	/*@ pure */ public void swapMove(ArrayList<Tile> tiles) {
 		for (Tile tile : tiles) {
 			sendMessage(swapToString(tile));
 		}
 	}
 
+	/**
+	 * Places the moves on a board. Also checks if it's the first move or not
+	 * Also sends messages to the ClientHandler about the moves to be placed
+	 * @param moves the moves you want to place
+	 * @return A message for every single  move to the ClientHandler
+     */
+	//@ requires moves.isEmpty() != False;
 	public void placeMove(ArrayList<Move> moves) {
 		Move tailMove = moves.get(0);
 		if (board.isEmpty() &&
@@ -291,7 +341,13 @@ public class Client extends ServerMethods {
 		}
 	}
 
-	private int getBagSize() {
+	/**
+	 * Calculated the bag size based on the tiles dealt and the number of players
+	 * @return tiles Amount of tiles left in the bag
+     */
+	/*@ ensures \result >= 0;
+	 */
+	/*@ pure */ private int getBagSize() {
 		int tiles = 108 - opponents.size() * 6 - board.getTiles().size();
 		if (tiles < 0) {
 			tiles = 0;
@@ -299,7 +355,12 @@ public class Client extends ServerMethods {
 		return tiles;
 	}
 
-	private void printUpdate() {
+	/**
+	 * This is the method that shows the Client the current game situation.
+	 * Basically the TUI.
+	 * @return Prints the current game situation in the console
+     */
+	/*@ pure */ private void printUpdate() {
 		System.out.println("\ncurrent game situation:");
 		System.out.println(getBagSize() + " tiles left in the bag.");
 		for (Map.Entry<String, Integer> playerInServer : opponents.entrySet()) {
@@ -307,12 +368,14 @@ public class Client extends ServerMethods {
 			String name = playerInServer.getKey();
 			System.out.println(name + "'s score is: " + score);
 		}
-
-		System.out.println();
-//		System.out.println(board.toString());
 	}
 
-	private void printResult() {
+	/**
+	 * After the game has ended, this method prints who the winner is and with how
+	 * many point they have won.
+	 * @return Endresults of the game.
+     */
+	/*@ pure */ private void printResult() {
 		ValueComparator scoreComp = new ValueComparator();
 		TreeMap<String, Integer> sortedScores = scoreComp.sortByValue(opponents);
 
@@ -340,7 +403,7 @@ public class Client extends ServerMethods {
 	}
 
 
-    public static void main(String[] args) throws IOException {
+	/*@ pure */ public static void main(String[] args) throws IOException {
         Client c1 = new Client();
         c1.start();
     }
