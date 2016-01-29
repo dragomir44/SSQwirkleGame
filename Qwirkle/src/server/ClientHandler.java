@@ -104,6 +104,7 @@ public class ClientHandler extends ServerMethods {
 				Random rn = new Random();
 				String clientNo = Integer.toString(rn.nextInt(99) + 1);
 				clientName = "Player" + clientNo;
+				name = clientName;
 				sendMessage(Protocol.SERVER_CORE_JOIN_ACCEPTED + 
 							  Protocol.MESSAGESEPERATOR + clientName);
 				System.out.println("Clientname " + clientName + " set to " + this.getClientName());
@@ -121,9 +122,9 @@ public class ClientHandler extends ServerMethods {
 				server.startGame(this);
 				//TODO SERVER_CORE_TURN
 				//TODO make method in Server to get a list of game
-				server.sendMessageToGamePlayers(server.getPlayersOfHandler(this), 
-								Protocol.SERVER_CORE_TURN + 
-								Protocol.MESSAGESEPERATOR + this.getClientName());
+//				server.sendMessageToGamePlayers(server.getPlayersOfHandler(this), 
+//								Protocol.SERVER_CORE_TURN + 
+//								Protocol.MESSAGESEPERATOR + this.getClientName());
 				break;
 			case Protocol.CLIENT_CORE_MOVE:
 				if (input.length == 5) {

@@ -13,7 +13,7 @@ public class Board {
 	// instance with a map of all the tiles placed on the board
 	private BoardTiles tiles = new BoardTiles();
 
-	/**
+	/**.
 	 * This is a getter method for the board where the tiles are stored
 	 * @return the tiles object consisting of a 2D HashMap for storing tile locations
      */
@@ -286,7 +286,7 @@ public class Board {
 		return setField(moves, tiles);
 	}
 
-	/**
+	/**.
 	 * check if the default tile layout is empty (to check for first move)
 	 * @return true if the board is empty.
      */
@@ -437,7 +437,7 @@ public class Board {
 		ensures result.isEmpty != False;
 	 */
 	/*@ pure */ public HashMap<ArrayList<Move>, Integer> recursiveMoveCalc(
-		   ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
+		               ArrayList<Tile> useTiles, ArrayList<Move> prevMoves, int direction) {
 		HashMap<ArrayList<Move>, Integer> result = new HashMap<ArrayList<Move>, Integer>();
 		Move headMove = prevMoves.get(prevMoves.size() - 1); // get the last move
 		int row = headMove.row;

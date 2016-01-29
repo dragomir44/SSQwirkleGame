@@ -3,6 +3,7 @@ package tests;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -11,12 +12,19 @@ import org.junit.Test;
 import model.Tile;
 import model.Tile.Colour;
 import model.Tile.Shape;
+import server.Client;
+import server.ClientHandler;
 import server.Protocol;
+import server.Server;
 
 public class ServerTest {
 	private ArrayList<String> lobby;
 	private ArrayList<String> opponents;
 	private Tile tile;
+	private Server s;
+	private Client cl;
+	private ClientHandler ch;
+	private Socket sock;
 	
 	@Before
 	public void setUp() throws IOException {
@@ -28,6 +36,9 @@ public class ServerTest {
 		lobby.add("rob");
 		lobby.add("henk");
 		tile = new Tile(Shape.$, Colour.G);
+		s = new Server();
+		cl = new Client();
+		ch = new ClientHandler(s, sock);
 	}
 	
 	
@@ -88,7 +99,31 @@ public class ServerTest {
 		}
 		assertEquals(c, tile.getColour().toString());
 	}
-	
+
+	@Test
+	public void coverageTest() throws IOException {
+		cl.readString(Protocol.SERVER_CORE_EXTENSION);
+		cl.readString(Protocol.SERVER_CORE_LOGIN_DENIED);
+		cl.readString(Protocol.SERVER_CORE_LOGIN_ACCEPTED);
+		cl.readString(Protocol.SERVER_CORE_JOIN_DENIED);
+		cl.readString(Protocol.SERVER_CORE_JOIN_ACCEPTED);
+		cl.readString(Protocol.SERVER_CORE_START_DENIED);
+		cl.readString(Protocol.SERVER_CORE_PLAYERS);
+		cl.readString(Protocol.SERVER_CORE_TURN);
+		cl.readString(Protocol.SERVER_CORE_MOVE_ACCEPTED);
+		cl.readString(Protocol.SERVER_CORE_MOVE_DENIED);
+		cl.readString(Protocol.SERVER_CORE_SWAP_ACCEPTED);
+		cl.readString(Protocol.SERVER_CORE_SWAP_DENIED);
+		cl.readString(Protocol.SERVER_CORE_MOVE_MADE);
+		cl.readString(Protocol.SERVER_CORE_SCORE);
+		cl.readString(Protocol.SERVER_CORE_SEND_TILE);
+		cl.readString(Protocol.SERVER_CORE_GAME_ENDED);
+		cl.readString(Protocol.SERVER_CORE_TIMEOUT_EXCEPTION);
+		cl.readString("default");
+		
+		
+		
+	}
 	
 	
 }

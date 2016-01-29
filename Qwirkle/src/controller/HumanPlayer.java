@@ -7,32 +7,33 @@ import java.util.regex.Pattern;
 import model.*;
 
 public class HumanPlayer extends Player {
-		
+	
+	//@ requires name != null;
 	public HumanPlayer(String name) {
 		super(name);
 	}
 
-	protected String readString(String prompt) {
+	//@ requires prompt != null;
+	//@ ensures \result != null;
+	/*@ pure */protected String readString(String prompt) {
 		writeString(prompt + ">");
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		String result = scanner.nextLine();
-//		scanner.close();
 		return result;
 	}
 	
 	@Override
-	public ArrayList<Move> determineMove(Board board) {
+	//@ requires board != null;
+	//@ ensures \result != null;
+	/*@ pure */public ArrayList<Move> determineMove(Board board) {
 		String question;
 		ArrayList<Move> moves = new ArrayList<Move>();
 		String intro = "Your hand: " + hand.toString() + "\n";
 		String drawText = "To draw new tiles: 'draw *tilenr* *tilenr* ...' \n";
 		String placeText = "To place tiles: 'place *rownr* *colnr* *tilenr*, repeat \n";
 		String invalidEntry = "This is an invalid command, please try again. \n";
-		String drawError =  "Invalid tiles, please try again. \n";
 		String retry = "Please try again, ";
-		String moveErrors = "";
-		String resultString = "";
 		
 		// Matchers:
 		String findCommand = "^([\\w\\-]+)";

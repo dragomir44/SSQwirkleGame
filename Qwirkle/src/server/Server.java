@@ -50,7 +50,7 @@ public class Server {
             }
             startServer();
         } catch (NumberFormatException e) {
-            serverMessage("*ERROR* port is not an integer");
+            serverMessage("*ERROR* port is not an integer or already in use");
         }
     }
 
@@ -73,7 +73,7 @@ public class Server {
 
 	public MultiplayerGame startGame(ClientHandler handler) {
         MultiplayerGame game;
-        StringBuilder playersString = new StringBuilder();
+        StringBuilder playerString = new StringBuilder();
 		OnlinePlayer player;
 		if (lobby.size() != 1) {
             ArrayList<OnlinePlayer> players = new ArrayList<OnlinePlayer>();
@@ -84,12 +84,15 @@ public class Server {
 				player = new OnlinePlayer(playerHandler);
 				ingame.add(playerHandler);
 				players.add(player);
-				playersString.append(Protocol.MESSAGESEPERATOR + player.getName());
+				playerString.append(Protocol.MESSAGESEPERATOR + playerHandler.getClientName());
 			}
+			System.out.println("PlayerNames1: " + playerString);
             game = new MultiplayerGame(players, handlers);
             gameMap.put(game, handlers);
             sendMessageToGamePlayers(handlers, Protocol.SERVER_CORE_START 
-            			  + playersString.toString());
+            			  + playerString);
+            System.out.println("Message sent to clients: " + Protocol.SERVER_CORE_START 
+      			  + playerString);
             System.out.println("Starting the game");
             game.start();
 		} else {
@@ -174,16 +177,6 @@ public class Server {
 		}
 		return opponents;
 	}
-
-    private void makeMove(ClientHandler handler, String move) {
-    	//TODO Make move method
-        // zet tile int1 int2 om naar Tile shape, color
-        // zet String move om naar row, col, Tile
-        // voeg toe aan ArrayList<Move>
-        // koppel aan LocalOnlinePlayer
-
-
-    }
     
     public void sendMessage(ClientHandler handler, String message) {
         handler.sendMessage(message);

@@ -16,6 +16,7 @@ public class MultiplayerGame extends Game {
 
     public MultiplayerGame(ArrayList<OnlinePlayer> players, ArrayList<ClientHandler> handlers) {
         super(new ArrayList<Player>(players)); // initally send empty player list
+        System.out.println("Players: " + players);
         this.players = players;
         this.handlers = handlers;
         for (ClientHandler handler : handlers) {
@@ -89,7 +90,10 @@ public class MultiplayerGame extends Game {
                 System.out.println("No move possible, skipped a turn");
             } else {
                 boolean validMove = false;
+                System.out.println("PlayersSize: " + players.size());
+                System.out.println("PlayersTest: " + players.get(current));
                 OnlinePlayer curPlayer = players.get(current);
+                System.out.println("PlayersTest2: " + curPlayer.getName());
                 curPlayer.writeString(curPlayer.getName() + "'s turn:");
                 ArrayList<Move> moves = curPlayer.determineMove(board);
                 do {
