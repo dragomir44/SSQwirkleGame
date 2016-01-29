@@ -22,6 +22,7 @@ public class Client extends ServerMethods {
 	private Player player;
 	private HashMap<String, Integer> opponents;
 	private ArrayList<Move> movesMade; // store the last move that was made
+	private InputStreamReader inStream;
 
 	public Client() throws IOException {
 //		clientName = getInput("Name:");
@@ -65,7 +66,6 @@ public class Client extends ServerMethods {
 			while (true) {
 				String line = in.readLine();
 				if (line != null) {
-					System.out.println(line);
 					readString(line);
 				} else {
 					break;
@@ -78,6 +78,7 @@ public class Client extends ServerMethods {
     
 
     public synchronized void readString(String msg) throws IOException {
+		System.out.println("Client (" + clientName + ") received:  " + msg);
     	String[] input = msg.split(Protocol.MESSAGESEPERATOR);
     	String startGame;
 		switch (input[0]) {
@@ -95,11 +96,7 @@ public class Client extends ServerMethods {
 				shutdown();
 				break;
 			case Protocol.SERVER_CORE_LOGIN_ACCEPTED:
-				//TODO fix this 
-				startGame = getInput("Type 'Y' to start a game");
-				if (startGame.equals("Y")) {
-					sendMessage(Protocol.CLIENT_CORE_START);
-				}
+				doStartGame(); // request start game input
 				break;
 			case Protocol.SERVER_CORE_JOIN_DENIED:
 				System.out.println("Join denied. Try again");
@@ -108,10 +105,8 @@ public class Client extends ServerMethods {
 			case Protocol.SERVER_CORE_JOIN_ACCEPTED:
 				clientName = input[1];
 				System.out.println("Joined server as: " + input[1]);
-				startGame = getInput("Type 'Y' to start a game");
-				if (startGame.equals("Y")) {
-					sendMessage(Protocol.CLIENT_CORE_START);
-				}
+				doStartGame();
+
 				break;
 			case Protocol.SERVER_CORE_START_DENIED:
 				System.out.println("Server does not want to start");
@@ -120,7 +115,8 @@ public class Client extends ServerMethods {
 				for (int i = 1; i < input.length; i++) {
 					opponents.put(input[i], 0);
 				}
-				System.out.println(board.toString());
+				inStream.close(); // close the start input stream
+//				System.out.println(board.toString());
 				break;
 			// sendMessage(Protocol.CLIENT_CORE_PLAYERS) to ask for players in server
 			case Protocol.SERVER_CORE_PLAYERS:
@@ -206,7 +202,8 @@ public class Client extends ServerMethods {
 				System.out.println("Player <" + input[1] + "> timed out");
 				break;
 			default:
-				System.out.println(msg);
+				System.out.println("Default case!, received: " + msg);
+				break;
 		}
     }
     
@@ -223,11 +220,14 @@ public class Client extends ServerMethods {
     }
     
     
-	public String getInput(String question) throws IOException {
+	public void doStartGame() throws IOException {
 	    String input = null;
-        System.out.println(question);
-        input = new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
-        return input;
+        System.out.println("Type 'Y' to start a game");
+		inStream = new InputStreamReader(System.in);
+        input = new BufferedReader(inStream).readLine().trim();
+		if (input.equals("Y")) {
+			sendMessage(Protocol.CLIENT_CORE_START);
+		}
     }
 	
 	public void placeTiles(Move move) {
@@ -258,8 +258,6 @@ public class Client extends ServerMethods {
 		} else {
 			placeMove(movesMade);
 		}
-		System.out.println("This was my move: " + movesMade);
-		System.out.println("I sent them to the server");
 	}
 
 	public void swapMove(ArrayList<Tile> tiles) {
@@ -301,7 +299,7 @@ public class Client extends ServerMethods {
 		}
 
 		System.out.println();
-		System.out.println(board.toString());
+//		System.out.println(board.toString());
 	}
 
 	private void printResult() {

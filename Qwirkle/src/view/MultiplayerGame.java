@@ -91,8 +91,8 @@ public class MultiplayerGame extends Game {
                 boolean validMove = false;
                 OnlinePlayer curPlayer = players.get(current);
                 curPlayer.writeString(curPlayer.getName() + "'s turn:");
+                ArrayList<Move> moves = curPlayer.determineMove(board);
                 do {
-                    ArrayList<Move> moves = curPlayer.determineMove(board);
                     validMove = curPlayer.getHandler().isMoveDone();
                 } while (!validMove);
                 curPlayer.getHandler().moveIsOver();
@@ -108,4 +108,5 @@ public class MultiplayerGame extends Game {
     public boolean gameOver() {
         return false;
     }
+
 }
